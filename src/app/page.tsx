@@ -88,6 +88,7 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
+          
           <Image
             aria-hidden
             src="/globe.svg"
