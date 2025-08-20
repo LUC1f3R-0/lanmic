@@ -21,11 +21,9 @@ const Header = () => {
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <img
-            src="/assets/img/POLYMERS 2024.png"
-            alt="LANMIC POLYMERS Logo"
-            className="h-10 w-auto"
-          />
+          <div className="text-xl font-bold text-blue-600">
+            LANMIC POLYMERS
+          </div>
         </Link>
 
         {/* Desktop Menu */}
