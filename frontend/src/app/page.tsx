@@ -1,6 +1,7 @@
 import Image from "next/image";
 
-export default function Home() {
+export default async function Home() {
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   return (
     <div className="font-sans grid grid-rows-[20px_1fr] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
@@ -11,6 +12,7 @@ export default function Home() {
           width={180}
           height={38}
           priority
+          style={{ width: 'auto', height: 'auto' }}
         />
         <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
           <li className="mb-2 tracking-[-.01em]">
@@ -38,6 +40,7 @@ export default function Home() {
               alt="Vercel logomark"
               width={20}
               height={20}
+              style={{ width: 'auto', height: 'auto' }}
             />
             Deploy now
           </a>
