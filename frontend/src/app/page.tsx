@@ -658,7 +658,7 @@ export default function Home() {
                   data-aos="fade-up"
                   data-aos-delay="200"
                 >
-                  Don't just take our word for it - hear from our satisfied customers
+                  Don&apos;t just take our word for it - hear from our satisfied customers
                 </p>
               </div>
 
@@ -691,7 +691,7 @@ export default function Home() {
                           />
                         </div>
                         <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                          &ldquo;LANMIC Polymers has consistently delivered exceptional quality and innovative solutions. Their team's expertise and commitment to excellence have made them our trusted partner for all polymer needs.&rdquo;
+                          &ldquo;LANMIC Polymers has consistently delivered exceptional quality and innovative solutions. Their team&apos;s expertise and commitment to excellence have made them our trusted partner for all polymer needs.&rdquo;
                         </blockquote>
                         <div className="text-center">
                           <h4 className="text-xl font-bold text-gray-900 mb-1">Adam Aderson</h4>
@@ -711,7 +711,7 @@ export default function Home() {
                           />
                         </div>
                         <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                          &ldquo;The level of technical expertise and customer service at LANMIC is unmatched. They've helped us achieve remarkable results with their cutting-edge polymer solutions.&rdquo;
+                          &ldquo;The level of technical expertise and customer service at LANMIC is unmatched. They&apos;ve helped us achieve remarkable results with their cutting-edge polymer solutions.&rdquo;
                         </blockquote>
                         <div className="text-center">
                           <h4 className="text-xl font-bold text-gray-900 mb-1">Lukas Devlin</h4>
@@ -762,7 +762,7 @@ export default function Home() {
                   data-aos="fade-up"
                   data-aos-delay="100"
                 >
-                  Let's discuss how LANMIC Polymers can help transform your business with our innovative polymer solutions.
+                  Let&apos;s discuss how LANMIC Polymers can help transform your business with our innovative polymer solutions.
                 </p>
                 <div
                   className="flex flex-col sm:flex-row gap-4 justify-center"
