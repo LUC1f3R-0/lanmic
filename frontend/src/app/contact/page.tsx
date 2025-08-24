@@ -12,11 +12,13 @@ export default function Contact() {
     message: "",
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -66,7 +68,8 @@ export default function Contact() {
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              Ready to discuss your polymer technology needs? We&apos;re here to help you find the perfect solution.
+              Ready to discuss your polymer technology needs? We&apos;re here to
+              help you find the perfect solution.
             </p>
           </div>
         </div>
@@ -78,12 +81,22 @@ export default function Contact() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl p-8 shadow-xl" data-aos="slide-right" data-aos-duration="1000" data-aos-easing="ease-out-cubic">
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+              <div
+                className="bg-white rounded-2xl p-8 shadow-xl"
+                data-aos="slide-right"
+                data-aos-duration="1000"
+                data-aos-easing="ease-out-cubic"
+              >
+                <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                  Send us a Message
+                </h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div data-aos="fade-up" data-aos-delay="100">
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         Full Name *
                       </label>
                       <input
@@ -98,7 +111,10 @@ export default function Contact() {
                       />
                     </div>
                     <div data-aos="fade-up" data-aos-delay="200">
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         Email Address *
                       </label>
                       <input
@@ -115,7 +131,10 @@ export default function Contact() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div data-aos="fade-up" data-aos-delay="300">
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         Phone Number
                       </label>
                       <input
@@ -129,7 +148,10 @@ export default function Contact() {
                       />
                     </div>
                     <div data-aos="fade-up" data-aos-delay="400">
-                      <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="company"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         Company
                       </label>
                       <input
@@ -144,7 +166,10 @@ export default function Contact() {
                     </div>
                   </div>
                   <div data-aos="fade-up" data-aos-delay="500">
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Message *
                     </label>
                     <textarea
@@ -171,22 +196,48 @@ export default function Contact() {
             </div>
 
             {/* Contact Details */}
-            <div className="space-y-8" data-aos="slide-left" data-aos-duration="1000" data-aos-easing="ease-out-cubic">
+            <div
+              className="space-y-8"
+              data-aos="slide-left"
+              data-aos-duration="1000"
+              data-aos-easing="ease-out-cubic"
+            >
               <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">
+                  Contact Information
+                </h3>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
                       </svg>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">Address</h4>
+                      <h4 className="font-semibold text-gray-900 mb-1">
+                        Address
+                      </h4>
                       <p className="text-gray-600 text-sm">
-                        123 Polymer Street<br />
-                        Innovation District<br />
+                        123 Polymer Street
+                        <br />
+                        Innovation District
+                        <br />
                         Tech City, TC 12345
                       </p>
                     </div>
@@ -194,14 +245,27 @@ export default function Contact() {
 
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                        />
                       </svg>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">Phone</h4>
+                      <h4 className="font-semibold text-gray-900 mb-1">
+                        Phone
+                      </h4>
                       <p className="text-gray-600 text-sm">
-                        +1 (555) 123-4567<br />
+                        +1 (555) 123-4567
+                        <br />
                         +1 (555) 987-6543
                       </p>
                     </div>
@@ -209,14 +273,27 @@ export default function Contact() {
 
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
                       </svg>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">Email</h4>
+                      <h4 className="font-semibold text-gray-900 mb-1">
+                        Email
+                      </h4>
                       <p className="text-gray-600 text-sm">
-                        info@lanmicpolymers.com<br />
+                        info@lanmicpolymers.com
+                        <br />
                         support@lanmicpolymers.com
                       </p>
                     </div>
@@ -225,15 +302,21 @@ export default function Contact() {
               </div>
 
               <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Business Hours</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">
+                  Business Hours
+                </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Monday - Friday</span>
-                    <span className="font-semibold text-gray-900">9:00 AM - 6:00 PM</span>
+                    <span className="font-semibold text-gray-900">
+                      9:00 AM - 6:00 PM
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Saturday</span>
-                    <span className="font-semibold text-gray-900">10:00 AM - 4:00 PM</span>
+                    <span className="font-semibold text-gray-900">
+                      10:00 AM - 4:00 PM
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Sunday</span>
@@ -261,15 +344,26 @@ export default function Contact() {
               data-aos="fade-up"
               data-aos-delay="100"
             >
-              Visit our state-of-the-art facility and see our polymer technology in action
+              Visit our state-of-the-art facility and see our polymer technology
+              in action
             </p>
           </div>
-          
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden" data-aos="zoom-in" data-aos-delay="200" data-aos-duration="1000" data-aos-easing="ease-out-cubic">
+
+          <div
+            className="bg-white rounded-2xl shadow-xl overflow-hidden"
+            data-aos="zoom-in"
+            data-aos-delay="200"
+            data-aos-duration="1000"
+            data-aos-easing="ease-out-cubic"
+          >
             <div className="h-96 bg-gray-200 flex items-center justify-center">
               <div className="text-center">
-                <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                <svg
+                  className="w-16 h-16 text-gray-400 mx-auto mb-4"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                 </svg>
                 <p className="text-gray-600">Interactive Map Coming Soon</p>
               </div>
@@ -300,7 +394,8 @@ export default function Contact() {
               data-aos="fade-up"
               data-aos-delay="200"
             >
-              Get answers to common questions about our polymer solutions and services
+              Get answers to common questions about our polymer solutions and
+              services
             </p>
           </div>
 
@@ -313,9 +408,13 @@ export default function Contact() {
                 data-aos-duration="800"
                 data-aos-easing="ease-out-cubic"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-3">What types of polymers do you specialize in?</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  What types of polymers do you specialize in?
+                </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  We specialize in a wide range of polymers including thermoplastics, thermosets, elastomers, and specialty polymers for various industrial applications.
+                  We specialize in a wide range of polymers including
+                  thermoplastics, thermosets, elastomers, and specialty polymers
+                  for various industrial applications.
                 </p>
               </div>
 
@@ -326,9 +425,12 @@ export default function Contact() {
                 data-aos-duration="800"
                 data-aos-easing="ease-out-cubic"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Do you provide custom polymer formulations?</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Do you provide custom polymer formulations?
+                </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Yes, we offer custom polymer formulations tailored to your specific requirements and application needs.
+                  Yes, we offer custom polymer formulations tailored to your
+                  specific requirements and application needs.
                 </p>
               </div>
 
@@ -339,9 +441,13 @@ export default function Contact() {
                 data-aos-duration="800"
                 data-aos-easing="ease-out-cubic"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-3">What is your typical project timeline?</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  What is your typical project timeline?
+                </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Project timelines vary depending on complexity, typically ranging from 2-8 weeks for standard formulations to 3-6 months for custom development projects.
+                  Project timelines vary depending on complexity, typically
+                  ranging from 2-8 weeks for standard formulations to 3-6 months
+                  for custom development projects.
                 </p>
               </div>
             </div>
@@ -354,9 +460,13 @@ export default function Contact() {
                 data-aos-duration="800"
                 data-aos-easing="ease-out-cubic"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Do you ship internationally?</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Do you ship internationally?
+                </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Yes, we provide international shipping to over 25 countries with proper documentation and compliance with local regulations.
+                  Yes, we provide international shipping to over 25 countries
+                  with proper documentation and compliance with local
+                  regulations.
                 </p>
               </div>
 
@@ -367,9 +477,13 @@ export default function Contact() {
                 data-aos-duration="800"
                 data-aos-easing="ease-out-cubic"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-3">What quality certifications do you have?</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  What quality certifications do you have?
+                </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  We maintain ISO 9001:2015 certification and follow strict quality control processes to ensure consistent product performance.
+                  We maintain ISO 9001:2015 certification and follow strict
+                  quality control processes to ensure consistent product
+                  performance.
                 </p>
               </div>
 
@@ -380,9 +494,13 @@ export default function Contact() {
                 data-aos-duration="800"
                 data-aos-easing="ease-out-cubic"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Can you provide technical support?</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Can you provide technical support?
+                </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Absolutely! Our technical team provides comprehensive support including application guidance, troubleshooting, and ongoing consultation.
+                  Absolutely! Our technical team provides comprehensive support
+                  including application guidance, troubleshooting, and ongoing
+                  consultation.
                 </p>
               </div>
             </div>

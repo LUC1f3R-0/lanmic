@@ -135,7 +135,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="text-center max-w-4xl mx-auto">
-                <h1 
+                <h1
                   className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight"
                   data-aos="fade-up"
                   data-aos-duration="1200"
@@ -146,16 +146,18 @@ export default function Home() {
                     LANMIC Polymers
                   </span>
                 </h1>
-                <p 
+                <p
                   className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
                   data-aos="fade-up"
                   data-aos-delay="200"
                   data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  Your trusted partner in innovative polymer solutions. We deliver excellence through cutting-edge technology and sustainable practices.
+                  Your trusted partner in innovative polymer solutions. We
+                  deliver excellence through cutting-edge technology and
+                  sustainable practices.
                 </p>
-                <div 
+                <div
                   className="flex flex-col sm:flex-row gap-4 justify-center"
                   data-aos="zoom-in"
                   data-aos-delay="400"
@@ -174,7 +176,10 @@ export default function Home() {
           </section>
 
           {/* About Section */}
-          <section id="about" className="about-section py-20 lg:py-32 bg-white relative">
+          <section
+            id="about"
+            className="about-section py-20 lg:py-32 bg-white relative"
+          >
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                 <div
@@ -264,12 +269,20 @@ export default function Home() {
                     </p>
                     <div className="grid grid-cols-2 gap-6 pt-6">
                       <div className="text-center p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors duration-300">
-                        <div className="text-2xl font-bold text-blue-600 mb-2">25+</div>
-                        <div className="text-sm text-gray-600">Years Experience</div>
+                        <div className="text-2xl font-bold text-blue-600 mb-2">
+                          25+
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Years Experience
+                        </div>
                       </div>
                       <div className="text-center p-4 bg-gray-50 rounded-xl hover:bg-purple-50 transition-colors duration-300">
-                        <div className="text-2xl font-bold text-purple-600 mb-2">500+</div>
-                        <div className="text-sm text-gray-600">Projects Completed</div>
+                        <div className="text-2xl font-bold text-purple-600 mb-2">
+                          500+
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Projects Completed
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -303,12 +316,13 @@ export default function Home() {
                   data-aos="fade-up"
                   data-aos-delay="200"
                 >
-                  Comprehensive polymer solutions tailored to your specific needs
+                  Comprehensive polymer solutions tailored to your specific
+                  needs
                 </p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div 
+                <div
                   className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
                   data-aos="zoom-in"
                   data-aos-delay="100"
@@ -332,11 +346,12 @@ export default function Home() {
                     Advanced Technology
                   </h3>
                   <p className="text-gray-600 leading-relaxed">
-                    Cutting-edge polymer technology solutions for modern manufacturing needs
+                    Cutting-edge polymer technology solutions for modern
+                    manufacturing needs
                   </p>
                 </div>
 
-                <div 
+                <div
                   className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
                   data-aos="zoom-in"
                   data-aos-delay="200"
@@ -360,11 +375,12 @@ export default function Home() {
                     Custom Design
                   </h3>
                   <p className="text-gray-600 leading-relaxed">
-                    Tailored polymer solutions designed specifically for your requirements
+                    Tailored polymer solutions designed specifically for your
+                    requirements
                   </p>
                 </div>
 
-                <div 
+                <div
                   className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
                   data-aos="zoom-in"
                   data-aos-delay="300"
@@ -384,7 +400,8 @@ export default function Home() {
                     Quality Assurance
                   </h3>
                   <p className="text-gray-600 leading-relaxed">
-                    Rigorous quality control processes ensuring the highest standards
+                    Rigorous quality control processes ensuring the highest
+                    standards
                   </p>
                 </div>
               </div>
@@ -412,8 +429,12 @@ export default function Home() {
                       data-aos-easing="ease-out-cubic"
                     />
                     <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-6 shadow-xl">
-                      <div className="text-3xl font-bold text-blue-600">25+</div>
-                      <div className="text-sm text-gray-600">Years of Excellence</div>
+                      <div className="text-3xl font-bold text-blue-600">
+                        25+
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Years of Excellence
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -430,43 +451,55 @@ export default function Home() {
                       <p className="text-lg text-gray-600 leading-relaxed mb-6">
                         Far far away, behind the word mountains, far from the
                         countries Vokalia and Consonantia, there live the blind
-                        texts. Separated they live in Bookmarksgrove right at the
-                        coast of the Semantics, a large language ocean.
+                        texts. Separated they live in Bookmarksgrove right at
+                        the coast of the Semantics, a large language ocean.
                       </p>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                      <div 
+                      <div
                         className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl hover:shadow-lg transition-all duration-300"
                         data-aos="slide-up"
                         data-aos-delay="100"
                         data-aos-duration="800"
                         data-aos-easing="ease-out-cubic"
                       >
-                        <div className="text-3xl font-bold text-blue-600 mb-2">3,919</div>
-                        <div className="text-sm text-gray-600 font-medium">Coffee Cups</div>
+                        <div className="text-3xl font-bold text-blue-600 mb-2">
+                          3,919
+                        </div>
+                        <div className="text-sm text-gray-600 font-medium">
+                          Coffee Cups
+                        </div>
                       </div>
 
-                      <div 
+                      <div
                         className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl hover:shadow-lg transition-all duration-300"
                         data-aos="slide-up"
                         data-aos-delay="200"
                         data-aos-duration="800"
                         data-aos-easing="ease-out-cubic"
                       >
-                        <div className="text-3xl font-bold text-green-600 mb-2">2,831</div>
-                        <div className="text-sm text-gray-600 font-medium">Lines of Code</div>
+                        <div className="text-3xl font-bold text-green-600 mb-2">
+                          2,831
+                        </div>
+                        <div className="text-sm text-gray-600 font-medium">
+                          Lines of Code
+                        </div>
                       </div>
 
-                      <div 
+                      <div
                         className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl hover:shadow-lg transition-all duration-300"
                         data-aos="slide-up"
                         data-aos-delay="300"
                         data-aos-duration="800"
                         data-aos-easing="ease-out-cubic"
                       >
-                        <div className="text-3xl font-bold text-purple-600 mb-2">1,914</div>
-                        <div className="text-sm text-gray-600 font-medium">Projects</div>
+                        <div className="text-3xl font-bold text-purple-600 mb-2">
+                          1,914
+                        </div>
+                        <div className="text-sm text-gray-600 font-medium">
+                          Projects
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -500,12 +533,13 @@ export default function Home() {
                   data-aos="fade-up"
                   data-aos-delay="200"
                 >
-                  Stay updated with the latest insights and innovations in polymer technology
+                  Stay updated with the latest insights and innovations in
+                  polymer technology
                 </p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <article 
+                <article
                   className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
                   data-aos="flip-left"
                   data-aos-delay="100"
@@ -551,14 +585,18 @@ export default function Home() {
                         className="w-10 h-10 rounded-full mr-3"
                       />
                       <div>
-                        <div className="font-semibold text-gray-900">Winston Gold</div>
-                        <div className="text-sm text-gray-600">Lead Product Designer</div>
+                        <div className="font-semibold text-gray-900">
+                          Winston Gold
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Lead Product Designer
+                        </div>
                       </div>
                     </div>
                   </div>
                 </article>
 
-                <article 
+                <article
                   className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
                   data-aos="flip-left"
                   data-aos-delay="200"
@@ -604,14 +642,18 @@ export default function Home() {
                         className="w-10 h-10 rounded-full mr-3"
                       />
                       <div>
-                        <div className="font-semibold text-gray-900">Sarah Johnson</div>
-                        <div className="text-sm text-gray-600">Research Director</div>
+                        <div className="font-semibold text-gray-900">
+                          Sarah Johnson
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Research Director
+                        </div>
                       </div>
                     </div>
                   </div>
                 </article>
 
-                <article 
+                <article
                   className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
                   data-aos="flip-left"
                   data-aos-delay="300"
@@ -657,8 +699,12 @@ export default function Home() {
                         className="w-10 h-10 rounded-full mr-3"
                       />
                       <div>
-                        <div className="font-semibold text-gray-900">Michael Chen</div>
-                        <div className="text-sm text-gray-600">Industry Analyst</div>
+                        <div className="font-semibold text-gray-900">
+                          Michael Chen
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Industry Analyst
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -692,11 +738,17 @@ export default function Home() {
                   data-aos="fade-up"
                   data-aos-delay="200"
                 >
-                  Don&apos;t just take our word for it - hear from our satisfied customers
+                  Don&apos;t just take our word for it - hear from our satisfied
+                  customers
                 </p>
               </div>
 
-              <div className="max-w-4xl mx-auto" data-aos="zoom-in" data-aos-duration="1000" data-aos-easing="ease-out-cubic">
+              <div
+                className="max-w-4xl mx-auto"
+                data-aos="zoom-in"
+                data-aos-duration="1000"
+                data-aos-easing="ease-out-cubic"
+              >
                 <div className="relative">
                   <Swiper
                     modules={[Autoplay, Pagination]}
@@ -725,11 +777,19 @@ export default function Home() {
                           />
                         </div>
                         <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                          &ldquo;LANMIC Polymers has consistently delivered exceptional quality and innovative solutions. Their team&apos;s expertise and commitment to excellence have made them our trusted partner for all polymer needs.&rdquo;
+                          &ldquo;LANMIC Polymers has consistently delivered
+                          exceptional quality and innovative solutions. Their
+                          team&apos;s expertise and commitment to excellence
+                          have made them our trusted partner for all polymer
+                          needs.&rdquo;
                         </blockquote>
                         <div className="text-center">
-                          <h4 className="text-xl font-bold text-gray-900 mb-1">Adam Aderson</h4>
-                          <p className="text-gray-600">CEO, TechCorp Industries</p>
+                          <h4 className="text-xl font-bold text-gray-900 mb-1">
+                            Adam Aderson
+                          </h4>
+                          <p className="text-gray-600">
+                            CEO, TechCorp Industries
+                          </p>
                         </div>
                       </div>
                     </SwiperSlide>
@@ -745,10 +805,15 @@ export default function Home() {
                           />
                         </div>
                         <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                          &ldquo;The level of technical expertise and customer service at LANMIC is unmatched. They&apos;ve helped us achieve remarkable results with their cutting-edge polymer solutions.&rdquo;
+                          &ldquo;The level of technical expertise and customer
+                          service at LANMIC is unmatched. They&apos;ve helped us
+                          achieve remarkable results with their cutting-edge
+                          polymer solutions.&rdquo;
                         </blockquote>
                         <div className="text-center">
-                          <h4 className="text-xl font-bold text-gray-900 mb-1">Lukas Devlin</h4>
+                          <h4 className="text-xl font-bold text-gray-900 mb-1">
+                            Lukas Devlin
+                          </h4>
                           <p className="text-gray-600">CTO, Innovation Labs</p>
                         </div>
                       </div>
@@ -765,20 +830,27 @@ export default function Home() {
                           />
                         </div>
                         <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                          &ldquo;Working with LANMIC has been a game-changer for our manufacturing process. Their sustainable approach and quality products have exceeded our expectations.&rdquo;
+                          &ldquo;Working with LANMIC has been a game-changer for
+                          our manufacturing process. Their sustainable approach
+                          and quality products have exceeded our
+                          expectations.&rdquo;
                         </blockquote>
                         <div className="text-center">
-                          <h4 className="text-xl font-bold text-gray-900 mb-1">Kayla Bryant</h4>
-                          <p className="text-gray-600">Operations Director, GreenTech</p>
+                          <h4 className="text-xl font-bold text-gray-900 mb-1">
+                            Kayla Bryant
+                          </h4>
+                          <p className="text-gray-600">
+                            Operations Director, GreenTech
+                          </p>
                         </div>
                       </div>
                     </SwiperSlide>
-                   </Swiper>
-                    <div className="testimonials-pagination mt-12"></div>
-                  </div>
+                  </Swiper>
+                  <div className="testimonials-pagination mt-12"></div>
                 </div>
               </div>
-            </section>
+            </div>
+          </section>
 
           {/* CTA Section */}
           <section className="cta-section py-20 lg:py-32 bg-gradient-to-r from-blue-600 to-purple-600 relative overflow-hidden">
@@ -800,7 +872,8 @@ export default function Home() {
                   data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  Let&apos;s discuss how LANMIC Polymers can help transform your business with our innovative polymer solutions.
+                  Let&apos;s discuss how LANMIC Polymers can help transform your
+                  business with our innovative polymer solutions.
                 </p>
                 <div
                   className="flex flex-col sm:flex-row gap-4 justify-center"
