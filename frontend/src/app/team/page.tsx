@@ -30,6 +30,8 @@ export default function Team() {
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
               data-aos="fade-up"
               data-aos-delay="100"
+              data-aos-duration="1200"
+              data-aos-easing="ease-out-cubic"
             >
               Meet Our{" "}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -40,6 +42,8 @@ export default function Team() {
               className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
               data-aos="fade-up"
               data-aos-delay="200"
+              data-aos-duration="1000"
+              data-aos-easing="ease-out-cubic"
             >
               Our dedicated team of professionals is committed to delivering excellence in polymer technology and innovative solutions.
             </p>
@@ -76,8 +80,10 @@ export default function Team() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div
               className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-              data-aos="fade-up"
+              data-aos="zoom-in"
               data-aos-delay="100"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
             >
               <div className="relative mb-6">
                 <Image
@@ -114,8 +120,10 @@ export default function Team() {
 
             <div
               className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-              data-aos="fade-up"
+              data-aos="zoom-in"
               data-aos-delay="200"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
             >
               <div className="relative mb-6">
                 <Image
@@ -152,8 +160,10 @@ export default function Team() {
 
             <div
               className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-              data-aos="fade-up"
+              data-aos="zoom-in"
               data-aos-delay="300"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
             >
               <div className="relative mb-6">
                 <Image
@@ -197,32 +207,40 @@ export default function Team() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div
               className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-              data-aos="fade-up"
+              data-aos="slide-up"
               data-aos-delay="100"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
             >
               <div className="text-4xl font-bold text-blue-600 mb-2">50+</div>
               <div className="text-gray-600 font-medium">Team Members</div>
             </div>
             <div
               className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-              data-aos="fade-up"
+              data-aos="slide-up"
               data-aos-delay="200"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
             >
               <div className="text-4xl font-bold text-green-600 mb-2">15+</div>
               <div className="text-gray-600 font-medium">Years Experience</div>
             </div>
             <div
               className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-              data-aos="fade-up"
+              data-aos="slide-up"
               data-aos-delay="300"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
             >
               <div className="text-4xl font-bold text-purple-600 mb-2">200+</div>
               <div className="text-gray-600 font-medium">Projects Completed</div>
             </div>
             <div
               className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-              data-aos="fade-up"
+              data-aos="slide-up"
               data-aos-delay="400"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
             >
               <div className="text-4xl font-bold text-orange-600 mb-2">25+</div>
               <div className="text-gray-600 font-medium">Countries Served</div>

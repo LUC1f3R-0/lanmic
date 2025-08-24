@@ -51,6 +51,8 @@ export default function Contact() {
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
               data-aos="fade-up"
               data-aos-delay="100"
+              data-aos-duration="1200"
+              data-aos-easing="ease-out-cubic"
             >
               Let&apos;s{" "}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -61,6 +63,8 @@ export default function Contact() {
               className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
               data-aos="fade-up"
               data-aos-delay="200"
+              data-aos-duration="1000"
+              data-aos-easing="ease-out-cubic"
             >
               Ready to discuss your polymer technology needs? We&apos;re here to help you find the perfect solution.
             </p>
@@ -74,7 +78,7 @@ export default function Contact() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl p-8 shadow-xl" data-aos="fade-right">
+              <div className="bg-white rounded-2xl p-8 shadow-xl" data-aos="slide-right" data-aos-duration="1000" data-aos-easing="ease-out-cubic">
                 <h2 className="text-3xl font-bold text-gray-900 mb-6">Send us a Message</h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -167,7 +171,7 @@ export default function Contact() {
             </div>
 
             {/* Contact Details */}
-            <div className="space-y-8" data-aos="fade-left">
+            <div className="space-y-8" data-aos="slide-left" data-aos-duration="1000" data-aos-easing="ease-out-cubic">
               <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h3>
                 <div className="space-y-6">
@@ -261,7 +265,7 @@ export default function Contact() {
             </p>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden" data-aos="fade-up" data-aos-delay="200">
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden" data-aos="zoom-in" data-aos-delay="200" data-aos-duration="1000" data-aos-easing="ease-out-cubic">
             <div className="h-96 bg-gray-200 flex items-center justify-center">
               <div className="text-center">
                 <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
@@ -304,8 +308,10 @@ export default function Contact() {
             <div className="space-y-6">
               <div
                 className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
-                data-aos="fade-up"
+                data-aos="slide-up"
                 data-aos-delay="100"
+                data-aos-duration="800"
+                data-aos-easing="ease-out-cubic"
               >
                 <h3 className="text-xl font-bold text-gray-900 mb-3">What types of polymers do you specialize in?</h3>
                 <p className="text-gray-600 leading-relaxed">
@@ -315,8 +321,10 @@ export default function Contact() {
 
               <div
                 className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
-                data-aos="fade-up"
+                data-aos="slide-up"
                 data-aos-delay="200"
+                data-aos-duration="800"
+                data-aos-easing="ease-out-cubic"
               >
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Do you provide custom polymer formulations?</h3>
                 <p className="text-gray-600 leading-relaxed">
@@ -326,8 +334,10 @@ export default function Contact() {
 
               <div
                 className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
-                data-aos="fade-up"
+                data-aos="slide-up"
                 data-aos-delay="300"
+                data-aos-duration="800"
+                data-aos-easing="ease-out-cubic"
               >
                 <h3 className="text-xl font-bold text-gray-900 mb-3">What is your typical project timeline?</h3>
                 <p className="text-gray-600 leading-relaxed">
@@ -339,8 +349,10 @@ export default function Contact() {
             <div className="space-y-6">
               <div
                 className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
-                data-aos="fade-up"
+                data-aos="slide-up"
                 data-aos-delay="150"
+                data-aos-duration="800"
+                data-aos-easing="ease-out-cubic"
               >
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Do you ship internationally?</h3>
                 <p className="text-gray-600 leading-relaxed">
@@ -350,8 +362,10 @@ export default function Contact() {
 
               <div
                 className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
-                data-aos="fade-up"
+                data-aos="slide-up"
                 data-aos-delay="250"
+                data-aos-duration="800"
+                data-aos-easing="ease-out-cubic"
               >
                 <h3 className="text-xl font-bold text-gray-900 mb-3">What quality certifications do you have?</h3>
                 <p className="text-gray-600 leading-relaxed">
@@ -361,8 +375,10 @@ export default function Contact() {
 
               <div
                 className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
-                data-aos="fade-up"
+                data-aos="slide-up"
                 data-aos-delay="350"
+                data-aos-duration="800"
+                data-aos-easing="ease-out-cubic"
               >
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Can you provide technical support?</h3>
                 <p className="text-gray-600 leading-relaxed">

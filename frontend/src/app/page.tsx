@@ -138,6 +138,8 @@ export default function Home() {
                 <h1 
                   className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight"
                   data-aos="fade-up"
+                  data-aos-duration="1200"
+                  data-aos-easing="ease-out-cubic"
                 >
                   Welcome to{" "}
                   <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -148,13 +150,17 @@ export default function Home() {
                   className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
                   data-aos="fade-up"
                   data-aos-delay="200"
+                  data-aos-duration="1000"
+                  data-aos-easing="ease-out-cubic"
                 >
                   Your trusted partner in innovative polymer solutions. We deliver excellence through cutting-edge technology and sustainable practices.
                 </p>
                 <div 
                   className="flex flex-col sm:flex-row gap-4 justify-center"
-                  data-aos="fade-up"
+                  data-aos="zoom-in"
                   data-aos-delay="400"
+                  data-aos-duration="800"
+                  data-aos-easing="ease-out-cubic"
                 >
                   <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
                     Get Started
@@ -173,8 +179,10 @@ export default function Home() {
               <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                 <div
                   className="lg:w-1/2 order-2 lg:order-1"
-                  data-aos="fade-right"
+                  data-aos="zoom-in"
                   data-aos-delay="200"
+                  data-aos-duration="1000"
+                  data-aos-easing="ease-out-cubic"
                 >
                   <div className="relative">
                     <Swiper
@@ -228,6 +236,8 @@ export default function Home() {
                     <span
                       className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide"
                       data-aos="fade-up"
+                      data-aos-duration="800"
+                      data-aos-easing="ease-out-cubic"
                     >
                       About Us
                     </span>
@@ -235,6 +245,8 @@ export default function Home() {
                       className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight"
                       data-aos="fade-up"
                       data-aos-delay="100"
+                      data-aos-duration="1000"
+                      data-aos-easing="ease-out-cubic"
                     >
                       Excepteur sint occaecat cupidatat non proident
                     </h2>
@@ -242,6 +254,8 @@ export default function Home() {
                       className="text-lg text-gray-600 leading-relaxed"
                       data-aos="fade-up"
                       data-aos-delay="200"
+                      data-aos-duration="1000"
+                      data-aos-easing="ease-out-cubic"
                     >
                       Far far away, behind the word mountains, far from the
                       countries Vokalia and Consonantia, there live the blind
@@ -296,8 +310,10 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div 
                   className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="fade-up"
+                  data-aos="zoom-in"
                   data-aos-delay="100"
+                  data-aos-duration="800"
+                  data-aos-easing="ease-out-cubic"
                 >
                   <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <svg
@@ -322,8 +338,10 @@ export default function Home() {
 
                 <div 
                   className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="fade-up"
+                  data-aos="zoom-in"
                   data-aos-delay="200"
+                  data-aos-duration="800"
+                  data-aos-easing="ease-out-cubic"
                 >
                   <div className="w-16 h-16 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <svg
@@ -348,8 +366,10 @@ export default function Home() {
 
                 <div 
                   className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="fade-up"
+                  data-aos="zoom-in"
                   data-aos-delay="300"
+                  data-aos-duration="800"
+                  data-aos-easing="ease-out-cubic"
                 >
                   <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <svg
@@ -387,7 +407,9 @@ export default function Home() {
                       width={600}
                       height={500}
                       className="rounded-2xl shadow-2xl"
-                      data-aos="fade-right"
+                      data-aos="slide-right"
+                      data-aos-duration="1000"
+                      data-aos-easing="ease-out-cubic"
                     />
                     <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-6 shadow-xl">
                       <div className="text-3xl font-bold text-blue-600">25+</div>
@@ -416,8 +438,10 @@ export default function Home() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                       <div 
                         className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl hover:shadow-lg transition-all duration-300"
-                        data-aos="fade-up"
+                        data-aos="slide-up"
                         data-aos-delay="100"
+                        data-aos-duration="800"
+                        data-aos-easing="ease-out-cubic"
                       >
                         <div className="text-3xl font-bold text-blue-600 mb-2">3,919</div>
                         <div className="text-sm text-gray-600 font-medium">Coffee Cups</div>
@@ -425,8 +449,10 @@ export default function Home() {
 
                       <div 
                         className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl hover:shadow-lg transition-all duration-300"
-                        data-aos="fade-up"
+                        data-aos="slide-up"
                         data-aos-delay="200"
+                        data-aos-duration="800"
+                        data-aos-easing="ease-out-cubic"
                       >
                         <div className="text-3xl font-bold text-green-600 mb-2">2,831</div>
                         <div className="text-sm text-gray-600 font-medium">Lines of Code</div>
@@ -434,8 +460,10 @@ export default function Home() {
 
                       <div 
                         className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl hover:shadow-lg transition-all duration-300"
-                        data-aos="fade-up"
+                        data-aos="slide-up"
                         data-aos-delay="300"
+                        data-aos-duration="800"
+                        data-aos-easing="ease-out-cubic"
                       >
                         <div className="text-3xl font-bold text-purple-600 mb-2">1,914</div>
                         <div className="text-sm text-gray-600 font-medium">Projects</div>
@@ -479,8 +507,10 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <article 
                   className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="fade-up"
+                  data-aos="flip-left"
                   data-aos-delay="100"
+                  data-aos-duration="1000"
+                  data-aos-easing="ease-out-cubic"
                 >
                   <div className="relative overflow-hidden">
                     <Image
@@ -530,8 +560,10 @@ export default function Home() {
 
                 <article 
                   className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="fade-up"
+                  data-aos="flip-left"
                   data-aos-delay="200"
+                  data-aos-duration="1000"
+                  data-aos-easing="ease-out-cubic"
                 >
                   <div className="relative overflow-hidden">
                     <Image
@@ -581,8 +613,10 @@ export default function Home() {
 
                 <article 
                   className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="fade-up"
+                  data-aos="flip-left"
                   data-aos-delay="300"
+                  data-aos-duration="1000"
+                  data-aos-easing="ease-out-cubic"
                 >
                   <div className="relative overflow-hidden">
                     <Image
@@ -662,7 +696,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="max-w-4xl mx-auto" data-aos="fade-up">
+              <div className="max-w-4xl mx-auto" data-aos="zoom-in" data-aos-duration="1000" data-aos-easing="ease-out-cubic">
                 <div className="relative">
                   <Swiper
                     modules={[Autoplay, Pagination]}
@@ -754,6 +788,8 @@ export default function Home() {
                 <h2
                   className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6"
                   data-aos="fade-up"
+                  data-aos-duration="1200"
+                  data-aos-easing="ease-out-cubic"
                 >
                   Ready to Get Started?
                 </h2>
@@ -761,13 +797,17 @@ export default function Home() {
                   className="text-xl text-blue-100 mb-8 leading-relaxed"
                   data-aos="fade-up"
                   data-aos-delay="100"
+                  data-aos-duration="1000"
+                  data-aos-easing="ease-out-cubic"
                 >
                   Let&apos;s discuss how LANMIC Polymers can help transform your business with our innovative polymer solutions.
                 </p>
                 <div
                   className="flex flex-col sm:flex-row gap-4 justify-center"
-                  data-aos="fade-up"
+                  data-aos="zoom-in"
                   data-aos-delay="200"
+                  data-aos-duration="800"
+                  data-aos-easing="ease-out-cubic"
                 >
                   <button className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 hover:scale-105 transition-all duration-300 transform">
                     Contact Us Today
