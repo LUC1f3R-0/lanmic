@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "aos": "^2.3.4",
+    "formik": "^2.4.6",
     "next": "15.4.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "swiper": "^11.2.10"
+    "swiper": "^11.2.10",
+    "yup": "^1.7.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
