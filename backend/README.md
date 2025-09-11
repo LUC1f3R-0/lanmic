@@ -31,6 +31,19 @@
 $ npm install
 ```
 
+## API Documentation
+
+This project includes Swagger/OpenAPI documentation. Once the server is running, you can access the interactive API documentation at:
+
+- **Swagger UI**: http://localhost:3000/api
+- **JSON Schema**: http://localhost:3000/api-json
+
+The documentation is automatically generated from your NestJS controllers and includes:
+- API endpoints and their descriptions
+- Request/response schemas
+- Interactive testing interface
+- Authentication requirements (when configured)
+
 ## Compile and run the project
 
 ```bash
