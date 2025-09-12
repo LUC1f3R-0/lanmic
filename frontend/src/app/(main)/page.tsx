@@ -20,58 +20,58 @@ export default function Home() {
     });
   }, []);
 
-    return (
+  return (
     <main className="main">
-          {/* Hero Section */}
-          <section className="hero-section relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
-            <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-              <div className="text-center max-w-4xl mx-auto">
-                <h1
-                  className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight"
-                  data-aos="fade-up"
-                  data-aos-duration="1200"
-                  data-aos-easing="ease-out-cubic"
-                >
-                  Welcome to{" "}
-                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    LANMIC Polymers
-                  </span>
-                </h1>
-                <p
-                  className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
-                  data-aos="fade-up"
-                  data-aos-delay="200"
-                  data-aos-duration="1000"
-                  data-aos-easing="ease-out-cubic"
-                >
-                  Your trusted partner in innovative polymer solutions. We
-                  deliver excellence through cutting-edge technology and
-                  sustainable practices.
-                </p>
-                <div
-                  className="flex flex-col sm:flex-row gap-4 justify-center"
-                  data-aos="zoom-in"
-                  data-aos-delay="400"
-                  data-aos-duration="800"
-                  data-aos-easing="ease-out-cubic"
-                >
-                  <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
-                    Get Started
-                  </button>
-                  <button className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-full font-semibold text-lg hover:border-blue-600 hover:text-blue-600 transition-all duration-300">
-                    Learn More
-                  </button>
-                </div>
-              </div>
+      {/* Hero Section */}
+      <section className="hero-section relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center max-w-4xl mx-auto">
+            <h1
+              className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight"
+              data-aos="fade-up"
+              data-aos-duration="1200"
+              data-aos-easing="ease-out-cubic"
+            >
+              Welcome to{" "}
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                LANMIC Polymers
+              </span>
+            </h1>
+            <p
+              className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
+              data-aos="fade-up"
+              data-aos-delay="200"
+              data-aos-duration="1000"
+              data-aos-easing="ease-out-cubic"
+            >
+              Your trusted partner in innovative polymer solutions. We
+              deliver excellence through cutting-edge technology and
+              sustainable practices.
+            </p>
+            <div
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+              data-aos="zoom-in"
+              data-aos-delay="400"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
+            >
+              <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                Get Started
+              </button>
+              <button className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-full font-semibold text-lg hover:border-blue-600 hover:text-blue-600 transition-all duration-300">
+                Learn More
+              </button>
             </div>
-          </section>
+          </div>
+        </div>
+      </section>
 
-          {/* About Section */}
-          <section
-            id="about"
-            className="about-section py-20 lg:py-32 bg-white relative"
-          >
+      {/* About Section */}
+      <section
+        id="about"
+        className="about-section py-20 lg:py-32 bg-white relative"
+      >
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                 <div
