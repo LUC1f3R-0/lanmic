@@ -17,6 +17,7 @@ export default function Home() {
       duration: 1000,
       once: true,
       offset: 100,
+      easing: 'ease-out-cubic',
     });
   }, []);
 
