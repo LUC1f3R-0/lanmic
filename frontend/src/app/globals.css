@@ -26,6 +26,31 @@ body {
   overflow-x: hidden;
 }
 
+/* Ensure testimonials swiper displays properly on all devices */
+.testimonials-swiper {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 400px !important;
+  display: block !important;
+  background-color: #f8f9fa !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+}
+
+.testimonials-swiper .swiper-slide {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+.testimonials-swiper .swiper-wrapper {
+  display: flex !important;
+  width: 100% !important;
+}
+
 /* Custom styles for testimonials pagination */
 .testimonials-pagination {
   position: relative !important;
@@ -47,6 +72,49 @@ body {
 .testimonials-pagination .swiper-pagination-bullet-active {
   background: #3b82f6 !important;
   transform: scale(1.2) !important;
+}
+
+/* Custom styles for about section swiper */
+.about-section .swiper {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  min-height: 250px !important;
+}
+
+.about-section .swiper-slide {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  background-color: #f3f4f6 !important;
+}
+
+.about-section .swiper-slide img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.about-section .swiper-wrapper {
+  display: flex !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.about-section .swiper-container {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* Custom styles for about pagination */
@@ -78,6 +146,135 @@ body {
   .hero-section p {
     font-size: 1.1rem !important;
   }
+  
+  /* Mobile testimonials adjustments */
+  .testimonials-swiper {
+    min-height: 350px !important;
+  }
+  
+  /* Mobile about section adjustments */
+  .about-section .swiper {
+    min-height: 200px !important;
+    height: 200px !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .about-section .swiper-slide {
+    height: 200px !important;
+    display: block !important;
+    width: 100% !important;
+  }
+  
+  .about-section .swiper-slide h3 {
+    font-size: 1.25rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .about-section .swiper-slide p {
+    font-size: 0.875rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .about-section .swiper-slide .text-center {
+    padding: 0.75rem !important;
+  }
+  
+  .about-section .swiper-slide .absolute {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .about-section .swiper {
+    min-height: 180px !important;
+    height: 180px !important;
+  }
+  
+  .about-section .swiper-slide {
+    height: 180px !important;
+  }
+  
+  .about-section .swiper-slide h3 {
+    font-size: 1.125rem !important;
+  }
+  
+  .about-section .swiper-slide p {
+    font-size: 0.8rem !important;
+  }
+  
+  .about-section .swiper-slide .text-center {
+    padding: 0.5rem !important;
+  }
+}
+
+/* Force mobile layout fixes */
+@media (max-width: 768px) {
+  .about-section .flex {
+    flex-direction: column !important;
+  }
+  
+  .about-section .order-1 {
+    order: 1 !important;
+  }
+  
+  .about-section .order-2 {
+    order: 2 !important;
+  }
+  
+  .about-section .w-full {
+    width: 100% !important;
+  }
+}
+
+/* Desktop testimonials styles */
+@media (min-width: 769px) {
+  .testimonials-swiper {
+    min-height: 450px !important;
+  }
+  
+  .testimonials-section {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Desktop about section styles */
+  .about-section {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .about-section .swiper {
+    min-height: 400px !important;
+  }
+}
+
+/* Ensure testimonials section is always visible */
+.testimonials-section {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  background-color: white !important;
+  min-height: 600px !important;
+}
+
+/* Ensure about section is always visible */
+.about-section {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  background-color: white !important;
+  min-height: 500px !important;
 }
 
 /* Smooth scrolling */
