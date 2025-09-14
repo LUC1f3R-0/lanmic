@@ -9,13 +9,17 @@ export class DatabaseService {
     this.prisma = new PrismaClient();
   }
 
+  getPrismaClient(): PrismaClient {
+    return this.prisma;
+  }
+
   async testConnection(): Promise<boolean> {
     try {
       // Try to connect to the database
       await this.prisma.$connect();
 
       // Test a simple query to ensure the connection is working
-      await this.prisma.$queryRaw`SELECT 1`;
+      await this.prisma.$queryRaw`SELECT 1 as test`;
 
       return true;
     } catch (error) {
