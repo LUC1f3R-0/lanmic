@@ -474,7 +474,7 @@ export default function About() {
             </Swiper>
 
             <div className="flex justify-center mt-8 space-x-4">
-              <button className="js-custom-prev w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors duration-300">
+              <button className="js-custom-prev w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors duration-300 cursor-pointer">
                 <svg
                   className="w-6 h-6 text-gray-600"
                   fill="none"
@@ -489,7 +489,7 @@ export default function About() {
                   />
                 </svg>
               </button>
-              <button className="js-custom-next w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors duration-300">
+              <button className="js-custom-next w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors duration-300  cursor-pointer">
                 <svg
                   className="w-6 h-6 text-gray-600"
                   fill="none"

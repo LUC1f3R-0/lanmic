@@ -100,14 +100,18 @@ export default function Home() {
                   <SwiperSlide>
                     <div className="relative w-full h-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
                       <Image
-                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop"
+                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop&auto=format&q=80"
                         alt="Manufacturing Process"
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
                       />
-                      <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-white bg-opacity-60 flex items-center justify-center">
                         <div className="text-center text-black p-6">
                           <h3 className="text-2xl font-bold mb-2">Manufacturing Excellence</h3>
                           <p className="text-lg">Advanced production processes</p>
@@ -118,14 +122,18 @@ export default function Home() {
                   <SwiperSlide>
                     <div className="relative w-full h-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
                       <Image
-                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop"
+                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&auto=format&q=80"
                         alt="Quality Control"
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
                       />
-                      <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-white bg-opacity-60 flex items-center justify-center">
                         <div className="text-center text-black p-6">
                           <h3 className="text-2xl font-bold mb-2">Quality Assurance</h3>
                           <p className="text-lg">Rigorous testing standards</p>
@@ -136,14 +144,18 @@ export default function Home() {
                   <SwiperSlide>
                     <div className="relative w-full h-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
                       <Image
-                        src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=600&fit=crop"
+                        src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=600&fit=crop&auto=format&q=80"
                         alt="Innovation Lab"
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
                       />
-                      <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-white bg-opacity-60 flex items-center justify-center">
                         <div className="text-center text-black p-6">
                           <h3 className="text-2xl font-bold mb-2">Innovation Hub</h3>
                           <p className="text-lg">Cutting-edge research & development</p>
@@ -338,13 +350,17 @@ export default function Home() {
             <div className="lg:w-1/2">
               <div className="relative">
                 <Image
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=500&fit=crop"
+                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=500&fit=crop&auto=format&q=80"
                   alt="Our Team"
                   width={600}
                   height={500}
                   className="rounded-2xl shadow-2xl"
                   data-aos="slide-right"
                   data-aos-duration="1000"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
                   data-aos-easing="ease-out-cubic"
                 />
                 <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-6 shadow-xl">
@@ -467,11 +483,15 @@ export default function Home() {
             >
               <div className="relative overflow-hidden">
                 <Image
-                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop"
+                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop&auto=format&q=80"
                   alt="Blog Post"
                   width={400}
                   height={250}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
@@ -497,11 +517,15 @@ export default function Home() {
                 </p>
                 <div className="flex items-center">
                   <Image
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format&q=80"
                     alt="Author"
                     width={40}
                     height={40}
                     className="w-10 h-10 rounded-full mr-3"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
                   />
                   <div>
                     <div className="font-semibold text-gray-900">
@@ -524,11 +548,15 @@ export default function Home() {
             >
               <div className="relative overflow-hidden">
                 <Image
-                  src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=250&fit=crop"
+                  src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=250&fit=crop&auto=format&q=80"
                   alt="Blog Post"
                   width={400}
                   height={250}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
@@ -554,11 +582,15 @@ export default function Home() {
                 </p>
                 <div className="flex items-center">
                   <Image
-                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face"
+                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face&auto=format&q=80"
                     alt="Author"
                     width={40}
                     height={40}
                     className="w-10 h-10 rounded-full mr-3"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
                   />
                   <div>
                     <div className="font-semibold text-gray-900">
@@ -581,11 +613,15 @@ export default function Home() {
             >
               <div className="relative overflow-hidden">
                 <Image
-                  src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop"
+                  src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop&auto=format&q=80"
                   alt="Blog Post"
                   width={400}
                   height={250}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
@@ -611,11 +647,15 @@ export default function Home() {
                 </p>
                 <div className="flex items-center">
                   <Image
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face"
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face&auto=format&q=80"
                     alt="Author"
                     width={40}
                     height={40}
                     className="w-10 h-10 rounded-full mr-3"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
                   />
                   <div>
                     <div className="font-semibold text-gray-900">
@@ -688,11 +728,15 @@ export default function Home() {
                   <div className="text-center">
                     <div className="mb-8">
                       <Image
-                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face"
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face&auto=format&q=80"
                         alt="Adam Aderson"
                         width={120}
                         height={120}
                         className="w-24 h-24 rounded-full mx-auto shadow-lg"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
                       />
                     </div>
                     <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
@@ -716,11 +760,15 @@ export default function Home() {
                   <div className="text-center">
                     <div className="mb-8">
                       <Image
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face"
+                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face&auto=format&q=80"
                         alt="Lukas Devlin"
                         width={120}
                         height={120}
                         className="w-24 h-24 rounded-full mx-auto shadow-lg"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
                       />
                     </div>
                     <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
@@ -741,11 +789,15 @@ export default function Home() {
                   <div className="text-center">
                     <div className="mb-8">
                       <Image
-                        src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face"
+                        src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face&auto=format&q=80"
                         alt="Kayla Bryant"
                         width={120}
                         height={120}
                         className="w-24 h-24 rounded-full mx-auto shadow-lg"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
                       />
                     </div>
                     <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
