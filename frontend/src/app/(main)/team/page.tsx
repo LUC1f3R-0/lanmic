@@ -17,11 +17,11 @@ export default function Team() {
   return (
     <main className="main">
       {/* Hero Section */}
-      <section className="hero-section py-20 lg:py-32 bg-gradient-to-br from-blue-50 via-white to-purple-50 relative">
+      <section className="hero-section py-20 lg:py-32 bg-gradient-to-br from-indigo-100 via-cyan-50 to-emerald-100 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <span
-              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
+              className="inline-block bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
               data-aos="fade-up"
             >
               Our Team
@@ -34,7 +34,7 @@ export default function Team() {
               data-aos-easing="ease-out-cubic"
             >
               Meet Our{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Expert Team
               </span>
             </h1>
@@ -53,11 +53,11 @@ export default function Team() {
       </section>
 
       {/* Leadership Team */}
-      <section className="leadership-section py-20 lg:py-32 bg-white relative">
+      <section className="leadership-section py-20 lg:py-32 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span
-              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
+              className="inline-block bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
               data-aos="fade-up"
             >
               Leadership
@@ -81,7 +81,7 @@ export default function Team() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div
-              className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="group bg-gradient-to-br from-white to-cyan-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-cyan-100"
               data-aos="zoom-in"
               data-aos-delay="100"
               data-aos-duration="800"
@@ -136,7 +136,7 @@ export default function Team() {
             </div>
 
             <div
-              className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="group bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-emerald-100"
               data-aos="zoom-in"
               data-aos-delay="200"
               data-aos-duration="800"
@@ -191,7 +191,7 @@ export default function Team() {
             </div>
 
             <div
-              className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="group bg-gradient-to-br from-white to-violet-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-violet-100"
               data-aos="zoom-in"
               data-aos-delay="300"
               data-aos-duration="800"
@@ -249,37 +249,37 @@ export default function Team() {
       </section>
 
       {/* Team Stats */}
-      <section className="stats-section py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-blue-50 relative">
+      <section className="stats-section py-20 lg:py-32 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div
-              className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+              className="text-center p-8 bg-gradient-to-br from-white to-cyan-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-cyan-100"
               data-aos="slide-up"
               data-aos-delay="100"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="text-4xl font-bold text-blue-600 mb-2">50+</div>
+              <div className="text-4xl font-bold text-cyan-600 mb-2">50+</div>
               <div className="text-gray-600 font-medium">Team Members</div>
             </div>
             <div
-              className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+              className="text-center p-8 bg-gradient-to-br from-white to-emerald-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-emerald-100"
               data-aos="slide-up"
               data-aos-delay="200"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="text-4xl font-bold text-green-600 mb-2">15+</div>
+              <div className="text-4xl font-bold text-emerald-600 mb-2">15+</div>
               <div className="text-gray-600 font-medium">Years Experience</div>
             </div>
             <div
-              className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+              className="text-center p-8 bg-gradient-to-br from-white to-violet-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-violet-100"
               data-aos="slide-up"
               data-aos-delay="300"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="text-4xl font-bold text-purple-600 mb-2">
+              <div className="text-4xl font-bold text-violet-600 mb-2">
                 200+
               </div>
               <div className="text-gray-600 font-medium">
@@ -287,7 +287,7 @@ export default function Team() {
               </div>
             </div>
             <div
-              className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+              className="text-center p-8 bg-gradient-to-br from-white to-orange-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-100"
               data-aos="slide-up"
               data-aos-delay="400"
               data-aos-duration="800"
@@ -301,8 +301,8 @@ export default function Team() {
       </section>
 
       {/* Join Our Team */}
-      <section className="join-team-section py-20 lg:py-32 bg-gradient-to-r from-blue-600 to-purple-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-10"></div>
+      <section className="join-team-section py-20 lg:py-32 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/20 via-blue-600/20 to-purple-600/20"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <h2
@@ -312,7 +312,7 @@ export default function Team() {
               Join Our Team
             </h2>
             <p
-              className="text-xl text-blue-100 mb-8 leading-relaxed"
+              className="text-xl text-cyan-100 mb-8 leading-relaxed"
               data-aos="fade-up"
               data-aos-delay="100"
             >
@@ -324,10 +324,10 @@ export default function Team() {
               data-aos="fade-up"
               data-aos-delay="200"
             >
-              <button className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 hover:scale-105 transition-all duration-300 transform">
+              <button className="bg-white text-cyan-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 hover:scale-105 transition-all duration-300 transform">
                 View Open Positions
               </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-blue-600 transition-all duration-300">
+              <button className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-cyan-600 transition-all duration-300">
                 Contact HR
               </button>
             </div>

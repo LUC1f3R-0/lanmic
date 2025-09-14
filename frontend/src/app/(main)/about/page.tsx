@@ -26,7 +26,7 @@ export default function About() {
       {/* About 2 Section */}
       <section
         id="about-2"
-        className="about-2-section py-20 lg:py-32 bg-white relative"
+        className="about-2-section py-20 lg:py-32 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
@@ -85,17 +85,17 @@ export default function About() {
       {/* Services Section */}
       <section
         id="services"
-        className="services-section py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-blue-50"
+        className="services-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-cyan-50 to-emerald-50"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div
-              className="services-item bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="services-item bg-gradient-to-br from-white to-cyan-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-cyan-100"
               data-aos="zoom-in"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="services-icon w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6">
+              <div className="services-icon w-16 h-16 bg-gradient-to-r from-cyan-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -119,13 +119,13 @@ export default function About() {
             </div>
 
             <div
-              className="services-item bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="services-item bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-emerald-100"
               data-aos="zoom-in"
               data-aos-delay="100"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="services-icon w-16 h-16 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl flex items-center justify-center mb-6">
+              <div className="services-icon w-16 h-16 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -149,13 +149,13 @@ export default function About() {
             </div>
 
             <div
-              className="services-item bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="services-item bg-gradient-to-br from-white to-violet-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-violet-100"
               data-aos="zoom-in"
               data-aos-delay="200"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="services-icon w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center mb-6">
+              <div className="services-icon w-16 h-16 bg-gradient-to-r from-violet-600 to-purple-700 rounded-2xl flex items-center justify-center mb-6">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -180,9 +180,9 @@ export default function About() {
       {/* Stats Section */}
       <section
         id="stats"
-        className="stats-section py-20 lg:py-32 bg-white relative overflow-hidden"
+        className="stats-section py-20 lg:py-32 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/10 via-blue-600/10 to-purple-600/10"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             <div className="lg:w-1/2">
@@ -271,11 +271,11 @@ export default function About() {
       {/* Team Section */}
       <section
         id="team"
-        className="team-section py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-blue-50"
+        className="team-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-cyan-50 to-emerald-50"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
+            <span className="inline-block bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
               Our Team
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
@@ -513,11 +513,11 @@ export default function About() {
       {/* Testimonials Section */}
       <section
         id="testimonials"
-        className="testimonials-section py-20 lg:py-32 bg-white relative"
+        className="testimonials-section py-20 lg:py-32 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 relative"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
+            <span className="inline-block bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
               Happy Customers
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
