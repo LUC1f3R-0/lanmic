@@ -184,7 +184,7 @@ export default function Home() {
                   data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  Excepteur sint occaecat cupidatat non proident
+                  Leading Innovation in Polymer Technology
                 </h2>
                 <p
                   className="text-lg text-gray-600 leading-relaxed"
@@ -193,10 +193,9 @@ export default function Home() {
                   data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  Far far away, behind the word mountains, far from the
-                  countries Vokalia and Consonantia, there live the blind
-                  texts. Separated they live in Bookmarksgrove right at the
-                  coast of the Semantics, a large language ocean.
+                  At LANMIC Polymers, we specialize in developing cutting-edge polymer solutions 
+                  that drive innovation across industries. Our commitment to quality, sustainability, 
+                  and technological advancement has made us a trusted partner for businesses worldwide.
                 </p>
                 <div className="grid grid-cols-2 gap-6 pt-6">
                   <div className="text-center p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors duration-300">
@@ -381,13 +380,13 @@ export default function Home() {
                     Why Choose Us
                   </span>
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                    Far far away Behind the Word Mountains
+                    Excellence Through Innovation and Quality
                   </h2>
                   <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                    Far far away, behind the word mountains, far from the
-                    countries Vokalia and Consonantia, there live the blind
-                    texts. Separated they live in Bookmarksgrove right at
-                    the coast of the Semantics, a large language ocean.
+                    Our state-of-the-art facilities and experienced team enable us to deliver 
+                    polymer solutions that meet the highest industry standards. We combine 
+                    traditional craftsmanship with modern technology to create products that 
+                    exceed expectations and drive business success.
                   </p>
                 </div>
 
@@ -400,10 +399,10 @@ export default function Home() {
                     data-aos-easing="ease-out-cubic"
                   >
                     <div className="text-3xl font-bold text-blue-600 mb-2">
-                      3,919
+                      1,000+
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
-                      Coffee Cups
+                      Products Delivered
                     </div>
                   </div>
 
@@ -415,10 +414,10 @@ export default function Home() {
                     data-aos-easing="ease-out-cubic"
                   >
                     <div className="text-3xl font-bold text-green-600 mb-2">
-                      2,831
+                      50+
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
-                      Lines of Code
+                      Countries Served
                     </div>
                   </div>
 
@@ -430,10 +429,10 @@ export default function Home() {
                     data-aos-easing="ease-out-cubic"
                   >
                     <div className="text-3xl font-bold text-purple-600 mb-2">
-                      1,914
+                      99%
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
-                      Projects
+                      Customer Satisfaction
                     </div>
                   </div>
                 </div>
@@ -507,13 +506,12 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
                   <a href="#" className="hover:underline">
-                    There live the blind texts they live
+                    Advanced Polymer Manufacturing Techniques
                   </a>
                 </h3>
                 <p className="text-gray-600 mb-4 leading-relaxed">
-                  Far far away, behind the word mountains, far from the
-                  countries Vokalia and Consonantia, there live the blind
-                  texts.
+                  Discover how our latest manufacturing innovations are revolutionizing 
+                  the polymer industry with sustainable and efficient production methods.
                 </p>
                 <div className="flex items-center">
                   <Image
@@ -529,10 +527,10 @@ export default function Home() {
                   />
                   <div>
                     <div className="font-semibold text-gray-900">
-                      Winston Gold
+                      Dr. Sarah Chen
                     </div>
                     <div className="text-sm text-gray-600">
-                      Lead Product Designer
+                      Chief Technology Officer
                     </div>
                   </div>
                 </div>
@@ -572,13 +570,12 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors duration-300">
                   <a href="#" className="hover:underline">
-                    There live the blind texts they live
+                    Sustainable Polymer Solutions for the Future
                   </a>
                 </h3>
                 <p className="text-gray-600 mb-4 leading-relaxed">
-                  Far far away, behind the word mountains, far from the
-                  countries Vokalia and Consonantia, there live the blind
-                  texts.
+                  Learn about our commitment to environmental responsibility and how we're 
+                  developing eco-friendly polymer alternatives for a sustainable future.
                 </p>
                 <div className="flex items-center">
                   <Image
@@ -594,7 +591,7 @@ export default function Home() {
                   />
                   <div>
                     <div className="font-semibold text-gray-900">
-                      Sarah Johnson
+                      Dr. Michael Rodriguez
                     </div>
                     <div className="text-sm text-gray-600">
                       Research Director
@@ -637,13 +634,12 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors duration-300">
                   <a href="#" className="hover:underline">
-                    There live the blind texts they live
+                    Quality Assurance in Polymer Production
                   </a>
                 </h3>
                 <p className="text-gray-600 mb-4 leading-relaxed">
-                  Far far away, behind the word mountains, far from the
-                  countries Vokalia and Consonantia, there live the blind
-                  texts.
+                  Explore our rigorous quality control processes and how we ensure 
+                  every product meets the highest industry standards and customer expectations.
                 </p>
                 <div className="flex items-center">
                   <Image
@@ -659,10 +655,10 @@ export default function Home() {
                   />
                   <div>
                     <div className="font-semibold text-gray-900">
-                      Michael Chen
+                      Lisa Thompson
                     </div>
                     <div className="text-sm text-gray-600">
-                      Industry Analyst
+                      Quality Assurance Manager
                     </div>
                   </div>
                 </div>
@@ -748,10 +744,10 @@ export default function Home() {
                     </blockquote>
                     <div className="text-center">
                       <h4 className="text-xl font-bold text-gray-900 mb-1">
-                        Adam Aderson
+                        David Anderson
                       </h4>
                       <p className="text-gray-600">
-                        CEO, TechCorp Industries
+                        CEO, Advanced Materials Corp
                       </p>
                     </div>
                   </div>
@@ -779,9 +775,9 @@ export default function Home() {
                     </blockquote>
                     <div className="text-center">
                       <h4 className="text-xl font-bold text-gray-900 mb-1">
-                        Lukas Devlin
+                        Dr. James Wilson
                       </h4>
-                      <p className="text-gray-600">CTO, Innovation Labs</p>
+                      <p className="text-gray-600">CTO, PolymerTech Solutions</p>
                     </div>
                   </div>
                 </SwiperSlide>
@@ -808,10 +804,10 @@ export default function Home() {
                     </blockquote>
                     <div className="text-center">
                       <h4 className="text-xl font-bold text-gray-900 mb-1">
-                        Kayla Bryant
+                        Maria Garcia
                       </h4>
                       <p className="text-gray-600">
-                        Operations Director, GreenTech
+                        Operations Director, EcoMaterials Inc
                       </p>
                     </div>
                   </div>
