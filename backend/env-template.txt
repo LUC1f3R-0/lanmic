@@ -1,0 +1,15 @@
+# Copy this content to a .env file in the backend directory
+
+# Database Configuration
+DATABASE_URL="mysql://root:password@localhost:3306/lanmic_db"
+
+# JWT Configuration (works in both development and production)
+# Note: Change these secrets when deploying to production for security
+JWT_SECRET="dev-jwt-secret-key-12345"
+JWT_EXPIRES_IN="15m"
+JWT_REFRESH_SECRET="dev-refresh-secret-key-67890"
+JWT_REFRESH_EXPIRES_IN="7d"
+
+# Application Configuration
+PORT=3001
+NODE_ENV=development
