@@ -1,189 +1,40 @@
 import {
   Injectable,
-  BadRequestException,
   UnauthorizedException,
-  ConflictException,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { DatabaseService } from '../database.service';
-import {
-  RegisterEmailDto,
-  VerifyOtpDto,
-  RegisterDetailsDto,
-  LoginDto,
-  RefreshTokenDto,
-} from './dto';
+import { CookieService } from './cookie.service';
+import { LoginDto, RefreshTokenDto } from './dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private databaseService: DatabaseService,
     private jwtService: JwtService,
+    private cookieService: CookieService,
   ) {}
 
-  async sendOtp(registerEmailDto: RegisterEmailDto) {
-    const { email } = registerEmailDto;
-
-    // Check if user already exists and is verified
-    const existingUser = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { email },
-      });
-
-    if (existingUser && existingUser.isVerified) {
-      throw new ConflictException('User already exists and is verified');
-    }
-
-    // Generate 6-digit OTP
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-
-    // Create or update user with OTP
-    await this.databaseService.getPrismaClient().user.upsert({
-      where: { email },
-      update: {
-        otpCode,
-        otpExpiresAt,
-      },
-      create: {
-        email,
-        otpCode,
-        otpExpiresAt,
-      },
-    });
-
-    // In a real application, you would send the OTP via email
-    // For now, we'll just log it to console
-    console.log(`OTP for ${email}: ${otpCode}`);
-
-    return {
-      message: 'OTP sent successfully to your email',
-      expiresInMinutes: 5,
-    };
-  }
-
-  async verifyOtp(verifyOtpDto: VerifyOtpDto) {
-    const { email, otp } = verifyOtpDto;
-
-    const user = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { email },
-      });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (!user.otpCode || !user.otpExpiresAt) {
-      throw new BadRequestException('No OTP found for this user');
-    }
-
-    if (user.otpCode !== otp) {
-      throw new BadRequestException('Invalid OTP');
-    }
-
-    if (new Date() > user.otpExpiresAt) {
-      throw new BadRequestException('OTP has expired');
-    }
-
-    // Mark user as verified
-    await this.databaseService.getPrismaClient().user.update({
-      where: { email },
-      data: {
-        isVerified: true,
-        otpCode: null,
-        otpExpiresAt: null,
-      },
-    });
-
-    return {
-      message: 'OTP verified successfully',
-      canProceed: true,
-    };
-  }
-
-  async registerDetails(registerDetailsDto: RegisterDetailsDto) {
-    const { email, username, password, confirmPassword } = registerDetailsDto;
-
-    if (password !== confirmPassword) {
-      throw new BadRequestException('Passwords do not match');
-    }
-
-    // Check if user exists and is verified
-    const user = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { email },
-      });
-
-    if (!user) {
-      throw new NotFoundException('User not found. Please verify your email first.');
-    }
-
-    if (!user.isVerified) {
-      throw new BadRequestException('User not verified. Please verify your email first.');
-    }
-
-    // Check if username is already taken
-    const existingUsername = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { username },
-      });
-
-    if (existingUsername) {
-      throw new ConflictException('Username already taken');
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Update user with username and password
-    const updatedUser = await this.databaseService
-      .getPrismaClient()
-      .user.update({
-        where: { email },
-        data: {
-          username,
-          password: hashedPassword,
-        },
-        select: {
-          id: true,
-          email: true,
-          username: true,
-          isVerified: true,
-        },
-      });
-
-    return {
-      message: 'Registration completed successfully',
-      user: updatedUser,
-    };
-  }
-
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto, res: Response) {
     const { email, password } = loginDto;
 
-    const user = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { email },
-      });
+    const user = await this.databaseService.getPrismaClient().user.findUnique({
+      where: { email },
+    });
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     if (!user.isVerified) {
-      throw new UnauthorizedException('User not verified');
+      throw new UnauthorizedException('Account is deactivated');
     }
 
     if (!user.password) {
-      throw new UnauthorizedException('User not fully registered');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -194,18 +45,30 @@ export class AuthService {
     // Generate tokens
     const tokens = await this.generateTokens(user.id);
 
+    // Set secure HTTP-only cookies
+    this.cookieService.setAccessTokenCookie(
+      res,
+      tokens.accessToken,
+      process.env.ACCESS_TOKEN_EXPIRY || '15m',
+    );
+    this.cookieService.setRefreshTokenCookie(
+      res,
+      tokens.refreshToken,
+      process.env.REFRESH_TOKEN_EXPIRY || '7d',
+    );
+
     return {
-      ...tokens,
+      message: 'Login successful',
       user: {
         id: user.id,
         email: user.email,
         username: user.username,
-        isVerified: user.isVerified,
+        isActive: user.isVerified,
       },
     };
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+  async refreshToken(refreshTokenDto: RefreshTokenDto, res: Response) {
     const { refreshToken } = refreshTokenDto;
 
     const tokenRecord = await this.databaseService
@@ -228,7 +91,7 @@ export class AuthService {
     }
 
     if (!tokenRecord.user.isVerified) {
-      throw new UnauthorizedException('User not verified');
+      throw new UnauthorizedException('Account is deactivated');
     }
 
     // Revoke the old refresh token
@@ -240,18 +103,30 @@ export class AuthService {
     // Generate new tokens
     const tokens = await this.generateTokens(tokenRecord.user.id);
 
+    // Set new secure HTTP-only cookies
+    this.cookieService.setAccessTokenCookie(
+      res,
+      tokens.accessToken,
+      process.env.ACCESS_TOKEN_EXPIRY || '15m',
+    );
+    this.cookieService.setRefreshTokenCookie(
+      res,
+      tokens.refreshToken,
+      process.env.REFRESH_TOKEN_EXPIRY || '7d',
+    );
+
     return {
-      ...tokens,
+      message: 'Tokens refreshed successfully',
       user: {
         id: tokenRecord.user.id,
         email: tokenRecord.user.email,
         username: tokenRecord.user.username,
-        isVerified: tokenRecord.user.isVerified,
+        isActive: tokenRecord.user.isVerified,
       },
     };
   }
 
-  async logout(refreshToken: string) {
+  async logout(refreshToken: string, res: Response) {
     const tokenRecord = await this.databaseService
       .getPrismaClient()
       .refreshToken.findUnique({
@@ -265,14 +140,22 @@ export class AuthService {
       });
     }
 
+    // Clear all authentication cookies
+    this.cookieService.clearAllAuthCookies(res);
+
     return { message: 'Logged out successfully' };
   }
 
   private async generateTokens(userId: number) {
-    const payload = { sub: userId };
+    const payload = {
+      sub: userId,
+      type: 'access',
+      iat: Math.floor(Date.now() / 1000),
+    };
 
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '15m',
+      algorithm: 'HS256',
     });
 
     const refreshToken = this.generateRandomToken();
@@ -286,6 +169,7 @@ export class AuthService {
         token: refreshToken,
         expiresAt: refreshTokenExpiry,
         userId,
+        createdAt: new Date(),
       },
     });
 
@@ -296,12 +180,25 @@ export class AuthService {
   }
 
   private generateRandomToken(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < 64; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
+    const crypto = require('crypto');
+    return crypto.randomBytes(32).toString('hex');
+  }
+
+  // Method to clean up expired refresh tokens
+  async cleanupExpiredTokens() {
+    await this.databaseService.getPrismaClient().refreshToken.deleteMany({
+      where: {
+        OR: [{ expiresAt: { lt: new Date() } }, { revoked: true }],
+      },
+    });
+  }
+
+  // Method to revoke all refresh tokens for a user
+  async revokeAllUserTokens(userId: number) {
+    await this.databaseService.getPrismaClient().refreshToken.updateMany({
+      where: { userId },
+      data: { revoked: true },
+    });
   }
 
   private parseExpiry(expiry: string): number {

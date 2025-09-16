@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "aos/dist/aos.css";
 import { geistSans, geistMono } from "@/lib/fonts";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export const metadata: Metadata = {
   title: "LANMIC Polymers",
@@ -19,7 +20,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

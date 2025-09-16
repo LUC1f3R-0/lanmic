@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 const LoginSchema = Yup.object({
   email: Yup.string()
@@ -16,6 +18,9 @@ const LoginSchema = Yup.object({
 
 export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { login } = useAuth();
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
@@ -25,15 +30,14 @@ export default function AdminLogin() {
     validationSchema: LoginSchema,
     onSubmit: async (values) => {
       setIsLoading(true);
+      setError(null);
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log("Login attempt:", values);
-        // Here you would typically handle the login logic
-        alert("Login successful! (This is a demo)");
-      } catch (error) {
+        await login(values.email, values.password);
+        // Redirect to dashboard or home page after successful login
+        router.push("/");
+      } catch (error: any) {
         console.error("Login error:", error);
-        alert("Login failed. Please try again.");
+        setError(error.message || "Login failed. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -41,8 +45,9 @@ export default function AdminLogin() {
   });
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="bg-white rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
         {/* Logo/Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
@@ -65,6 +70,13 @@ export default function AdminLogin() {
             Sign in to access the admin panel
           </p>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
 
         {/* Login Form */}
         <form onSubmit={formik.handleSubmit} className="space-y-6">
@@ -201,6 +213,7 @@ export default function AdminLogin() {
           >
             ← Back to Home
           </Link>
+        </div>
         </div>
       </div>
     </div>

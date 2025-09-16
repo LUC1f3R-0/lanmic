@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -30,7 +30,7 @@ async function main() {
     id: adminUser.id,
     email: adminUser.email,
     username: adminUser.username,
-    isVerified: adminUser.isVerified,
+    isActive: adminUser.isVerified,
   });
 
   console.log('🎉 Seed completed successfully!');
