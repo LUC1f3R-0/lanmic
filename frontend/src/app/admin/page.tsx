@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { apiService } from "@/lib/api";
 
 const LoginSchema = Yup.object({
   email: Yup.string()
@@ -19,8 +20,17 @@ const LoginSchema = Yup.object({
 export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const router = useRouter();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    console.log('Admin page useEffect - authLoading:', authLoading, 'isAuthenticated:', isAuthenticated);
+    if (!authLoading && isAuthenticated) {
+      console.log('User is authenticated, redirecting to dashboard');
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   const formik = useFormik({
     initialValues: {
@@ -32,9 +42,19 @@ export default function AdminLogin() {
       setIsLoading(true);
       setError(null);
       try {
+        console.log('Attempting login...');
         await login(values.email, values.password);
-        // Redirect to dashboard or home page after successful login
-        router.push("/");
+        console.log('Login successful, checking authentication state...');
+        console.log('Current isAuthenticated:', isAuthenticated);
+        console.log('Current authLoading:', authLoading);
+        
+        // Force redirect after successful login using window.location to bypass state timing issues
+        console.log('Forcing redirect to dashboard...');
+        
+        // Add a small delay to ensure state updates
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 500);
       } catch (error: any) {
         console.error("Login error:", error);
         setError(error.message || "Login failed. Please try again.");
@@ -43,6 +63,26 @@ export default function AdminLogin() {
       }
     },
   });
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return null; // Will redirect to dashboard
+  }
+
+  // Debug authentication state
+  const debugInfo = {
+    isAuthenticated,
+    authLoading,
+    apiAuthenticated: typeof window !== 'undefined' ? apiService.isAuthenticated() : false,
+    accessTokenState: typeof window !== 'undefined' ? apiService.accessToken : null,
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -69,6 +109,17 @@ export default function AdminLogin() {
           <p className="text-gray-600">
             Sign in to access the admin panel
           </p>
+        </div>
+
+        {/* Debug Information */}
+        <div className="mb-6 p-4 bg-gray-100 rounded-lg text-sm">
+          <h3 className="font-semibold mb-2">Debug Info (HTTP-only cookies):</h3>
+          <div className="space-y-1">
+            <div>isAuthenticated: <span className={debugInfo.isAuthenticated ? 'text-green-600' : 'text-red-600'}>{debugInfo.isAuthenticated.toString()}</span></div>
+            <div>authLoading: <span className={debugInfo.authLoading ? 'text-yellow-600' : 'text-gray-600'}>{debugInfo.authLoading.toString()}</span></div>
+            <div>apiAuthenticated: <span className={debugInfo.apiAuthenticated ? 'text-green-600' : 'text-red-600'}>{debugInfo.apiAuthenticated.toString()}</span></div>
+            <div>accessTokenState: <span className="text-blue-600">{debugInfo.accessTokenState || 'null'}</span></div>
+          </div>
         </div>
 
         {/* Error Message */}
@@ -192,18 +243,6 @@ export default function AdminLogin() {
           </button>
         </form>
 
-        {/* Register Link */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/register"
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              Register here
-            </Link>
-          </p>
-        </div>
 
         {/* Back to Home */}
         <div className="mt-4 text-center">

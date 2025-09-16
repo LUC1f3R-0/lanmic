@@ -1,7 +1,6 @@
 import {
   Injectable,
   UnauthorizedException,
-  NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
@@ -44,6 +43,12 @@ export class AuthService {
 
     // Generate tokens
     const tokens = await this.generateTokens(user.id);
+    console.log('Auth Service: Generated tokens:', {
+      hasAccessToken: !!tokens.accessToken,
+      hasRefreshToken: !!tokens.refreshToken,
+      accessTokenLength: tokens.accessToken?.length,
+      refreshTokenLength: tokens.refreshToken?.length,
+    });
 
     // Set secure HTTP-only cookies
     this.cookieService.setAccessTokenCookie(
@@ -144,6 +149,24 @@ export class AuthService {
     this.cookieService.clearAllAuthCookies(res);
 
     return { message: 'Logged out successfully' };
+  }
+
+  getProfile(req: any) {
+    // Extract user from JWT token (set by JWT strategy)
+    const user = req.user;
+
+    if (!user) {
+      throw new UnauthorizedException('Not authenticated');
+    }
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        isActive: user.isVerified,
+      },
+    };
   }
 
   private async generateTokens(userId: number) {

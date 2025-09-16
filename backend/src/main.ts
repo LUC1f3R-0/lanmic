@@ -14,7 +14,7 @@ import cookieParser from 'cookie-parser';
 
 dotenv.config({ path: __dirname + '/../.env' });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 const logger = new Logger('Bootstrap');
 
 async function bootstrap() {

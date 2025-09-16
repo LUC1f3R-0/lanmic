@@ -5,12 +5,17 @@ import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import AOS from "aos";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
 
 export default function Home() {
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
   useEffect(() => {
     // Initialize AOS
     AOS.init({
@@ -19,6 +24,10 @@ export default function Home() {
       offset: 100,
     });
   }, []);
+
+  // Note: Removed automatic redirect to dashboard
+  // Users can now visit the homepage even when authenticated
+  // They can access dashboard through the header navigation or direct URL
 
   return (
     <main className="main">
@@ -57,11 +66,17 @@ export default function Home() {
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <button className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
-                Get Started
+              <button 
+                onClick={() => router.push('/admin')}
+                className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform"
+              >
+                Admin Access
               </button>
-              <button className="border-2 border-emerald-400 text-emerald-700 px-8 py-4 rounded-full font-semibold text-lg hover:border-emerald-600 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-300">
-                Learn More
+              <button 
+                onClick={() => router.push('/contact')}
+                className="border-2 border-emerald-400 text-emerald-700 px-8 py-4 rounded-full font-semibold text-lg hover:border-emerald-600 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-300"
+              >
+                Contact Us
               </button>
             </div>
           </div>
