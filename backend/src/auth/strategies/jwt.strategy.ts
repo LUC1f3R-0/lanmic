@@ -23,11 +23,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         // Extract from cookies
         (req: any) => {
           const token = req.cookies?.access_token || null;
-          console.log('JWT Strategy: Extracting token from cookies:', {
-            hasCookies: !!req.cookies,
-            cookies: req.cookies,
-            accessToken: !!token,
-          });
+          // Only log when token is found to reduce noise
+          if (token) {
+            console.log('JWT Strategy: Found access token in cookies');
+          }
           return token;
         },
         // Fallback to Authorization header
@@ -40,12 +39,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload) {
-    console.log('JWT Strategy: Validating payload:', {
-      sub: payload.sub,
-      type: payload.type,
-      exp: payload.exp,
-      iat: payload.iat,
-    });
+    // Only log successful validations to reduce noise
+    console.log('JWT Strategy: Validating token for user:', payload.sub);
 
     // Validate token type to ensure it's an access token
     if (payload.type !== 'access') {
@@ -78,12 +73,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     // CRITICAL SECURITY CHECK: Verify that a valid refresh token exists for this user
+    // Since we now delete tokens on logout instead of marking as revoked, we only check for non-expired tokens
     const validRefreshToken = await this.databaseService
       .getPrismaClient()
       .refreshToken.findFirst({
         where: {
           userId: user.id,
-          revoked: false,
           expiresAt: {
             gt: new Date(), // Token hasn't expired
           },

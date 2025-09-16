@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
@@ -41,8 +38,16 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // Clean up old tokens for this user before generating new ones
+    const beforeCleanup = await this.getUserTokenCount(user.id);
+    await this.cleanupUserTokens(user.id);
+    const afterCleanup = await this.getUserTokenCount(user.id);
+
     // Generate tokens
     const tokens = await this.generateTokens(user.id);
+    const afterLogin = await this.getUserTokenCount(user.id);
+
+    console.log(`Auth Service: Token cleanup for user ${user.id}: ${beforeCleanup} -> ${afterCleanup} -> ${afterLogin} tokens`);
     console.log('Auth Service: Generated tokens:', {
       hasAccessToken: !!tokens.accessToken,
       hasRefreshToken: !!tokens.refreshToken,
@@ -99,11 +104,13 @@ export class AuthService {
       throw new UnauthorizedException('Account is deactivated');
     }
 
-    // Revoke the old refresh token
-    await this.databaseService.getPrismaClient().refreshToken.update({
+    // Delete the old refresh token completely
+    await this.databaseService.getPrismaClient().refreshToken.delete({
       where: { id: tokenRecord.id },
-      data: { revoked: true },
     });
+    console.log(
+      `Auth Service: Deleted old refresh token with ID ${tokenRecord.id} during refresh`,
+    );
 
     // Generate new tokens
     const tokens = await this.generateTokens(tokenRecord.user.id);
@@ -132,23 +139,37 @@ export class AuthService {
   }
 
   async logout(refreshToken: string, res: Response) {
-    const tokenRecord = await this.databaseService
-      .getPrismaClient()
-      .refreshToken.findUnique({
-        where: { token: refreshToken },
-      });
+    try {
+      // Find and completely delete the specific refresh token
+      if (refreshToken) {
+        const tokenRecord = await this.databaseService
+          .getPrismaClient()
+          .refreshToken.findUnique({
+            where: { token: refreshToken },
+          });
 
-    if (tokenRecord) {
-      await this.databaseService.getPrismaClient().refreshToken.update({
-        where: { id: tokenRecord.id },
-        data: { revoked: true },
-      });
+        if (tokenRecord) {
+          const beforeDelete = await this.getTotalTokenCount();
+          await this.databaseService.getPrismaClient().refreshToken.delete({
+            where: { id: tokenRecord.id },
+          });
+          const afterDelete = await this.getTotalTokenCount();
+          console.log(
+            `Auth Service: Deleted refresh token with ID ${tokenRecord.id} on logout. Total tokens: ${beforeDelete} -> ${afterDelete}`,
+          );
+        }
+      }
+
+      // Clear all authentication cookies
+      this.cookieService.clearAllAuthCookies(res);
+
+      return { message: 'Logged out successfully' };
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if there's an error, clear cookies and return success
+      this.cookieService.clearAllAuthCookies(res);
+      return { message: 'Logged out successfully' };
     }
-
-    // Clear all authentication cookies
-    this.cookieService.clearAllAuthCookies(res);
-
-    return { message: 'Logged out successfully' };
   }
 
   getProfile(req: any) {
@@ -209,19 +230,65 @@ export class AuthService {
 
   // Method to clean up expired refresh tokens
   async cleanupExpiredTokens() {
-    await this.databaseService.getPrismaClient().refreshToken.deleteMany({
-      where: {
-        OR: [{ expiresAt: { lt: new Date() } }, { revoked: true }],
-      },
-    });
+    const result = await this.databaseService
+      .getPrismaClient()
+      .refreshToken.deleteMany({
+        where: {
+          expiresAt: { lt: new Date() }, // Only expired tokens
+        },
+      });
+    if (result.count > 0) {
+      console.log(
+        `Auth Service: Cleaned up ${result.count} expired tokens globally`,
+      );
+    }
+    return result.count;
   }
 
-  // Method to revoke all refresh tokens for a user
+  // Method to delete all refresh tokens for a user
   async revokeAllUserTokens(userId: number) {
-    await this.databaseService.getPrismaClient().refreshToken.updateMany({
+    const result = await this.databaseService
+      .getPrismaClient()
+      .refreshToken.deleteMany({
+        where: { userId },
+      });
+    if (result.count > 0) {
+      console.log(
+        `Auth Service: Deleted all ${result.count} tokens for user ${userId}`,
+      );
+    }
+    return result.count;
+  }
+
+  // Method to clean up old tokens for a user (delete expired tokens)
+  async cleanupUserTokens(userId: number) {
+    const result = await this.databaseService
+      .getPrismaClient()
+      .refreshToken.deleteMany({
+        where: {
+          userId,
+          expiresAt: { lt: new Date() }, // Only expired tokens
+        },
+      });
+    if (result.count > 0) {
+      console.log(
+        `Auth Service: Cleaned up ${result.count} expired tokens for user ${userId}`,
+      );
+    }
+  }
+
+  // Method to get token count for a user (for debugging/testing)
+  async getUserTokenCount(userId: number): Promise<number> {
+    const count = await this.databaseService.getPrismaClient().refreshToken.count({
       where: { userId },
-      data: { revoked: true },
     });
+    return count;
+  }
+
+  // Method to get total token count (for debugging/testing)
+  async getTotalTokenCount(): Promise<number> {
+    const count = await this.databaseService.getPrismaClient().refreshToken.count();
+    return count;
   }
 
   private parseExpiry(expiry: string): number {

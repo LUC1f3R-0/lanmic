@@ -46,11 +46,19 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       );
     }
 
-    // Log the error
-    this.logger.error(
-      `${request.method} ${request.url} - ${status} - ${typeof message === 'string' ? message : JSON.stringify(message)}`,
-      (exception as Error).stack,
-    );
+    // Log the error (but reduce noise for expected 401 errors)
+    if (status === 401) {
+      // Log 401 errors as warnings instead of errors since they're expected after logout
+      this.logger.warn(
+        `${request.method} ${request.url} - ${status} - ${typeof message === 'string' ? message : JSON.stringify(message)}`,
+      );
+    } else {
+      // Log other errors normally
+      this.logger.error(
+        `${request.method} ${request.url} - ${status} - ${typeof message === 'string' ? message : JSON.stringify(message)}`,
+        (exception as Error).stack,
+      );
+    }
 
     const errorResponse = {
       statusCode: status,

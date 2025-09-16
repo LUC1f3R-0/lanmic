@@ -25,9 +25,7 @@ export default function AdminLogin() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    console.log('Admin page useEffect - authLoading:', authLoading, 'isAuthenticated:', isAuthenticated);
     if (!authLoading && isAuthenticated) {
-      console.log('User is authenticated, redirecting to dashboard');
       router.push('/dashboard');
     }
   }, [isAuthenticated, authLoading, router]);
@@ -42,15 +40,9 @@ export default function AdminLogin() {
       setIsLoading(true);
       setError(null);
       try {
-        console.log('Attempting login...');
         await login(values.email, values.password);
-        console.log('Login successful, checking authentication state...');
-        console.log('Current isAuthenticated:', isAuthenticated);
-        console.log('Current authLoading:', authLoading);
         
         // Force redirect after successful login using window.location to bypass state timing issues
-        console.log('Forcing redirect to dashboard...');
-        
         // Add a small delay to ensure state updates
         setTimeout(() => {
           window.location.href = '/dashboard';
@@ -76,13 +68,6 @@ export default function AdminLogin() {
     return null; // Will redirect to dashboard
   }
 
-  // Debug authentication state
-  const debugInfo = {
-    isAuthenticated,
-    authLoading,
-    apiAuthenticated: typeof window !== 'undefined' ? apiService.isAuthenticated() : false,
-    accessTokenState: typeof window !== 'undefined' ? apiService.accessToken : null,
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -111,16 +96,6 @@ export default function AdminLogin() {
           </p>
         </div>
 
-        {/* Debug Information */}
-        <div className="mb-6 p-4 bg-gray-100 rounded-lg text-sm">
-          <h3 className="font-semibold mb-2">Debug Info (HTTP-only cookies):</h3>
-          <div className="space-y-1">
-            <div>isAuthenticated: <span className={debugInfo.isAuthenticated ? 'text-green-600' : 'text-red-600'}>{debugInfo.isAuthenticated.toString()}</span></div>
-            <div>authLoading: <span className={debugInfo.authLoading ? 'text-yellow-600' : 'text-gray-600'}>{debugInfo.authLoading.toString()}</span></div>
-            <div>apiAuthenticated: <span className={debugInfo.apiAuthenticated ? 'text-green-600' : 'text-red-600'}>{debugInfo.apiAuthenticated.toString()}</span></div>
-            <div>accessTokenState: <span className="text-blue-600">{debugInfo.accessTokenState || 'null'}</span></div>
-          </div>
-        </div>
 
         {/* Error Message */}
         {error && (

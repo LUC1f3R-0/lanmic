@@ -248,37 +248,43 @@ class ApiService {
   }
 
   async refreshToken(): Promise<AuthResponse> {
-    const refreshToken = this.getRefreshToken();
-    if (!refreshToken) {
-      throw new Error('No refresh token available');
-    }
-
+    // Since we use HTTP-only cookies, we don't need to send refresh token in body
     const authData = await this.request<AuthResponse>('/auth/refresh', {
       method: 'POST',
-      data: { refreshToken },
+      data: {}, // Empty body since backend gets refresh token from cookie
     });
     
-    // Update tokens
-    this.setAccessToken(authData.accessToken);
-    this.setRefreshToken(authData.refreshToken);
+    // Update authentication state
+    this.accessToken = 'authenticated';
     
-    return authData;
+    return {
+      accessToken: 'authenticated',
+      refreshToken: 'authenticated',
+      user: authData.user
+    };
   }
 
   async logout(): Promise<{ message: string }> {
-    // Get refresh token from localStorage for logout (if available)
-    const refreshToken = this.getRefreshToken();
-    
-    const response = await this.request<{ message: string }>('/auth/logout', {
-      method: 'POST',
-      data: { refreshToken: refreshToken || '' }, // Send refresh token for logout
-    });
-    
-    // Clear authentication state
-    this.accessToken = null;
-    this.clearTokens();
-    
-    return response;
+    try {
+      // Since we use HTTP-only cookies, we don't need to send refresh token
+      // The backend will get it from the cookie
+      const response = await this.request<{ message: string }>('/auth/logout', {
+        method: 'POST',
+        data: { refreshToken: '' }, // Empty string since backend uses cookies
+      });
+      
+      // Clear authentication state
+      this.accessToken = null;
+      this.clearTokens();
+      
+      return response;
+    } catch (error) {
+      // Even if logout fails on backend, clear local state
+      console.error('Logout request failed:', error);
+      this.accessToken = null;
+      this.clearTokens();
+      return { message: 'Logged out successfully' };
+    }
   }
 
   // Utility methods
