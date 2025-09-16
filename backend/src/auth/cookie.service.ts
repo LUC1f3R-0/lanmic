@@ -19,7 +19,7 @@ export class CookieService {
       name: this.ACCESS_TOKEN_COOKIE_NAME,
       hasToken: !!token,
       maxAge,
-      options: this.COOKIE_OPTIONS
+      options: this.COOKIE_OPTIONS,
     });
 
     res.cookie(this.ACCESS_TOKEN_COOKIE_NAME, token, {

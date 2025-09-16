@@ -76,9 +76,12 @@ export class AuthController {
     description: 'Invalid input',
   })
   async refreshToken(
-    @Body() refreshTokenDto: RefreshTokenDto,
+    @Req() req: any,
     @Res({ passthrough: true }) res: Response,
   ) {
+    // Get refresh token from HTTP-only cookie
+    const refreshToken = req.cookies?.refresh_token || '';
+    const refreshTokenDto: RefreshTokenDto = { refreshToken };
     return this.authService.refreshToken(refreshTokenDto, res);
   }
 
@@ -107,35 +110,14 @@ export class AuthController {
     summary: 'User logout',
     description: 'Revokes the refresh token and clears authentication cookies',
   })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        refreshToken: {
-          type: 'string',
-          description: 'Refresh token to revoke',
-          example: 'abc123...',
-        },
-      },
-      required: ['refreshToken'],
-    },
-  })
   @ApiResponse({
     status: 200,
     description: 'Logged out successfully',
     type: LogoutResponseDto,
   })
-  @ApiResponse({
-    status: 400,
-    description: 'Invalid input - refresh token required',
-  })
-  async logout(
-    @Body() body: { refreshToken: string },
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    if (!body.refreshToken) {
-      throw new BadRequestException('Refresh token is required');
-    }
-    return this.authService.logout(body.refreshToken, res);
+  async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+    // Get refresh token from HTTP-only cookie
+    const refreshToken = req.cookies?.refresh_token || '';
+    return this.authService.logout(refreshToken, res);
   }
 }

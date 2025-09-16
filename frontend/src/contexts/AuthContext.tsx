@@ -64,8 +64,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(response.user);
             apiService.accessToken = 'authenticated';
           }
-        } catch (error) {
-          console.log('AuthContext: Not authenticated or session expired');
+        } catch (error: any) {
+          // Handle 401 errors gracefully (expected after logout)
+          if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+            console.log('AuthContext: Not authenticated (expected after logout)');
+          } else {
+            console.log('AuthContext: Authentication check failed:', error.message);
+          }
+          setUser(null);
           apiService.accessToken = null;
         }
       } catch (error) {
