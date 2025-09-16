@@ -39,19 +39,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const isAuthenticated = !!user && apiService.isAuthenticated();
+  
+  // Debug authentication state
+  useEffect(() => {
+    console.log('AuthContext: Authentication state changed', {
+      user: !!user,
+      apiAuthenticated: apiService.isAuthenticated(),
+      isAuthenticated,
+      accessTokenState: apiService.accessToken
+    });
+  }, [user, isAuthenticated]);
 
   // Initialize auth state on mount
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        if (apiService.isAuthenticated()) {
-          // Try to refresh token to get user data
-          await refreshToken();
+        // Check if user is authenticated by calling the profile endpoint
+        console.log('AuthContext: Checking authentication status...');
+        
+        try {
+          const response = await apiService.request<{ user: User }>('/auth/profile', { method: 'GET' });
+          if (response.user) {
+            console.log('AuthContext: User is authenticated, setting user data');
+            setUser(response.user);
+            apiService.accessToken = 'authenticated';
+          }
+        } catch (error) {
+          console.log('AuthContext: Not authenticated or session expired');
+          apiService.accessToken = null;
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
-        // Clear invalid tokens
-        apiService.clearTokens();
+        apiService.accessToken = null;
       } finally {
         setIsLoading(false);
       }
@@ -64,7 +83,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await apiService.login(email, password);
+      console.log('AuthContext: Login response received:', response);
+      
+      // Set user state first
       setUser(response.user);
+      console.log('AuthContext: User state updated');
+      
+      // Force a small delay to ensure state updates
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      console.log('AuthContext: Login completed, isAuthenticated should be true');
     } catch (error) {
       console.error('Login failed:', error);
       throw error;

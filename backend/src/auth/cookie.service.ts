@@ -15,6 +15,13 @@ export class CookieService {
   setAccessTokenCookie(res: Response, token: string, expiresIn: string): void {
     const maxAge = this.parseExpiryToMs(expiresIn);
 
+    console.log('Cookie Service: Setting access token cookie:', {
+      name: this.ACCESS_TOKEN_COOKIE_NAME,
+      hasToken: !!token,
+      maxAge,
+      options: this.COOKIE_OPTIONS
+    });
+
     res.cookie(this.ACCESS_TOKEN_COOKIE_NAME, token, {
       ...this.COOKIE_OPTIONS,
       maxAge,

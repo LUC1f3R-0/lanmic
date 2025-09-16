@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { config, isDebugMode } from './config';
 
 export interface ApiResponse<T = any> {
   data?: T;
@@ -41,52 +42,125 @@ export interface RegisterResponse {
 }
 
 class ApiService {
-  private baseURL: string;
-  private accessToken: string | null = null;
+  private axiosInstance: AxiosInstance;
+  public accessToken: string | null = null;
+  private isRefreshing = false;
+  private failedQueue: Array<{
+    resolve: (value?: any) => void;
+    reject: (error?: any) => void;
+  }> = [];
 
   constructor() {
-    this.baseURL = API_BASE_URL;
-    
-    // Initialize token from localStorage if available
-    if (typeof window !== 'undefined') {
-      this.accessToken = localStorage.getItem('accessToken');
-    }
-  }
-
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<ApiResponse<T>> {
-    const url = `${this.baseURL}${endpoint}`;
-    
-    const config: RequestInit = {
+    this.axiosInstance = axios.create({
+      baseURL: config.api.baseURL,
+      timeout: config.api.timeout,
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers,
       },
-      ...options,
-    };
+      withCredentials: true, // Important: Include cookies in requests
+    });
 
-    // Add authorization header if token exists
-    if (this.accessToken) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${this.accessToken}`,
-      };
-    }
+    // Initialize authentication state
+    this.accessToken = null;
 
-    try {
-      const response = await fetch(url, config);
-      const data = await response.json();
+    this.setupInterceptors();
+  }
 
-      if (!response.ok) {
-        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+  private setupInterceptors() {
+    // Request interceptor - no need to add auth headers since we use HTTP-only cookies
+    this.axiosInstance.interceptors.request.use(
+      (config) => {
+        // Ensure credentials are included for all requests
+        config.withCredentials = true;
+        
+        if (isDebugMode()) {
+          console.log('API Request:', {
+            method: config.method?.toUpperCase(),
+            url: config.url,
+            baseURL: config.baseURL,
+            withCredentials: config.withCredentials,
+          });
+        }
+        
+        return config;
+      },
+      (error) => {
+        if (isDebugMode()) {
+          console.error('Request Error:', error);
+        }
+        return Promise.reject(error);
       }
+    );
 
-      return data;
-    } catch (error) {
-      console.error('API request failed:', error);
-      throw error;
+    // Response interceptor for HTTP-only cookies
+    this.axiosInstance.interceptors.response.use(
+      (response) => {
+        if (isDebugMode()) {
+          console.log('API Response:', {
+            status: response.status,
+            url: response.config.url,
+            data: response.data,
+          });
+        }
+        return response;
+      },
+      async (error) => {
+        if (isDebugMode()) {
+          console.error('Response Error:', {
+            status: error.response?.status,
+            url: error.config?.url,
+            message: error.message,
+            data: error.response?.data,
+          });
+        }
+
+        // If we get a 401, clear authentication state
+        if (error.response?.status === 401) {
+          this.accessToken = null;
+        }
+
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  private processQueue(error: any) {
+    this.failedQueue.forEach(({ resolve, reject }) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+    
+    this.failedQueue = [];
+  }
+
+  public async request<T>(
+    endpoint: string,
+    config: AxiosRequestConfig = {}
+  ): Promise<T> {
+    try {
+      const response: AxiosResponse<T> = await this.axiosInstance.request({
+        url: endpoint,
+        ...config,
+      });
+      return response.data;
+    } catch (error: any) {
+      // Handle axios errors
+      if (error.response) {
+        // Server responded with error status
+        const errorMessage = error.response.data?.message || 
+                           error.response.data?.error || 
+                           `HTTP error! status: ${error.response.status}`;
+        throw new Error(errorMessage);
+      } else if (error.request) {
+        // Request was made but no response received
+        throw new Error('Network error: No response from server');
+      } else {
+        // Something else happened
+        throw new Error(error.message || 'An unexpected error occurred');
+      }
     }
   }
 
@@ -95,9 +169,9 @@ class ApiService {
     this.accessToken = token;
     if (typeof window !== 'undefined') {
       if (token) {
-        localStorage.setItem('accessToken', token);
+        localStorage.setItem(config.security.tokenStorageKey, token);
       } else {
-        localStorage.removeItem('accessToken');
+        localStorage.removeItem(config.security.tokenStorageKey);
       }
     }
   }
@@ -105,16 +179,16 @@ class ApiService {
   setRefreshToken(token: string | null) {
     if (typeof window !== 'undefined') {
       if (token) {
-        localStorage.setItem('refreshToken', token);
+        localStorage.setItem(config.security.refreshTokenKey, token);
       } else {
-        localStorage.removeItem('refreshToken');
+        localStorage.removeItem(config.security.refreshTokenKey);
       }
     }
   }
 
   getRefreshToken(): string | null {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('refreshToken');
+      return localStorage.getItem(config.security.refreshTokenKey);
     }
     return null;
   }
@@ -126,19 +200,17 @@ class ApiService {
 
   // Authentication endpoints
   async sendOtp(email: string): Promise<OtpResponse> {
-    const response = await this.request<OtpResponse>('/auth/register/email', {
+    return this.request<OtpResponse>('/auth/register/email', {
       method: 'POST',
-      body: JSON.stringify({ email }),
+      data: { email },
     });
-    return response as OtpResponse;
   }
 
   async verifyOtp(email: string, otp: string): Promise<VerifyOtpResponse> {
-    const response = await this.request<VerifyOtpResponse>('/auth/register/otp', {
+    return this.request<VerifyOtpResponse>('/auth/register/otp', {
       method: 'POST',
-      body: JSON.stringify({ email, otp }),
+      data: { email, otp },
     });
-    return response as VerifyOtpResponse;
   }
 
   async registerDetails(data: {
@@ -147,26 +219,32 @@ class ApiService {
     password: string;
     confirmPassword: string;
   }): Promise<RegisterResponse> {
-    const response = await this.request<RegisterResponse>('/auth/register/details', {
+    return this.request<RegisterResponse>('/auth/register/details', {
       method: 'POST',
-      body: JSON.stringify(data),
+      data,
     });
-    return response as RegisterResponse;
   }
 
   async login(email: string, password: string): Promise<AuthResponse> {
-    const response = await this.request<AuthResponse>('/auth/login', {
+    const authData = await this.request<AuthResponse>('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      data: { email, password },
     });
     
-    const authData = response as AuthResponse;
+    console.log('API Service: Login response received:', authData);
     
-    // Store tokens
-    this.setAccessToken(authData.accessToken);
-    this.setRefreshToken(authData.refreshToken);
+    // Backend sets HTTP-only cookies, so we don't need to store tokens in localStorage
+    // Just mark that we're authenticated
+    this.accessToken = 'authenticated'; // Placeholder to indicate authentication
     
-    return authData;
+    console.log('API Service: Authentication successful, cookies set by backend');
+    
+    // Return the response with user data (tokens are in HTTP-only cookies)
+    return {
+      accessToken: 'authenticated', // Placeholder
+      refreshToken: 'authenticated', // Placeholder
+      user: authData.user
+    };
   }
 
   async refreshToken(): Promise<AuthResponse> {
@@ -175,12 +253,10 @@ class ApiService {
       throw new Error('No refresh token available');
     }
 
-    const response = await this.request<AuthResponse>('/auth/refresh', {
+    const authData = await this.request<AuthResponse>('/auth/refresh', {
       method: 'POST',
-      body: JSON.stringify({ refreshToken }),
+      data: { refreshToken },
     });
-    
-    const authData = response as AuthResponse;
     
     // Update tokens
     this.setAccessToken(authData.accessToken);
@@ -190,25 +266,39 @@ class ApiService {
   }
 
   async logout(): Promise<{ message: string }> {
+    // Get refresh token from localStorage for logout (if available)
     const refreshToken = this.getRefreshToken();
-    if (!refreshToken) {
-      throw new Error('No refresh token available');
-    }
-
+    
     const response = await this.request<{ message: string }>('/auth/logout', {
       method: 'POST',
-      body: JSON.stringify({ refreshToken }),
+      data: { refreshToken: refreshToken || '' }, // Send refresh token for logout
     });
     
-    // Clear tokens
+    // Clear authentication state
+    this.accessToken = null;
     this.clearTokens();
     
-    return response as { message: string };
+    return response;
   }
 
-  // Utility method to check if user is authenticated
+  // Utility methods
   isAuthenticated(): boolean {
-    return !!this.accessToken;
+    // Since we're using HTTP-only cookies, we can't directly check them from JavaScript
+    // We'll rely on the instance token which is set to 'authenticated' after successful login
+    // In a real app, you might want to make a request to a /me endpoint to verify authentication
+    return this.accessToken === 'authenticated';
+  }
+
+  // Get axios instance for custom requests
+  getAxiosInstance(): AxiosInstance {
+    return this.axiosInstance;
+  }
+
+  // Health check
+  async healthCheck(): Promise<{ status: string; timestamp: string }> {
+    return this.request<{ status: string; timestamp: string }>('/health', {
+      method: 'GET',
+    });
   }
 }
 

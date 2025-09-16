@@ -1,8 +1,11 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   Res,
+  Req,
+  UseGuards,
   HttpCode,
   HttpStatus,
   BadRequestException,
@@ -10,6 +13,7 @@ import {
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import {
   LoginDto,
   RefreshTokenDto,
@@ -76,6 +80,25 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.authService.refreshToken(refreshTokenDto, res);
+  }
+
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get user profile',
+    description: 'Returns current user profile if authenticated',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile retrieved successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Not authenticated',
+  })
+  async getProfile(@Req() req: any) {
+    return this.authService.getProfile(req);
   }
 
   @Post('logout')
