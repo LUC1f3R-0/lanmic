@@ -37,9 +37,25 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
+            <div 
+              className="mb-8 flex justify-center"
+              data-aos="fade-up"
+              data-aos-duration="1000"
+              data-aos-easing="ease-out-cubic"
+            >
+              <Image
+                src="/lanmic_logo.png"
+                alt="LANMIC Polymers Logo"
+                width={180}
+                height={180}
+                className="w-36 h-36 sm:w-48 sm:h-48 object-contain drop-shadow-lg"
+                priority
+              />
+            </div>
             <h1
               className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight"
               data-aos="fade-up"
+              data-aos-delay="200"
               data-aos-duration="1200"
               data-aos-easing="ease-out-cubic"
             >
@@ -51,7 +67,7 @@ export default function Home() {
             <p
               className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
               data-aos="fade-up"
-              data-aos-delay="200"
+              data-aos-delay="400"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
@@ -62,7 +78,7 @@ export default function Home() {
             <div
               className="flex flex-col sm:flex-row gap-4 justify-center"
               data-aos="zoom-in"
-              data-aos-delay="400"
+              data-aos-delay="600"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
@@ -678,156 +694,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section
-        id="testimonials"
-        className="testimonials-section py-20 lg:py-32 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 relative"
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span
-              className="inline-block bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
-              data-aos="fade-up"
-            >
-              Testimonials
-            </span>
-            <h2
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
-              data-aos="fade-up"
-              data-aos-delay="100"
-            >
-              What Our Clients Say
-            </h2>
-            <p
-              className="text-lg text-gray-600 max-w-3xl mx-auto"
-              data-aos="fade-up"
-              data-aos-delay="200"
-            >
-              Don&apos;t just take our word for it - hear from our satisfied
-              customers
-            </p>
-          </div>
-
-          <div
-            className="max-w-4xl mx-auto"
-            data-aos="zoom-in"
-            data-aos-duration="1000"
-            data-aos-easing="ease-out-cubic"
-          >
-            <div className="relative">
-              <Swiper
-                modules={[Autoplay, Pagination]}
-                loop={true}
-                speed={600}
-                autoplay={{
-                  delay: 5000,
-                  disableOnInteraction: false,
-                }}
-                slidesPerView={1}
-                pagination={{
-                  clickable: true,
-                  el: ".testimonials-pagination",
-                }}
-                className="testimonials-swiper w-full"
-              >
-                <SwiperSlide>
-                  <div className="text-center">
-                    <div className="mb-8">
-                      <Image
-                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face&auto=format&q=80"
-                        alt="Adam Aderson"
-                        width={120}
-                        height={120}
-                        className="w-24 h-24 rounded-full mx-auto shadow-lg"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                    <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                      &ldquo;LANMIC Polymers has consistently delivered
-                      exceptional quality and innovative solutions. Their
-                      team&apos;s expertise and commitment to excellence
-                      have made them our trusted partner for all polymer
-                      needs.&rdquo;
-                    </blockquote>
-                    <div className="text-center">
-                      <h4 className="text-xl font-bold text-gray-900 mb-1">
-                        David Anderson
-                      </h4>
-                      <p className="text-gray-600">
-                        CEO, Advanced Materials Corp
-                      </p>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="text-center">
-                    <div className="mb-8">
-                      <Image
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face&auto=format&q=80"
-                        alt="Lukas Devlin"
-                        width={120}
-                        height={120}
-                        className="w-24 h-24 rounded-full mx-auto shadow-lg"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                    <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                      &ldquo;The level of technical expertise and customer
-                      service at LANMIC is unmatched. They&apos;ve helped us
-                      achieve remarkable results with their cutting-edge
-                      polymer solutions.&rdquo;
-                    </blockquote>
-                    <div className="text-center">
-                      <h4 className="text-xl font-bold text-gray-900 mb-1">
-                        Dr. James Wilson
-                      </h4>
-                      <p className="text-gray-600">CTO, PolymerTech Solutions</p>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="text-center">
-                    <div className="mb-8">
-                      <Image
-                        src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face&auto=format&q=80"
-                        alt="Kayla Bryant"
-                        width={120}
-                        height={120}
-                        className="w-24 h-24 rounded-full mx-auto shadow-lg"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                    <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                      &ldquo;Working with LANMIC has been a game-changer for
-                      our manufacturing process. Their sustainable approach
-                      and quality products have exceeded our
-                      expectations.&rdquo;
-                    </blockquote>
-                    <div className="text-center">
-                      <h4 className="text-xl font-bold text-gray-900 mb-1">
-                        Maria Garcia
-                      </h4>
-                      <p className="text-gray-600">
-                        Operations Director, EcoMaterials Inc
-                      </p>
-                    </div>
-                  </div>
-                </SwiperSlide>
-              </Swiper>
-              <div className="testimonials-pagination mt-12"></div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="cta-section py-20 lg:py-32 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 relative overflow-hidden">

@@ -23,64 +23,6 @@ export default function About() {
 
   return (
     <main className="main">
-      {/* About 2 Section */}
-      <section
-        id="about-2"
-        className="about-2-section py-20 lg:py-32 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative"
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-            <div className="lg:w-1/2 order-2 lg:order-1">
-              <div
-                className="text-center lg:text-left"
-                data-aos="slide-right"
-                data-aos-delay="100"
-                data-aos-duration="1000"
-                data-aos-easing="ease-out-cubic"
-              >
-                <div className="relative">
-                  <Image
-                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=500&fit=crop"
-                    alt="Our Mission"
-                    width={600}
-                    height={500}
-                    className="rounded-2xl shadow-2xl"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="lg:w-1/2 order-1 lg:order-2"
-              data-aos="slide-left"
-              data-aos-duration="1000"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="px-3">
-                <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
-                  Our Mission
-                </span>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                  The Big Oxmox advised her not to do so, because there were
-                  thousands.
-                </h2>
-                <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                  A small river named Duden flows by their place and supplies it
-                  with the necessary regelialia. It is a paradisematic country.
-                </p>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  The Big Oxmox advised her not to do so, because there were
-                  thousands of bad Commas, wild Question Marks and devious
-                  Semikoli.
-                </p>
-                <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
-                  Get Started
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* LANMIC Group Values Section */}
       <section

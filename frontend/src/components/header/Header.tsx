@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -32,8 +33,16 @@ const Header = () => {
     <header className="sticky top-0 z-50 bg-white shadow">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
         {/* Logo */}
-        <Link href="/" className="flex items-center">
-          <div className="text-xl font-bold text-blue-600">
+        <Link href="/" className="flex items-center space-x-3">
+          <Image
+            src="/lanmic_logo.png"
+            alt="LANMIC Polymers Logo"
+            width={60}
+            height={60}
+            className="w-15 h-15 object-contain"
+            priority
+          />
+          <div className="text-xl font-bold text-blue-600 hidden sm:block">
             LANMIC POLYMERS
           </div>
         </Link>

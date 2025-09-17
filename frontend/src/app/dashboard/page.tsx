@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
@@ -59,11 +60,13 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <div className="h-10 w-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+              <Image
+                src="/lanmic_logo.png"
+                alt="LANMIC Polymers Logo"
+                width={60}
+                height={60}
+                className="w-15 h-15 object-contain mr-3"
+              />
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">LANMIC Dashboard</h1>
                 <p className="text-sm text-gray-500">Secure Admin Panel</p>
