@@ -29,7 +29,7 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     try {
       await logout();
-      router.push('/');
+      router.push('/admin');
     } catch (error) {
       console.error('Logout failed:', error);
     }

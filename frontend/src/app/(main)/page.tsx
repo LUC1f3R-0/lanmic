@@ -67,12 +67,6 @@ export default function Home() {
               data-aos-easing="ease-out-cubic"
             >
               <button 
-                onClick={() => router.push('/admin')}
-                className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform"
-              >
-                Admin Access
-              </button>
-              <button 
                 onClick={() => router.push('/contact')}
                 className="border-2 border-emerald-400 text-emerald-700 px-8 py-4 rounded-full font-semibold text-lg hover:border-emerald-600 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-300"
               >
