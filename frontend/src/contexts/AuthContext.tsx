@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
   logout: () => Promise<void>;
   refreshToken: () => Promise<void>;
   sendOtp: (email: string) => Promise<void>;
@@ -85,10 +85,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initializeAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, rememberMe: boolean = false) => {
     try {
       setIsLoading(true);
-      const response = await apiService.login(email, password);
+      const response = await apiService.login(email, password, rememberMe);
       console.log('AuthContext: Login response received:', response);
       
       // Set user state first
