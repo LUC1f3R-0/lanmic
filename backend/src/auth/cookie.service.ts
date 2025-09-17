@@ -7,7 +7,7 @@ export class CookieService {
   private readonly REFRESH_TOKEN_COOKIE_NAME = 'refresh_token';
   private readonly COOKIE_OPTIONS = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV !== 'development',
     sameSite: 'strict' as const,
     path: '/',
   };
