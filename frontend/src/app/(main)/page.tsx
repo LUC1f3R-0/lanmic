@@ -32,9 +32,8 @@ export default function Home() {
   return (
     <main className="main">
       {/* Hero Section */}
-      <section className="hero-section relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-cyan-50 to-emerald-100 overflow-hidden">
+      <section className="hero-section relative min-h-screen flex items-center justify-center bg-background-primary overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <div 
@@ -48,24 +47,24 @@ export default function Home() {
                 alt="LANMIC Polymers Logo"
                 width={180}
                 height={180}
-                className="w-36 h-36 sm:w-48 sm:h-48 object-contain drop-shadow-lg"
+                className="w-36 h-36 sm:w-48 sm:h-48 object-contain"
                 priority
               />
             </div>
             <h1
-              className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight"
+              className="text-4xl sm:text-5xl lg:text-7xl font-bold text-text-primary mb-6 leading-tight"
               data-aos="fade-up"
               data-aos-delay="200"
               data-aos-duration="1200"
               data-aos-easing="ease-out-cubic"
             >
               Welcome to{" "}
-              <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-primary-500">
                 LANMIC Polymers
               </span>
             </h1>
             <p
-              className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
+              className="text-lg sm:text-xl lg:text-2xl text-text-secondary mb-8 leading-relaxed max-w-3xl mx-auto"
               data-aos="fade-up"
               data-aos-delay="400"
               data-aos-duration="1000"
@@ -84,7 +83,7 @@ export default function Home() {
             >
               <button 
                 onClick={() => router.push('/contact')}
-                className="border-2 border-emerald-400 text-emerald-700 px-8 py-4 rounded-full font-semibold text-lg hover:border-emerald-600 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-300"
+                className="btn-primary px-8 py-4 rounded-md font-semibold text-lg"
               >
                 Contact Us
               </button>
@@ -96,7 +95,7 @@ export default function Home() {
       {/* About Section */}
       <section
         id="about"
-        className="about-section py-20 lg:py-32 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative"
+        className="about-section py-20 lg:py-32 bg-background-secondary relative"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
@@ -121,10 +120,10 @@ export default function Home() {
                     clickable: true,
                     el: ".about-pagination",
                   }}
-                  className="rounded-2xl overflow-hidden shadow-2xl w-full h-[200px] sm:h-[250px] md:h-[300px] lg:h-[400px]"
+                  className="rounded-lg overflow-hidden shadow-lg w-full h-[200px] sm:h-[250px] md:h-[300px] lg:h-[400px]"
                 >
                   <SwiperSlide>
-                    <div className="relative w-full h-full bg-gradient-to-br from-cyan-500 to-blue-700 flex items-center justify-center">
+                    <div className="relative w-full h-full bg-primary-500 flex items-center justify-center">
                       <Image
                         src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop&auto=format&q=80"
                         alt="Manufacturing Process"
@@ -137,7 +136,7 @@ export default function Home() {
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/80 to-blue-700/80 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-primary-500/80 flex items-center justify-center">
                         <div className="text-center text-white p-6">
                           <h3 className="text-2xl font-bold mb-2">Manufacturing Excellence</h3>
                           <p className="text-lg">Advanced production processes</p>
@@ -146,7 +145,7 @@ export default function Home() {
                     </div>
                   </SwiperSlide>
                   <SwiperSlide>
-                    <div className="relative w-full h-full bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center">
+                    <div className="relative w-full h-full bg-secondary-500 flex items-center justify-center">
                       <Image
                         src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&auto=format&q=80"
                         alt="Quality Control"
@@ -159,7 +158,7 @@ export default function Home() {
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/80 to-teal-700/80 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-secondary-500/80 flex items-center justify-center">
                         <div className="text-center text-white p-6">
                           <h3 className="text-2xl font-bold mb-2">Quality Assurance</h3>
                           <p className="text-lg">Rigorous testing standards</p>
@@ -168,7 +167,7 @@ export default function Home() {
                     </div>
                   </SwiperSlide>
                   <SwiperSlide>
-                    <div className="relative w-full h-full bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center">
+                    <div className="relative w-full h-full bg-accent-sage flex items-center justify-center">
                       <Image
                         src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop&auto=format&q=80"
                         alt="Innovation Lab"
@@ -181,7 +180,7 @@ export default function Home() {
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/80 to-purple-700/80 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-accent-sage/80 flex items-center justify-center">
                         <div className="text-center text-white p-6">
                           <h3 className="text-2xl font-bold mb-2">Innovation Hub</h3>
                           <p className="text-lg">Cutting-edge research & development</p>
@@ -196,7 +195,7 @@ export default function Home() {
             <div className="w-full lg:w-1/2 order-2 lg:order-2">
               <div className="space-y-6">
                 <span
-                  className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide"
+                  className="inline-block bg-primary-500 text-white px-4 py-2 rounded-md text-sm font-semibold uppercase tracking-wide"
                   data-aos="fade-up"
                   data-aos-duration="800"
                   data-aos-easing="ease-out-cubic"
@@ -204,7 +203,7 @@ export default function Home() {
                   About Us
                 </span>
                 <h2
-                  className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight"
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary leading-tight"
                   data-aos="fade-up"
                   data-aos-delay="100"
                   data-aos-duration="1000"
@@ -213,7 +212,7 @@ export default function Home() {
                   Leading Innovation in Polymer Technology
                 </h2>
                 <p
-                  className="text-lg text-gray-600 leading-relaxed"
+                  className="text-lg text-text-secondary leading-relaxed"
                   data-aos="fade-up"
                   data-aos-delay="200"
                   data-aos-duration="1000"
@@ -224,19 +223,19 @@ export default function Home() {
                   and technological advancement has made us a trusted partner for businesses worldwide.
                 </p>
                 <div className="grid grid-cols-2 gap-6 pt-6">
-                  <div className="text-center p-4 bg-gradient-to-br from-cyan-50 to-blue-100 rounded-xl hover:from-cyan-100 hover:to-blue-200 transition-all duration-300 border border-cyan-200">
-                    <div className="text-2xl font-bold text-cyan-600 mb-2">
+                  <div className="text-center p-4 card-primary rounded-lg hover-lift">
+                    <div className="text-2xl font-bold text-primary-500 mb-2">
                       25+
                     </div>
-                    <div className="text-sm text-gray-700">
+                    <div className="text-sm text-text-secondary">
                       Years Experience
                     </div>
                   </div>
-                  <div className="text-center p-4 bg-gradient-to-br from-violet-50 to-purple-100 rounded-xl hover:from-violet-100 hover:to-purple-200 transition-all duration-300 border border-violet-200">
-                    <div className="text-2xl font-bold text-violet-600 mb-2">
+                  <div className="text-center p-4 card-primary rounded-lg hover-lift">
+                    <div className="text-2xl font-bold text-secondary-500 mb-2">
                       500+
                     </div>
-                    <div className="text-sm text-gray-700">
+                    <div className="text-sm text-text-secondary">
                       Projects Completed
                     </div>
                   </div>
@@ -250,25 +249,25 @@ export default function Home() {
       {/* Services Section */}
       <section
         id="services"
-        className="services-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-cyan-50 to-emerald-50"
+        className="services-section py-20 lg:py-32 bg-background-primary"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span
-              className="inline-block bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
+              className="inline-block bg-primary-500 text-white px-4 py-2 rounded-md text-sm font-semibold uppercase tracking-wide mb-4"
               data-aos="fade-up"
             >
               Our Services
             </span>
             <h2
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-6"
               data-aos="fade-up"
               data-aos-delay="100"
             >
               What We Offer
             </h2>
             <p
-              className="text-lg text-gray-600 max-w-3xl mx-auto"
+              className="text-lg text-text-secondary max-w-3xl mx-auto"
               data-aos="fade-up"
               data-aos-delay="200"
             >
@@ -279,13 +278,13 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div
-              className="group bg-gradient-to-br from-white to-cyan-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-cyan-100"
+              className="group card-primary rounded-lg p-8 card-hover"
               data-aos="zoom-in"
               data-aos-delay="100"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-gradient-to-r from-cyan-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 bg-primary-500 rounded-lg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -298,23 +297,23 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-primary-500 transition-colors duration-300">
                 Advanced Technology
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-text-secondary leading-relaxed">
                 Cutting-edge polymer technology solutions for modern
                 manufacturing needs
               </p>
             </div>
 
             <div
-              className="group bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-emerald-100"
+              className="group card-primary rounded-lg p-8 card-hover"
               data-aos="zoom-in"
               data-aos-delay="200"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 bg-secondary-500 rounded-lg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -327,23 +326,23 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-secondary-500 transition-colors duration-300">
                 Custom Design
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-text-secondary leading-relaxed">
                 Tailored polymer solutions designed specifically for your
                 requirements
               </p>
             </div>
 
             <div
-              className="group bg-gradient-to-br from-white to-violet-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-violet-100"
+              className="group card-primary rounded-lg p-8 card-hover"
               data-aos="zoom-in"
               data-aos-delay="300"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-gradient-to-r from-violet-600 to-purple-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 bg-accent-sage rounded-lg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -352,10 +351,10 @@ export default function Home() {
                   <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-accent-sage transition-colors duration-300">
                 Quality Assurance
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-text-secondary leading-relaxed">
                 Rigorous quality control processes ensuring the highest
                 standards
               </p>
@@ -696,8 +695,7 @@ export default function Home() {
 
 
       {/* CTA Section */}
-      <section className="cta-section py-20 lg:py-32 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/20 via-blue-600/20 to-purple-600/20"></div>
+      <section className="cta-section py-20 lg:py-32 bg-primary-500 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <h2
@@ -709,7 +707,7 @@ export default function Home() {
               Ready to Get Started?
             </h2>
             <p
-              className="text-xl text-cyan-100 mb-8 leading-relaxed"
+              className="text-xl text-white/90 mb-8 leading-relaxed"
               data-aos="fade-up"
               data-aos-delay="100"
               data-aos-duration="1000"
@@ -725,10 +723,10 @@ export default function Home() {
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <button className="bg-white text-cyan-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 hover:scale-105 transition-all duration-300 transform">
+              <button className="bg-white text-primary-500 px-8 py-4 rounded-md font-semibold text-lg hover:bg-gray-100 transition-all duration-300">
                 Contact Us Today
               </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-cyan-600 transition-all duration-300">
+              <button className="border-2 border-white text-white px-8 py-4 rounded-md font-semibold text-lg hover:bg-white hover:text-primary-500 transition-all duration-300">
                 Request Quote
               </button>
             </div>
