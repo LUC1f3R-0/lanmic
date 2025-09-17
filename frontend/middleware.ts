@@ -9,14 +9,12 @@ export function middleware(request: NextRequest) {
   
   console.log('Middleware: Processing request for', pathname, 'hasAccessToken:', !!accessToken);
   
-  // Only handle dashboard and admin routes
+  // Only handle dashboard and login routes
   if (pathname.startsWith('/dashboard')) {
     // If it's a protected route and no access token, redirect to admin
     if (!accessToken) {
       console.log('Middleware: No access token, redirecting to admin');
-      const adminUrl = new URL('/admin', request.url);
-      adminUrl.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(adminUrl);
+      return NextResponse.redirect(new URL('/admin', request.url));
     }
     // If user has access token, allow access to dashboard
     console.log('Middleware: Access token found, allowing dashboard access');

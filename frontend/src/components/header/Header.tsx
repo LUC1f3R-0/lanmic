@@ -2,13 +2,23 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); // current route
+  const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push('/admin');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   const navItems = [
     { href: "/", label: "Home" },
@@ -60,7 +70,7 @@ const Header = () => {
                     Welcome, {user?.username || user?.email}
                   </span>
                   <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition-colors"
                   >
                     Logout
@@ -68,16 +78,7 @@ const Header = () => {
                 </>
               )}
             </div>
-          ) : (
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/admin"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
-              >
-                Admin Access
-              </Link>
-            </div>
-          )}
+          ) : null}
         </nav>
 
         {/* Mobile Menu Toggle */}
@@ -129,7 +130,7 @@ const Header = () => {
                       </div>
                       <button
                         onClick={() => {
-                          logout();
+                          handleLogout();
                           setIsOpen(false);
                         }}
                         className="w-full text-left bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition-colors"
@@ -139,17 +140,7 @@ const Header = () => {
                     </>
                   )}
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  <Link
-                    href="/admin"
-                    onClick={() => setIsOpen(false)}
-                    className="block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors text-center"
-                  >
-                    Admin Access
-                  </Link>
-                </div>
-              )}
+              ) : null}
             </li>
           </ul>
         </nav>
