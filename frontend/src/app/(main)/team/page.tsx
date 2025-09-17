@@ -74,12 +74,11 @@ export default function Team() {
               data-aos="fade-up"
               data-aos-delay="200"
             >
-              Meet the visionary leaders who drive our company&apos;s success
-              and innovation
+              At LANMIC Polymers, leadership is about more than just decision-making — it&apos;s about inspiring innovation, empowering people, and creating solutions that make an impact.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             <div
               className="group bg-gradient-to-br from-white to-cyan-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-cyan-100"
               data-aos="zoom-in"
@@ -90,7 +89,7 @@ export default function Team() {
               <div className="relative mb-6">
                 <Image
                   src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
-                  alt="Jeremy Walker"
+                  alt="Chandana Bopitiya"
                   width={400}
                   height={400}
                   className="w-full h-80 object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
@@ -99,12 +98,11 @@ export default function Team() {
               </div>
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  <span className="text-blue-600">Jeremy</span> Walker
+                  <span className="text-blue-600">Chandana</span> Bopitiya
                 </h3>
-                <p className="text-gray-600 mb-4">CEO & Founder</p>
+                <p className="text-gray-600 mb-4">Group Managing Director, LANMIC Group</p>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  Visionary leader with over 20 years of experience in polymer
-                  technology and business development.
+                  As the founder of the LANMIC Group, Chandana brings a wealth of experience and visionary thinking. He continues to guide and mentor the team at LANMIC Polymers, ensuring that the values of integrity, quality, and long-term partnerships remain at the heart of the business.
                 </p>
                 <div className="flex justify-center space-x-4">
                   <a
@@ -145,7 +143,7 @@ export default function Team() {
               <div className="relative mb-6">
                 <Image
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face"
-                  alt="Lawson Arnold"
+                  alt="Udesha Bopitiya"
                   width={400}
                   height={400}
                   className="w-full h-80 object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
@@ -154,12 +152,11 @@ export default function Team() {
               </div>
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  <span className="text-blue-600">Lawson</span> Arnold
+                  <span className="text-blue-600">Udesha</span> Bopitiya
                 </h3>
-                <p className="text-gray-600 mb-4">CTO & Technology Lead</p>
+                <p className="text-gray-600 mb-4">Director</p>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  Technology expert driving innovation in polymer research and
-                  development processes.
+                  Udesha leads LANMIC Polymers with fresh energy and a modern outlook. With a strong technical background and a passion for polymers, she is focused on building products that combine performance, sustainability, and value for customers. Her hands-on approach and drive for continuous improvement ensure that the company stays ahead in a fast-changing industry.
                 </p>
                 <div className="flex justify-center space-x-4">
                   <a
@@ -189,60 +186,43 @@ export default function Team() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
+      {/* Our Team Section */}
+      <section className="our-team-section py-20 lg:py-32 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 relative">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <span
+              className="inline-block bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
+              data-aos="fade-up"
+            >
+              Our Team
+            </span>
+            <h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              Our Dynamic Team
+            </h2>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
             <div
-              className="group bg-gradient-to-br from-white to-violet-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-violet-100"
-              data-aos="zoom-in"
-              data-aos-delay="300"
-              data-aos-duration="800"
+              className="bg-white rounded-2xl p-8 shadow-lg"
+              data-aos="fade-up"
+              data-aos-delay="200"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="relative mb-6">
-                <Image
-                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
-                  alt="Patrik White"
-                  width={400}
-                  height={400}
-                  className="w-full h-80 object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
-              <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  <span className="text-blue-600">Patrik</span> White
-                </h3>
-                <p className="text-gray-600 mb-4">Design Director</p>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  Creative leader focused on product design and user experience
-                  in polymer applications.
-                </p>
-                <div className="flex justify-center space-x-4">
-                  <a
-                    href="#"
-                    className="text-blue-600 hover:text-blue-800 transition-colors duration-300"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                    </svg>
-                  </a>
-                  <a
-                    href="#"
-                    className="text-blue-600 hover:text-blue-800 transition-colors duration-300"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
+              <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                We&apos;re proud of our dynamic team who bring ideas and strategies to life every day. Together, they drive research, develop new solutions, and ensure our customers get reliable, high-quality products that meet global standards.
+              </p>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                At LANMIC Polymers, we believe our people are our greatest strength — and their passion, creativity, and commitment shape everything we do.
+              </p>
             </div>
           </div>
         </div>

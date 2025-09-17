@@ -82,6 +82,154 @@ export default function About() {
         </div>
       </section>
 
+      {/* LANMIC Group Values Section */}
+      <section
+        id="values"
+        className="values-section py-20 lg:py-32 bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50"
+      >
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <span
+              className="inline-block bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
+              data-aos="fade-up"
+            >
+              LANMIC GROUP VALUES
+            </span>
+            <h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              Our Core Values
+            </h2>
+            <p
+              className="text-lg text-gray-600 max-w-3xl mx-auto"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              The principles that guide everything we do at LANMIC Group
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div
+              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-blue-600"
+              data-aos="zoom-in"
+              data-aos-delay="100"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
+            >
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl flex items-center justify-center mr-4">
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Integrity</h3>
+              </div>
+              <ul className="space-y-3 text-gray-600">
+                <li className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  We conduct business activities ethically and transparently
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  We own decisions and take accountability
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  We are open and honest when communicating with others
+                </li>
+              </ul>
+            </div>
+
+            <div
+              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-green-600"
+              data-aos="zoom-in"
+              data-aos-delay="200"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
+            >
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-green-700 rounded-xl flex items-center justify-center mr-4">
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Striving for Excellency</h3>
+              </div>
+              <p className="text-gray-600 leading-relaxed">
+                We ensure for continuous growth through R&D innovation to create quality customer centric products and solutions using state of the art technology
+              </p>
+            </div>
+
+            <div
+              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-purple-600"
+              data-aos="zoom-in"
+              data-aos-delay="300"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
+            >
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl flex items-center justify-center mr-4">
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">People Excellence</h3>
+              </div>
+              <p className="text-gray-600 leading-relaxed">
+                We recognize top performers, commit to develop overall well-being and happiness of our people
+              </p>
+            </div>
+
+            <div
+              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-teal-600"
+              data-aos="zoom-in"
+              data-aos-delay="400"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
+            >
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-teal-700 rounded-xl flex items-center justify-center mr-4">
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Social Accountability</h3>
+              </div>
+              <p className="text-gray-600 leading-relaxed">
+                In everything we do we strive for positive impact on people and planet
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Services Section */}
       <section
         id="services"
