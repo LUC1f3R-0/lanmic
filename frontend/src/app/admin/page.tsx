@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { apiService } from "@/lib/api";
@@ -76,21 +77,17 @@ export default function AdminLogin() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-            <svg
-              className="w-8 h-8 text-white"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
+          <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+            <Image
+              src="/lanmic_logo.png"
+              alt="LANMIC Polymers Logo"
+              width={96}
+              height={96}
+              className="w-24 h-24 object-contain"
+            />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Admin Login
+            LANMIC Admin
           </h1>
           <p className="text-gray-600">
             Sign in to access the admin panel
