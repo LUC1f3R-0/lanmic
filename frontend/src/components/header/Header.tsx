@@ -30,8 +30,8 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow">
-      <div className="container mx-auto flex items-center justify-between px-4 py-3">
+    <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-neutral-200">
+      <div className="container mx-auto flex items-center justify-between px-4 py-4">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-3">
           <Image
@@ -42,7 +42,7 @@ const Header = () => {
             className="w-15 h-15 object-contain"
             priority
           />
-          <div className="text-xl font-bold text-blue-600 hidden sm:block">
+          <div className="text-xl font-bold text-primary-500 hidden sm:block">
             LANMIC POLYMERS
           </div>
         </Link>
@@ -55,8 +55,8 @@ const Header = () => {
               href={item.href}
               className={`${
                 pathname === item.href
-                  ? "text-blue-600 font-semibold border-b-2 border-blue-600"
-                  : "text-gray-700 hover:text-blue-600"
+                  ? "text-primary-500 font-semibold border-b-2 border-primary-500"
+                  : "text-text-primary hover:text-primary-500 transition-colors"
               }`}
             >
               {item.label}
@@ -68,19 +68,19 @@ const Header = () => {
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="text-gray-700 hover:text-blue-600 font-medium"
+                className="text-text-primary hover:text-primary-500 font-medium transition-colors"
               >
                 Dashboard
               </Link>
               {/* Only show welcome message and logout on dashboard route */}
               {pathname === '/dashboard' && (
                 <>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-text-muted">
                     Welcome, {user?.username || user?.email}
                   </span>
                   <button
                     onClick={handleLogout}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition-colors"
+                    className="bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 transition-colors"
                   >
                     Logout
                   </button>
@@ -92,7 +92,7 @@ const Header = () => {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="text-2xl text-gray-700 md:hidden"
+          className="text-2xl text-text-primary md:hidden hover:text-primary-500 transition-colors"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
@@ -102,8 +102,8 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <nav className="md:hidden bg-white border-t border-gray-200 shadow">
-          <ul className="flex flex-col space-y-4 px-4 py-6 font-medium text-gray-700">
+        <nav className="md:hidden bg-white border-t border-neutral-200 shadow-sm">
+          <ul className="flex flex-col space-y-4 px-4 py-6 font-medium text-text-primary">
             {navItems.map((item) => (
               <li key={item.href}>
                 <Link
@@ -111,8 +111,8 @@ const Header = () => {
                   onClick={() => setIsOpen(false)}
                   className={`${
                     pathname === item.href
-                      ? "text-blue-600 font-semibold border-l-4 border-blue-600 pl-2"
-                      : "hover:text-blue-600"
+                      ? "text-primary-500 font-semibold border-l-4 border-primary-500 pl-2"
+                      : "hover:text-primary-500 transition-colors"
                   }`}
                 >
                   {item.label}
@@ -121,20 +121,20 @@ const Header = () => {
             ))}
             
             {/* Mobile User Menu */}
-            <li className="border-t border-gray-200 pt-4">
+            <li className="border-t border-neutral-200 pt-4">
               {isAuthenticated ? (
                 <div className="space-y-2">
                   <Link
                     href="/dashboard"
                     onClick={() => setIsOpen(false)}
-                    className="block text-gray-700 hover:text-blue-600 font-medium"
+                    className="block text-text-primary hover:text-primary-500 font-medium transition-colors"
                   >
                     Dashboard
                   </Link>
                   {/* Only show welcome message and logout on dashboard route */}
                   {pathname === '/dashboard' && (
                     <>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-text-muted">
                         Welcome, {user?.username || user?.email}
                       </div>
                       <button
@@ -142,7 +142,7 @@ const Header = () => {
                           handleLogout();
                           setIsOpen(false);
                         }}
-                        className="w-full text-left bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition-colors"
+                        className="w-full text-left bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 transition-colors"
                       >
                         Logout
                       </button>

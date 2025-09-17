@@ -7,21 +7,21 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #4c5a1c;
+  --primary: #3e9aba;
+  --secondary: #bc851d;
+  --text-primary: #4c5a1c;
+  --text-secondary: #5c5c1c;
+  --text-muted: #848180;
+  --background-secondary: #e0ded3;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
+  line-height: 1.6;
 }
 
 /* Custom Swiper Styles */
@@ -30,10 +30,11 @@ body {
   height: auto;
   min-height: 400px;
   display: block;
-  background: linear-gradient(135deg, #f0fdfa, #ecfdf5, #f0f9ff);
-  border: 2px solid #10b981;
-  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e0ded3;
+  border-radius: 8px;
   padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .testimonials-swiper .swiper-slide {
@@ -56,13 +57,14 @@ body {
 .testimonials-pagination .swiper-pagination-bullet {
   width: 12px;
   height: 12px;
-  background: #cbd5e1;
+  background: #e0ded3;
   opacity: 1;
   margin: 0 6px;
+  border-radius: 50%;
 }
 
 .testimonials-pagination .swiper-pagination-bullet-active {
-  background: #3b82f6;
+  background: #3e9aba;
   transform: scale(1.2);
 }
 
@@ -75,13 +77,14 @@ body {
 .about-pagination .swiper-pagination-bullet {
   width: 10px;
   height: 10px;
-  background: #cbd5e1;
+  background: #e0ded3;
   opacity: 1;
   margin: 0 4px;
+  border-radius: 50%;
 }
 
 .about-pagination .swiper-pagination-bullet-active {
-  background: #3b82f6;
+  background: #3e9aba;
   transform: scale(1.1);
 }
 
@@ -90,11 +93,11 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom animations */
+/* Professional animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -103,119 +106,117 @@ html {
 }
 
 .fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
+  animation: fadeInUp 0.4s ease-out;
 }
 
-/* Enhanced hover effects */
+/* Subtle hover effects */
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Colorful gradient backgrounds */
+/* Professional grid pattern */
 .bg-grid-pattern {
   background-image: 
-    linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+    linear-gradient(rgba(62, 154, 186, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(62, 154, 186, 0.05) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
-/* Vibrant color animations */
-@keyframes colorShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animated-gradient {
-  background: linear-gradient(-45deg, #06b6d4, #3b82f6, #8b5cf6, #ec4899);
-  background-size: 400% 400%;
-  animation: colorShift 15s ease infinite;
-}
-
-/* Enhanced card hover effects */
+/* Professional card hover effects */
 .card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
 }
 
 .card-hover:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* Colorful text gradients */
-.text-gradient-cyan {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-emerald {
-  background: linear-gradient(135deg, #10b981, #059669);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-violet {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Enhanced button styles */
-.btn-gradient {
-  background: linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6);
-  background-size: 200% 200%;
-  transition: all 0.3s ease;
-}
-
-.btn-gradient:hover {
-  background-position: right center;
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(6, 182, 212, 0.4);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Colorful section backgrounds */
-.section-gradient-1 {
-  background: linear-gradient(135deg, #f0f9ff, #e0f2fe, #bae6fd);
+/* Professional button styles */
+.btn-primary {
+  background: #3e9aba;
+  color: white;
+  transition: all 0.2s ease;
 }
 
-.section-gradient-2 {
-  background: linear-gradient(135deg, #f0fdf4, #dcfce7, #bbf7d0);
+.btn-primary:hover {
+  background: #2d7a9a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(62, 154, 186, 0.3);
 }
 
-.section-gradient-3 {
-  background: linear-gradient(135deg, #faf5ff, #f3e8ff, #e9d5ff);
+.btn-secondary {
+  background: #bc851d;
+  color: white;
+  transition: all 0.2s ease;
 }
 
-.section-gradient-4 {
-  background: linear-gradient(135deg, #fff7ed, #fed7aa, #fdba74);
+.btn-secondary:hover {
+  background: #a6731a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(188, 133, 29, 0.3);
 }
 
-/* Enhanced colorful cards */
-.colorful-card-1 {
-  background: linear-gradient(135deg, #ffffff, #f0f9ff);
-  border: 1px solid #0ea5e9;
+.btn-outline {
+  background: transparent;
+  color: #3e9aba;
+  border: 2px solid #3e9aba;
+  transition: all 0.2s ease;
 }
 
-.colorful-card-2 {
-  background: linear-gradient(135deg, #ffffff, #f0fdf4);
-  border: 1px solid #10b981;
+.btn-outline:hover {
+  background: #3e9aba;
+  color: white;
 }
 
-.colorful-card-3 {
-  background: linear-gradient(135deg, #ffffff, #faf5ff);
-  border: 1px solid #8b5cf6;
+/* Professional section backgrounds */
+.section-bg-primary {
+  background: #ffffff;
 }
 
-.colorful-card-4 {
-  background: linear-gradient(135deg, #ffffff, #fff7ed);
-  border: 1px solid #f59e0b;
+.section-bg-secondary {
+  background: #e0ded3;
+}
+
+.section-bg-accent {
+  background: #f8f9fa;
+}
+
+/* Professional cards */
+.card-primary {
+  background: #ffffff;
+  border: 1px solid #e0ded3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card-secondary {
+  background: #f8f9fa;
+  border: 1px solid #e0ded3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Professional text styles */
+.text-primary {
+  color: #4c5a1c;
+}
+
+.text-secondary {
+  color: #5c5c1c;
+}
+
+.text-muted {
+  color: #848180;
+}
+
+.text-accent {
+  color: #3e9aba;
+}
+
+.text-highlight {
+  color: #bc851d;
 }
