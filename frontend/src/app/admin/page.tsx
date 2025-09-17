@@ -34,13 +34,14 @@ export default function AdminLogin() {
     initialValues: {
       email: "",
       password: "",
+      rememberMe: false,
     },
     validationSchema: LoginSchema,
     onSubmit: async (values) => {
       setIsLoading(true);
       setError(null);
       try {
-        await login(values.email, values.password);
+        await login(values.email, values.password, values.rememberMe);
         
         // Force redirect after successful login using window.location to bypass state timing issues
         // Add a small delay to ensure state updates
@@ -166,12 +167,14 @@ export default function AdminLogin() {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
-                id="remember-me"
-                name="remember-me"
+                id="rememberMe"
+                name="rememberMe"
                 type="checkbox"
+                checked={formik.values.rememberMe}
+                onChange={formik.handleChange}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+              <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
                 Remember me
               </label>
             </div>

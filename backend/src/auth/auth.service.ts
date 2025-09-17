@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto, res: Response) {
-    const { email, password } = loginDto;
+    const { email, password, rememberMe } = loginDto;
 
     const user = await this.databaseService.getPrismaClient().user.findUnique({
       where: { email },
@@ -55,16 +55,24 @@ export class AuthService {
       refreshTokenLength: tokens.refreshToken?.length,
     });
 
-    // Set secure HTTP-only cookies
+    // Set secure HTTP-only cookies with different expiry based on remember me
+    const accessTokenExpiry = rememberMe
+      ? process.env.ACCESS_TOKEN_EXPIRY_REMEMBER || '24h' // Longer for remember me
+      : process.env.ACCESS_TOKEN_EXPIRY || '15m'; // Default short expiry
+
+    const refreshTokenExpiry = rememberMe
+      ? process.env.REFRESH_TOKEN_EXPIRY_REMEMBER || '30d' // Much longer for remember me
+      : process.env.REFRESH_TOKEN_EXPIRY || '7d'; // Default expiry
+
     this.cookieService.setAccessTokenCookie(
       res,
       tokens.accessToken,
-      process.env.ACCESS_TOKEN_EXPIRY || '15m',
+      accessTokenExpiry,
     );
     this.cookieService.setRefreshTokenCookie(
       res,
       tokens.refreshToken,
-      process.env.REFRESH_TOKEN_EXPIRY || '7d',
+      refreshTokenExpiry,
     );
 
     return {

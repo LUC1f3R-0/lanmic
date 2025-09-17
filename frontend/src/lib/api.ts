@@ -225,10 +225,10 @@ class ApiService {
     });
   }
 
-  async login(email: string, password: string): Promise<AuthResponse> {
+  async login(email: string, password: string, rememberMe: boolean = false): Promise<AuthResponse> {
     const authData = await this.request<AuthResponse>('/auth/login', {
       method: 'POST',
-      data: { email, password },
+      data: { email, password, rememberMe },
     });
     
     console.log('API Service: Login response received:', authData);
