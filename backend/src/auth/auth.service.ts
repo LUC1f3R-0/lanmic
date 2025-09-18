@@ -1,10 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { DatabaseService } from '../database.service';
 import { CookieService } from './cookie.service';
-import { LoginDto, RefreshTokenDto } from './dto';
+import { EmailService } from './email.service';
+import { LoginDto, RefreshTokenDto, ForgotPasswordDto, VerifyOtpDto, ResetPasswordDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
     private databaseService: DatabaseService,
     private jwtService: JwtService,
     private cookieService: CookieService,
+    private emailService: EmailService,
   ) {}
 
   async login(loginDto: LoginDto, res: Response) {
@@ -297,6 +299,204 @@ export class AuthService {
   async getTotalTokenCount(): Promise<number> {
     const count = await this.databaseService.getPrismaClient().refreshToken.count();
     return count;
+  }
+
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+    const { email } = forgotPasswordDto;
+
+    // Check if user exists (exact match first)
+    let user = await this.databaseService.getPrismaClient().user.findFirst({
+      where: { 
+        email: {
+          equals: email,
+        }
+      },
+    });
+
+    // If not found, try case-insensitive search
+    if (!user) {
+      user = await this.databaseService.getPrismaClient().user.findFirst({
+        where: {
+          email: {
+            contains: email,
+          }
+        }
+      });
+    }
+
+    if (!user) {
+      // Email not found in system
+      throw new BadRequestException('Email address not found in our system. Please check your email address or contact the administrator.');
+    }
+
+    if (!user.isVerified) {
+      throw new BadRequestException('Account is deactivated. Please contact the administrator.');
+    }
+
+    // Generate 5-digit OTP
+    const otp = this.generateOtp();
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Update user with OTP
+    await this.databaseService.getPrismaClient().user.update({
+      where: { id: user.id },
+      data: {
+        otp,
+        otpExpiresAt,
+      },
+    });
+
+    // Send OTP email using SMTP
+    await this.emailService.sendOtpEmail(email, otp);
+
+    return { message: 'OTP has been sent to your email address. Please check your inbox and enter the 5-digit code.' };
+  }
+
+  async verifyOtp(verifyOtpDto: VerifyOtpDto) {
+    const { email, otp } = verifyOtpDto;
+
+    // Try exact match first, then case-insensitive
+    let user = await this.databaseService.getPrismaClient().user.findFirst({
+      where: { 
+        email: {
+          equals: email,
+        }
+      },
+    });
+
+    if (!user) {
+      user = await this.databaseService.getPrismaClient().user.findFirst({
+        where: {
+          email: {
+            contains: email,
+          }
+        }
+      });
+    }
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!user.otp || !user.otpExpiresAt) {
+      throw new BadRequestException('No OTP found for this email');
+    }
+
+    if (new Date() > user.otpExpiresAt) {
+      throw new BadRequestException('OTP has expired');
+    }
+
+    if (user.otp !== otp) {
+      throw new BadRequestException('Invalid OTP');
+    }
+
+    return { message: 'OTP verified successfully' };
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const { email, newPassword, confirmPassword } = resetPasswordDto;
+
+    if (newPassword !== confirmPassword) {
+      throw new BadRequestException('Passwords do not match');
+    }
+
+    // Try exact match first, then case-insensitive
+    let user = await this.databaseService.getPrismaClient().user.findFirst({
+      where: { 
+        email: {
+          equals: email,
+        }
+      },
+    });
+
+    if (!user) {
+      user = await this.databaseService.getPrismaClient().user.findFirst({
+        where: {
+          email: {
+            contains: email,
+          }
+        }
+      });
+    }
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!user.otp || !user.otpExpiresAt) {
+      throw new BadRequestException('No valid OTP found. Please request a new OTP.');
+    }
+
+    if (new Date() > user.otpExpiresAt) {
+      throw new BadRequestException('OTP has expired. Please request a new OTP.');
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user password and clear OTP
+    await this.databaseService.getPrismaClient().user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        otp: null,
+        otpExpiresAt: null,
+      },
+    });
+
+    // Send success email
+    await this.emailService.sendPasswordResetSuccessEmail(email);
+
+    return { message: 'Password reset successfully' };
+  }
+
+  async debugUserLookup(email: string) {
+    try {
+      console.log(`Debug: Looking up user with email: "${email}"`);
+      
+      // Check all users in database
+      const allUsers = await this.databaseService.getPrismaClient().user.findMany({
+        select: { id: true, email: true, username: true, isVerified: true }
+      });
+      
+      console.log('Debug: All users in database:', allUsers);
+      
+      // Try exact match
+      const exactUser = await this.databaseService.getPrismaClient().user.findUnique({
+        where: { email: email },
+      });
+      
+      console.log('Debug: Exact match result:', exactUser);
+      
+      // Try case-insensitive search
+      const caseInsensitiveUser = await this.databaseService.getPrismaClient().user.findFirst({
+        where: { 
+          email: {
+            contains: email,
+          }
+        },
+      });
+      
+      console.log('Debug: Case-insensitive match result:', caseInsensitiveUser);
+      
+      return {
+        searchedEmail: email,
+        allUsers: allUsers,
+        exactMatch: exactUser,
+        caseInsensitiveMatch: caseInsensitiveUser,
+        totalUsers: allUsers.length
+      };
+    } catch (error) {
+      console.error('Debug: Error in user lookup:', error);
+      return {
+        error: error.message,
+        searchedEmail: email
+      };
+    }
+  }
+
+  private generateOtp(): string {
+    return Math.floor(10000 + Math.random() * 90000).toString();
   }
 
   private parseExpiry(expiry: string): number {

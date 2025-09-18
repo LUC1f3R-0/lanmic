@@ -206,7 +206,7 @@ class ApiService {
     });
   }
 
-  async verifyOtp(email: string, otp: string): Promise<VerifyOtpResponse> {
+  async verifyRegistrationOtp(email: string, otp: string): Promise<VerifyOtpResponse> {
     return this.request<VerifyOtpResponse>('/auth/register/otp', {
       method: 'POST',
       data: { email, otp },
@@ -298,6 +298,28 @@ class ApiService {
   // Get axios instance for custom requests
   getAxiosInstance(): AxiosInstance {
     return this.axiosInstance;
+  }
+
+  // Forgot password endpoints
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>('/auth/forgot-password', {
+      method: 'POST',
+      data: { email },
+    });
+  }
+
+  async verifyOtp(email: string, otp: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>('/auth/verify-otp', {
+      method: 'POST',
+      data: { email, otp },
+    });
+  }
+
+  async resetPassword(email: string, newPassword: string, confirmPassword: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>('/auth/reset-password', {
+      method: 'POST',
+      data: { email, newPassword, confirmPassword },
+    });
   }
 
   // Health check

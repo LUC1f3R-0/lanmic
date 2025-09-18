@@ -13,3 +13,12 @@ REFRESH_TOKEN_EXPIRY="7d"
 PORT=3002
 NODE_ENV=development
 FRONTEND_URL="http://localhost:3000"
+
+# SMTP Configuration for Email
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="your-app-password"
+SMTP_FROM_NAME="LANMIC Admin"
+SMTP_FROM_EMAIL="your-email@gmail.com"

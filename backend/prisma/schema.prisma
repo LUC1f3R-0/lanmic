@@ -13,6 +13,8 @@ model User {
   username      String         @unique
   password      String
   isVerified    Boolean        @default(true)
+  otp           String?
+  otpExpiresAt  DateTime?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]

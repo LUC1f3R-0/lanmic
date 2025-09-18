@@ -8,6 +8,9 @@ import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { apiService } from "@/lib/api";
+import ForgotPasswordModal from "@/components/ForgotPasswordModal";
+import OtpVerificationModal from "@/components/OtpVerificationModal";
+import ResetPasswordModal from "@/components/ResetPasswordModal";
 
 const LoginSchema = Yup.object({
   email: Yup.string()
@@ -21,6 +24,10 @@ const LoginSchema = Yup.object({
 export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showOtpVerification, setShowOtpVerification] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
@@ -30,6 +37,33 @@ export default function AdminLogin() {
       router.push('/dashboard');
     }
   }, [isAuthenticated, authLoading, router]);
+
+  // Forgot password handlers
+  const handleForgotPasswordSuccess = (email: string) => {
+    setForgotPasswordEmail(email);
+    setShowForgotPassword(false);
+    setShowOtpVerification(true);
+  };
+
+  const handleOtpVerificationSuccess = () => {
+    setShowOtpVerification(false);
+    setShowResetPassword(true);
+  };
+
+  const handleResetPasswordClose = () => {
+    setShowResetPassword(false);
+    setForgotPasswordEmail("");
+  };
+
+  const handleForgotPasswordClose = () => {
+    setShowForgotPassword(false);
+    setForgotPasswordEmail("");
+  };
+
+  const handleOtpVerificationClose = () => {
+    setShowOtpVerification(false);
+    setForgotPasswordEmail("");
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -176,9 +210,13 @@ export default function AdminLogin() {
               </label>
             </div>
             <div className="text-sm">
-              <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
                 Forgot password?
-              </a>
+              </button>
             </div>
           </div>
 
@@ -230,6 +268,26 @@ export default function AdminLogin() {
         </div>
         </div>
       </div>
+
+      {/* Forgot Password Modals */}
+      <ForgotPasswordModal
+        isOpen={showForgotPassword}
+        onClose={handleForgotPasswordClose}
+        onSuccess={handleForgotPasswordSuccess}
+      />
+
+      <OtpVerificationModal
+        isOpen={showOtpVerification}
+        onClose={handleOtpVerificationClose}
+        email={forgotPasswordEmail}
+        onSuccess={handleOtpVerificationSuccess}
+      />
+
+      <ResetPasswordModal
+        isOpen={showResetPassword}
+        onClose={handleResetPasswordClose}
+        email={forgotPasswordEmail}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { CookieService } from './cookie.service';
+import { EmailService } from './email.service';
 import { TokenCleanupService } from './token-cleanup.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { DatabaseService } from '../database.service';
@@ -22,6 +23,7 @@ import { DatabaseService } from '../database.service';
   providers: [
     AuthService,
     CookieService,
+    EmailService,
     TokenCleanupService,
     JwtStrategy,
     DatabaseService,
