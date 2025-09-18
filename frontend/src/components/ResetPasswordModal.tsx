@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { apiService } from "@/lib/api";
@@ -32,9 +32,53 @@ export default function ResetPasswordModal({
 }: ResetPasswordModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState(180); // 3 minutes in seconds
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+  const countdownRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle countdown and redirect when success is shown
+  useEffect(() => {
+    if (success && countdown > 0) {
+      countdownRef.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            // Redirect when countdown reaches 0
+            router.push("/admin");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+      }
+    };
+  }, [success, countdown, router]);
+
+  // Reset countdown when modal closes or success is cleared
+  useEffect(() => {
+    if (!success) {
+      setCountdown(180);
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+      }
+    }
+  }, [success]);
+
+  // Cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+      }
+    };
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -45,10 +89,10 @@ export default function ResetPasswordModal({
     onSubmit: async (values) => {
       setIsLoading(true);
       setError(null);
+      setSuccess(null);
       try {
-        await apiService.resetPassword(email, values.newPassword, values.confirmPassword);
-        // Redirect to admin login page after successful password reset
-        router.push("/admin");
+        const response = await apiService.resetPassword(email, values.newPassword, values.confirmPassword);
+        setSuccess(response.message || "Password updated successfully!");
       } catch (error: any) {
         console.error("Reset password error:", error);
         setError(error.message || "Failed to reset password. Please try again.");
@@ -80,6 +124,21 @@ export default function ResetPasswordModal({
           </div>
         )}
 
+        {/* Success Message */}
+        {success && (
+          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              {success}
+            </div>
+            <p className="text-sm mt-1">
+              Redirecting to login page in {Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}...
+            </p>
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* New Password Field */}
@@ -99,11 +158,12 @@ export default function ResetPasswordModal({
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.newPassword}
+                disabled={!!success}
                 className={`w-full px-4 py-3 pr-12 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                   formik.touched.newPassword && formik.errors.newPassword
                     ? "border-red-500"
                     : "border-gray-300"
-                }`}
+                } ${success ? "bg-gray-100 cursor-not-allowed" : ""}`}
                 placeholder="Enter new password"
               />
               <button
@@ -145,11 +205,12 @@ export default function ResetPasswordModal({
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.confirmPassword}
+                disabled={!!success}
                 className={`w-full px-4 py-3 pr-12 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                   formik.touched.confirmPassword && formik.errors.confirmPassword
                     ? "border-red-500"
                     : "border-gray-300"
-                }`}
+                } ${success ? "bg-gray-100 cursor-not-allowed" : ""}`}
                 placeholder="Confirm new password"
               />
               <button
@@ -188,46 +249,58 @@ export default function ResetPasswordModal({
 
           {/* Buttons */}
           <div className="flex space-x-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 bg-gray-200 text-gray-800 py-3 px-4 rounded-xl font-semibold hover:bg-gray-300 transition-all duration-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Resetting...
-                </div>
-              ) : (
-                "Reset Password"
-              )}
-            </button>
+            {!success ? (
+              <>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="flex-1 bg-gray-200 text-gray-800 py-3 px-4 rounded-xl font-semibold hover:bg-gray-300 transition-all duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center">
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Resetting...
+                    </div>
+                  ) : (
+                    "Reset Password"
+                  )}
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => router.push("/admin")}
+                className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200"
+              >
+                Go to Login
+              </button>
+            )}
           </div>
         </form>
       </div>

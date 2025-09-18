@@ -25,7 +25,9 @@
     "db:generate": "npx prisma generate",
     "db:seed": "npm run seed",
     "db:reset": "npx prisma migrate reset --force",
-    "db:studio": "npx prisma studio"
+    "db:studio": "npx prisma studio",
+    "smtp:setup": "node setup-smtp.js",
+    "smtp:test": "node test-smtp.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
