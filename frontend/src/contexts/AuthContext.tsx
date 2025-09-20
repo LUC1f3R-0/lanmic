@@ -18,6 +18,9 @@ interface AuthContextType {
     password: string;
     confirmPassword: string;
   }) => Promise<void>;
+  sendVerificationEmail: () => Promise<void>;
+  verifyEmail: (otp: string) => Promise<void>;
+  checkAuthStatus: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,15 +41,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const isAuthenticated = !!user && apiService.isAuthenticated();
+  const isAuthenticated = !!user;
   
   // Debug authentication state
   useEffect(() => {
     console.log('AuthContext: Authentication state changed', {
       user: !!user,
-      apiAuthenticated: apiService.isAuthenticated(),
       isAuthenticated,
-      accessTokenState: apiService.accessToken
+      userData: user
     });
   }, [user, isAuthenticated]);
 
@@ -62,7 +64,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           if (response.user) {
             console.log('AuthContext: User is authenticated, setting user data');
             setUser(response.user);
-            apiService.accessToken = 'authenticated';
           }
         } catch (error: any) {
           // Handle 401 errors gracefully (expected after logout)
@@ -72,11 +73,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             console.log('AuthContext: Authentication check failed:', error.message);
           }
           setUser(null);
-          apiService.accessToken = null;
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
-        apiService.accessToken = null;
       } finally {
         setIsLoading(false);
       }
@@ -88,12 +87,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string, rememberMe: boolean = false) => {
     try {
       setIsLoading(true);
+      console.log('AuthContext: Starting login process...');
       const response = await apiService.login(email, password, rememberMe);
       console.log('AuthContext: Login response received:', response);
+      console.log('AuthContext: Response user data:', response.user);
       
       // Set user state first
       setUser(response.user);
-      console.log('AuthContext: User state updated');
+      console.log('AuthContext: User state updated with:', response.user);
       
       // Force a small delay to ensure state updates
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -163,6 +164,49 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const sendVerificationEmail = async () => {
+    try {
+      await apiService.sendVerificationEmail();
+    } catch (error) {
+      console.error('Send verification email failed:', error);
+      throw error;
+    }
+  };
+
+  const verifyEmail = async (otp: string) => {
+    try {
+      console.log('AuthContext: Starting email verification...');
+      await apiService.verifyEmail(otp);
+      console.log('AuthContext: Email verification successful, refreshing user data...');
+      
+      // Refresh user data to get updated verification status
+      const response = await apiService.request<{ user: User }>('/auth/profile', { method: 'GET' });
+      console.log('AuthContext: Profile response after verification:', response);
+      
+      if (response.user) {
+        console.log('AuthContext: Updating user state with verified user:', response.user);
+        setUser(response.user);
+      }
+    } catch (error) {
+      console.error('Verify email failed:', error);
+      throw error;
+    }
+  };
+
+  const checkAuthStatus = async () => {
+    try {
+      console.log('AuthContext: Manually checking authentication status...');
+      const response = await apiService.request<{ user: User }>('/auth/profile', { method: 'GET' });
+      if (response.user) {
+        console.log('AuthContext: User is authenticated, updating user data');
+        setUser(response.user);
+      }
+    } catch (error: any) {
+      console.log('AuthContext: Authentication check failed:', error.message);
+      setUser(null);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated,
@@ -173,6 +217,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     sendOtp,
     verifyOtp,
     registerDetails,
+    sendVerificationEmail,
+    verifyEmail,
+    checkAuthStatus,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

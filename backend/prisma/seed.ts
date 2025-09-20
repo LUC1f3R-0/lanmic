@@ -11,18 +11,18 @@ async function main() {
 
   // Create admin user
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@gmail.com' },
+    where: { email: 'anonymous.inbox99@gmail.com' },
     update: {
       // Update password in case it changed
       password: hashedPassword,
-      isVerified: true,
+      isVerified: false,
       username: 'admin',
     },
     create: {
-      email: 'admin@gmail.com',
+      email: 'anonymous.inbox99@gmail.com',
       password: hashedPassword,
       username: 'admin',
-      isVerified: true,
+      isVerified: false,
     },
   });
 

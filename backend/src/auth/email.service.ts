@@ -36,7 +36,9 @@ export class EmailService {
       this.transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: parseInt(process.env.SMTP_PORT),
-        secure: process.env.SMTP_SECURE === 'true' || parseInt(process.env.SMTP_PORT) === 465,
+        secure:
+          process.env.SMTP_SECURE === 'true' ||
+          parseInt(process.env.SMTP_PORT) === 465,
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,
@@ -297,6 +299,174 @@ export class EmailService {
             </ul>
             
             <p>If you have any questions or need assistance, please contact the system administrator.</p>
+          </div>
+          <div class="footer">
+            <p>This is an automated message from LANMIC Admin Panel. Please do not reply to this email.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  async sendRegistrationOtpEmail(email: string, otp: string): Promise<void> {
+    if (!this.isTransporterReady || !this.transporter) {
+      this.logger.error(
+        'Email transporter is not ready. Cannot send registration OTP email.',
+      );
+      throw new Error('Email service is not available');
+    }
+
+    try {
+      const mailOptions = {
+        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+        to: email,
+        subject: 'Complete Your Registration - LANMIC Admin Panel',
+        html: this.getRegistrationOtpTemplate(otp),
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      this.logger.log(`Registration OTP email sent successfully to ${email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send registration OTP email to ${email}:`,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async sendVerificationEmail(email: string, token: string): Promise<void> {
+    if (!this.isTransporterReady || !this.transporter) {
+      this.logger.error(
+        'Email transporter is not ready. Cannot send verification email.',
+      );
+      throw new Error('Email service is not available');
+    }
+
+    try {
+      const mailOptions = {
+        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+        to: email,
+        subject: 'Verify Your Email - LANMIC Admin Panel',
+        html: this.getVerificationEmailTemplate(token),
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      this.logger.log(`Verification email sent successfully to ${email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send verification email to ${email}:`,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  private getRegistrationOtpTemplate(otp: string): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Complete Your Registration</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .otp-code { background: #007bff; color: white; font-size: 32px; font-weight: bold; padding: 20px; text-align: center; border-radius: 10px; margin: 20px 0; letter-spacing: 5px; }
+          .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+          .warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🔐 Complete Your Registration</h1>
+            <p>LANMIC Admin Panel</p>
+          </div>
+          <div class="content">
+            <h2>Welcome to LANMIC Admin Panel!</h2>
+            <p>Thank you for starting the registration process. To complete your account setup, please use the verification code below:</p>
+            
+            <div class="otp-code">${otp}</div>
+            
+            <div class="warning">
+              <strong>⚠️ Important:</strong> This code will expire in 10 minutes. Please enter it promptly to complete your registration.
+            </div>
+            
+            <p><strong>Next Steps:</strong></p>
+            <ol>
+              <li>Enter the verification code above in the registration form</li>
+              <li>Complete your profile with username and password</li>
+              <li>Start using the LANMIC Admin Panel</li>
+            </ol>
+            
+            <p>If you didn't request this registration, please ignore this email.</p>
+          </div>
+          <div class="footer">
+            <p>This is an automated message from LANMIC Admin Panel. Please do not reply to this email.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  private getVerificationEmailTemplate(token: string): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Verify Your Email Address</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .otp-code { background: #28a745; color: white; font-size: 32px; font-weight: bold; padding: 20px; text-align: center; border-radius: 10px; margin: 20px 0; letter-spacing: 5px; }
+          .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+          .warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>📧 Verify Your Email</h1>
+            <p>LANMIC Admin Panel</p>
+          </div>
+          <div class="content">
+            <h2>Session Email Verification Required</h2>
+            <p>For security purposes, email verification is required for each login session. Please click the button below to verify your email address:</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${process.env.BACKEND_URL}/auth/verify-email/${token}" 
+                 style="background: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; font-size: 16px;">
+                ✅ Verify My Email
+              </a>
+            </div>
+            
+            <div class="warning">
+              <strong>⚠️ Important:</strong> This verification link will expire in 10 minutes. Please click the button above to complete verification.
+            </div>
+            
+            <p><strong>What happens next:</strong></p>
+            <ol>
+              <li>Click the "Verify My Email" button above</li>
+              <li>You'll be redirected to your dashboard</li>
+              <li>Enjoy full access to all features for this session!</li>
+            </ol>
+            
+            <p><strong>Alternative:</strong> If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style="background: #f8f9fa; padding: 10px; border-radius: 5px; word-break: break-all; font-family: monospace; font-size: 12px;">
+              ${process.env.BACKEND_URL}/auth/verify-email/${token}
+            </p>
+            
+            <p>If you didn't request this verification, please contact the system administrator.</p>
           </div>
           <div class="footer">
             <p>This is an automated message from LANMIC Admin Panel. Please do not reply to this email.</p>

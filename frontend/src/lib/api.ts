@@ -226,12 +226,14 @@ class ApiService {
   }
 
   async login(email: string, password: string, rememberMe: boolean = false): Promise<AuthResponse> {
+    console.log('API Service: Starting login request...');
     const authData = await this.request<AuthResponse>('/auth/login', {
       method: 'POST',
       data: { email, password, rememberMe },
     });
     
-    console.log('API Service: Login response received:', authData);
+    console.log('API Service: Raw login response received:', authData);
+    console.log('API Service: User data from response:', authData.user);
     
     // Backend sets HTTP-only cookies, so we don't need to store tokens in localStorage
     // Just mark that we're authenticated
@@ -240,11 +242,14 @@ class ApiService {
     console.log('API Service: Authentication successful, cookies set by backend');
     
     // Return the response with user data (tokens are in HTTP-only cookies)
-    return {
+    const response = {
       accessToken: 'authenticated', // Placeholder
       refreshToken: 'authenticated', // Placeholder
       user: authData.user
     };
+    
+    console.log('API Service: Returning login response:', response);
+    return response;
   }
 
   async refreshToken(): Promise<AuthResponse> {
@@ -290,8 +295,8 @@ class ApiService {
   // Utility methods
   isAuthenticated(): boolean {
     // Since we're using HTTP-only cookies, we can't directly check them from JavaScript
-    // We'll rely on the instance token which is set to 'authenticated' after successful login
-    // In a real app, you might want to make a request to a /me endpoint to verify authentication
+    // This method is kept for backward compatibility but authentication state
+    // is now managed by the AuthContext based on user state
     return this.accessToken === 'authenticated';
   }
 
@@ -319,6 +324,21 @@ class ApiService {
     return this.request<{ message: string }>('/auth/reset-password', {
       method: 'POST',
       data: { email, newPassword, confirmPassword },
+    });
+  }
+
+  // Email verification endpoints
+  async sendVerificationEmail(): Promise<{ message: string }> {
+    return this.request<{ message: string }>('/auth/send-verification-email', {
+      method: 'POST',
+      data: {},
+    });
+  }
+
+  async verifyEmail(otp: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>('/auth/verify-email', {
+      method: 'POST',
+      data: { otp },
     });
   }
 

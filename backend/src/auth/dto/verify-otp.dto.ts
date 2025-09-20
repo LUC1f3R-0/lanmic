@@ -19,4 +19,3 @@ export class VerifyOtpDto {
   @Length(5, 5, { message: 'OTP must be exactly 5 digits' })
   otp: string;
 }
-
