@@ -77,12 +77,7 @@ export default function AdminLogin() {
       setError(null);
       try {
         await login(values.email, values.password, values.rememberMe);
-        
-        // Force redirect after successful login using window.location to bypass state timing issues
-        // Add a small delay to ensure state updates
-        setTimeout(() => {
-          window.location.href = '/dashboard';
-        }, 500);
+        // The useEffect will handle the redirect when isAuthenticated becomes true
       } catch (error: any) {
         console.error("Login error:", error);
         setError(error.message || "Login failed. Please try again.");

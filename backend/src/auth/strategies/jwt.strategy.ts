@@ -68,9 +68,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('User not found');
     }
 
-    if (!user.isVerified) {
-      throw new UnauthorizedException('Account is deactivated');
-    }
+    // Don't block unverified users at JWT level
+    // Let individual endpoints handle verification requirements
 
     // CRITICAL SECURITY CHECK: Verify that a valid refresh token exists for this user
     // Since we now delete tokens on logout instead of marking as revoked, we only check for non-expired tokens

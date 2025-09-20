@@ -1,25 +1,25 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
+// Removed EmailVerificationModal import - now using link-based verification
 
 export default function DashboardPage() {
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout, sendVerificationEmail } = useAuth();
   const router = useRouter();
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailMessage, setEmailMessage] = useState('');
   
   // Use auth redirect hook to handle authentication failures
   useAuthRedirect();
 
   // Redirect if not authenticated - CRITICAL SECURITY CHECK
   useEffect(() => {
-    console.log('Dashboard page useEffect - isLoading:', isLoading, 'isAuthenticated:', isAuthenticated);
-    
     const verifyAuth = async () => {
       if (!isLoading && !isAuthenticated) {
-        console.log('Unauthorized access attempt to dashboard - redirecting to admin');
         router.push('/admin');
       }
     };
@@ -35,6 +35,20 @@ export default function DashboardPage() {
       console.error('Logout failed:', error);
     }
   };
+
+  const handleSendVerificationEmail = async () => {
+    try {
+      setIsSendingEmail(true);
+      setEmailMessage('');
+      await sendVerificationEmail();
+      setEmailMessage('Verification email sent! Please check your inbox and click the verification link.');
+    } catch (error: any) {
+      setEmailMessage(`Error: ${error.message || 'Failed to send verification email'}`);
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
 
   // Show loading spinner while checking authentication
   if (isLoading) {
@@ -79,6 +93,37 @@ export default function DashboardPage() {
                   {user?.isVerified ? 'Verified Account' : 'Pending Verification'}
                 </p>
               </div>
+              {user?.isVerified ? (
+                <div className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
+                  <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Verified
+                </div>
+              ) : (
+                <button
+                  onClick={handleSendVerificationEmail}
+                  disabled={isSendingEmail}
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center"
+                >
+                  {isSendingEmail ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Send Verification Email
+                    </>
+                  )}
+                </button>
+              )}
               <button
                 onClick={handleLogout}
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center"
@@ -95,25 +140,31 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="h-12 w-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mr-4">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">Welcome back, {user?.username}!</h2>
-                <p className="text-gray-600">You have successfully accessed the secure dashboard.</p>
+
+        {/* Welcome Section - Only show when verified */}
+        {user?.isVerified && (
+          <div className="mb-8">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center">
+                <div className="h-12 w-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mr-4">
+                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Welcome back, {user?.username}!</h2>
+                  <p className="text-gray-600">You have successfully accessed the secure dashboard.</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Dashboard Content - Only show when verified */}
+        {user?.isVerified && (
+          <>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center">
               <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
@@ -227,24 +278,28 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Security Notice */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <div className="flex items-start">
-            <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-              <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
+            {/* Security Notice */}
+            <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
+              <div className="flex items-start">
+                <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-blue-900 mb-1">Secure Access Confirmed</h4>
+                  <p className="text-sm text-blue-700">
+                    You are accessing a secure dashboard. All data is protected and encrypted. 
+                    Your session is monitored for security purposes.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h4 className="text-sm font-semibold text-blue-900 mb-1">Secure Access Confirmed</h4>
-              <p className="text-sm text-blue-700">
-                You are accessing a secure dashboard. All data is protected and encrypted. 
-                Your session is monitored for security purposes.
-              </p>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </main>
+
+      {/* Email verification is now handled via email links - no modal needed */}
     </div>
   );
 }

@@ -8,7 +8,6 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
-  BadRequestException,
   Param,
 } from '@nestjs/common';
 import type { Response } from 'express';
@@ -84,7 +83,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     // Get refresh token from HTTP-only cookie
-    const refreshToken = req.cookies?.refresh_token || '';
+    const refreshToken = (req.cookies as any)?.refresh_token || '';
     const refreshTokenDto: RefreshTokenDto = { refreshToken };
     return this.authService.refreshToken(refreshTokenDto, res);
   }
@@ -105,7 +104,7 @@ export class AuthController {
     description: 'Not authenticated',
   })
   async getProfile(@Req() req: any) {
-    return this.authService.getProfile(req);
+    return await this.authService.getProfile(req);
   }
 
   @Post('logout')
@@ -121,7 +120,7 @@ export class AuthController {
   })
   async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
     // Get refresh token from HTTP-only cookie
-    const refreshToken = req.cookies?.refresh_token || '';
+    const refreshToken = (req.cookies as any)?.refresh_token || '';
     return this.authService.logout(refreshToken, res);
   }
 
@@ -188,6 +187,177 @@ export class AuthController {
   })
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto);
+  }
+
+  @Post('register/email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Send registration OTP',
+    description: 'Sends an OTP to the user email for registration verification',
+  })
+  @ApiBody({ type: ForgotPasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'OTP sent successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input or email already exists',
+  })
+  async sendRegistrationOtp(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return this.authService.sendRegistrationOtp(forgotPasswordDto);
+  }
+
+  @Post('register/otp')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Verify registration OTP',
+    description: 'Verifies the OTP sent to user email during registration',
+  })
+  @ApiBody({ type: VerifyOtpDto })
+  @ApiResponse({
+    status: 200,
+    description: 'OTP verified successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid or expired OTP',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  async verifyRegistrationOtp(@Body() verifyOtpDto: VerifyOtpDto) {
+    return this.authService.verifyRegistrationOtp(verifyOtpDto);
+  }
+
+  @Post('register/details')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Complete registration',
+    description: 'Completes user registration with username and password',
+  })
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Registration completed successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input or passwords do not match',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  async registerDetails(@Body() registerDetailsDto: {
+    email: string;
+    username: string;
+    password: string;
+    confirmPassword: string;
+  }) {
+    return this.authService.registerDetails(registerDetailsDto);
+  }
+
+  @Post('send-verification-email')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Send email verification',
+    description: 'Sends a verification email to the authenticated user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Verification email sent successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Not authenticated',
+  })
+  async sendVerificationEmail(@Req() req: any) {
+    return this.authService.sendVerificationEmail((req as any).user);
+  }
+
+  @Post('verify-email')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Verify email with OTP',
+    description: 'Verifies user email using OTP sent to their email',
+  })
+  @ApiBody({ type: VerifyOtpDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Email verified successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid or expired OTP',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Not authenticated',
+  })
+  async verifyEmail(@Req() req: any, @Body() verifyOtpDto: VerifyOtpDto) {
+    return this.authService.verifyEmail((req as any).user, verifyOtpDto);
+  }
+
+  @Get('verify-email/:token')
+  @HttpCode(HttpStatus.FOUND)
+  @ApiOperation({
+    summary: 'Verify email with token',
+    description: 'Verifies user email using token from email link, logs user in, and redirects to dashboard',
+  })
+  @ApiResponse({
+    status: 302,
+    description: 'Email verified successfully and redirected to dashboard',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid or expired token',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  async verifyEmailByToken(
+    @Param('token') token: string,
+    @Res() res: Response,
+  ) {
+    console.log('=== EMAIL VERIFICATION ENDPOINT CALLED ===');
+    console.log('Token received:', token);
+    console.log('BACKEND_URL:', process.env.BACKEND_URL);
+    console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
+    
+    try {
+      await this.authService.verifyEmailByToken(token, res);
+      
+      // Redirect to frontend dashboard
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      console.log(`Redirecting to: ${frontendUrl}/dashboard`);
+      res.redirect(`${frontendUrl}/dashboard`);
+    } catch (error) {
+      console.error('Email verification error:', error);
+      // Redirect to frontend with error
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      console.log(`Redirecting to error page: ${frontendUrl}/admin?error=verification_failed`);
+      res.redirect(`${frontendUrl}/admin?error=verification_failed`);
+    }
+  }
+
+  @Get('test')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Test endpoint',
+    description: 'Simple test endpoint to verify server is running',
+  })
+  async test() {
+    return { 
+      message: 'Backend server is running!', 
+      timestamp: new Date().toISOString(),
+      backendUrl: process.env.BACKEND_URL,
+      frontendUrl: process.env.FRONTEND_URL
+    };
   }
 
   @Get('debug/user/:email')
