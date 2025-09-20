@@ -3,6 +3,7 @@ import "./globals.css";
 import "aos/dist/aos.css";
 import { geistSans, geistMono } from "@/lib/fonts";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { BlogProvider } from "@/contexts/BlogContext";
 
 export const metadata: Metadata = {
   title: "LANMIC Polymers",
@@ -46,7 +47,9 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <AuthProvider>
-          {children}
+          <BlogProvider>
+            {children}
+          </BlogProvider>
         </AuthProvider>
       </body>
     </html>

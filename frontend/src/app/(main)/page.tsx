@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import AOS from "aos";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBlog } from "@/contexts/BlogContext";
 import { useRouter } from "next/navigation";
 
 // Import Swiper styles
@@ -14,7 +15,10 @@ import "swiper/css/pagination";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();
+  const { getPublishedPosts } = useBlog();
   const router = useRouter();
+  
+  const publishedPosts = getPublishedPosts();
 
   useEffect(() => {
     // Initialize AOS
@@ -498,197 +502,90 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <article
-              className="group bg-gradient-to-br from-white to-amber-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-amber-100"
-              data-aos="flip-left"
-              data-aos-delay="100"
-              data-aos-duration="1000"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="relative overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=250&fit=crop&auto=format&q=80"
-                  alt="Blog Post"
-                  width={400}
-                  height={250}
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    Technology
-                  </span>
-                </div>
+            {publishedPosts.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <svg className="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No Blog Posts Yet</h3>
+                <p className="text-gray-600">Check back soon for the latest insights and innovations in polymer technology.</p>
               </div>
-              <div className="p-6">
-                <div className="flex items-center text-sm text-gray-500 mb-3">
-                  <span>July 20, 2024</span>
-                  <span className="mx-2">•</span>
-                  <span>5 min read</span>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-amber-600 transition-colors duration-300">
-                  <a href="#" className="hover:underline">
-                    Advanced Polymer Manufacturing Techniques
-                  </a>
-                </h3>
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  Discover how our latest manufacturing innovations are revolutionizing 
-                  the polymer industry with sustainable and efficient production methods.
-                </p>
-                <div className="flex items-center">
-                  <Image
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format&q=80"
-                    alt="Author"
-                    width={40}
-                    height={40}
-                    className="w-10 h-10 rounded-full mr-3"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                  <div>
-                    <div className="font-semibold text-gray-900">
-                      Dr. Sarah Chen
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      Chief Technology Officer
+            ) : (
+              publishedPosts.slice(0, 3).map((post, index) => (
+                <article
+                  key={post.id}
+                  className="group bg-gradient-to-br from-white to-amber-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-amber-100"
+                  data-aos="flip-left"
+                  data-aos-delay={`${(index + 1) * 100}`}
+                  data-aos-duration="1000"
+                  data-aos-easing="ease-out-cubic"
+                >
+                  <div className="relative overflow-hidden">
+                    <Image
+                      src={post.blogImage}
+                      alt={post.title}
+                      width={400}
+                      height={250}
+                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute top-4 left-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        post.category === 'Technology' ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white' :
+                        post.category === 'Innovation' ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white' :
+                        post.category === 'Industry' ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white' :
+                        'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                      }`}>
+                        {post.category}
+                      </span>
                     </div>
                   </div>
-                </div>
-              </div>
-            </article>
-
-            <article
-              className="group bg-gradient-to-br from-white to-emerald-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-emerald-100"
-              data-aos="flip-left"
-              data-aos-delay="200"
-              data-aos-duration="1000"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="relative overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop&auto=format&q=80"
-                  alt="Blog Post"
-                  width={400}
-                  height={250}
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    Innovation
-                  </span>
-                </div>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center text-sm text-gray-500 mb-3">
-                  <span>July 18, 2024</span>
-                  <span className="mx-2">•</span>
-                  <span>3 min read</span>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors duration-300">
-                  <a href="#" className="hover:underline">
-                    Sustainable Polymer Solutions for the Future
-                  </a>
-                </h3>
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  Learn about our commitment to environmental responsibility and how we're 
-                  developing eco-friendly polymer alternatives for a sustainable future.
-                </p>
-                <div className="flex items-center">
-                  <Image
-                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face&auto=format&q=80"
-                    alt="Author"
-                    width={40}
-                    height={40}
-                    className="w-10 h-10 rounded-full mr-3"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                  <div>
-                    <div className="font-semibold text-gray-900">
-                      Dr. Michael Rodriguez
+                  <div className="p-6">
+                    <div className="flex items-center text-sm text-gray-500 mb-3">
+                      <span>{post.createdAt.toLocaleDateString()}</span>
+                      {post.readTime && (
+                        <>
+                          <span className="mx-2">•</span>
+                          <span>{post.readTime}</span>
+                        </>
+                      )}
                     </div>
-                    <div className="text-sm text-gray-600">
-                      Research Director
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-amber-600 transition-colors duration-300">
+                      <a href="#" className="hover:underline">
+                        {post.title}
+                      </a>
+                    </h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed">
+                      {post.description}
+                    </p>
+                    <div className="flex items-center">
+                      <Image
+                        src={post.authorImage}
+                        alt={post.authorName}
+                        width={40}
+                        height={40}
+                        className="w-10 h-10 rounded-full mr-3"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      <div>
+                        <div className="font-semibold text-gray-900">
+                          {post.authorName}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {post.authorPosition}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </article>
-
-            <article
-              className="group bg-gradient-to-br from-white to-violet-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-violet-100"
-              data-aos="flip-left"
-              data-aos-delay="300"
-              data-aos-duration="1000"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="relative overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop&auto=format&q=80"
-                  alt="Blog Post"
-                  width={400}
-                  height={250}
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="bg-gradient-to-r from-violet-600 to-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    Industry
-                  </span>
-                </div>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center text-sm text-gray-500 mb-3">
-                  <span>July 15, 2024</span>
-                  <span className="mx-2">•</span>
-                  <span>7 min read</span>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-violet-600 transition-colors duration-300">
-                  <a href="#" className="hover:underline">
-                    Quality Assurance in Polymer Production
-                  </a>
-                </h3>
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  Explore our rigorous quality control processes and how we ensure 
-                  every product meets the highest industry standards and customer expectations.
-                </p>
-                <div className="flex items-center">
-                  <Image
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face&auto=format&q=80"
-                    alt="Author"
-                    width={40}
-                    height={40}
-                    className="w-10 h-10 rounded-full mr-3"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                  <div>
-                    <div className="font-semibold text-gray-900">
-                      Lisa Thompson
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      Quality Assurance Manager
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
+                </article>
+              ))
+            )}
           </div>
         </div>
       </section>
