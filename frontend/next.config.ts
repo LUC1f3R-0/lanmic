@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3002',
+        pathname: '/uploads/**',
+      },
     ],
   },
   // Webpack configuration for production builds (Turbopack handles Node.js polyfills automatically)

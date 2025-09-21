@@ -476,4 +476,489 @@ export class EmailService {
       </html>
     `;
   }
+
+  async sendCurrentEmailVerificationOtp(
+    email: string,
+    otp: string,
+  ): Promise<void> {
+    try {
+      // Check if transporter is ready
+      if (!this.isTransporterReady || !this.transporter) {
+        this.logger.error(
+          'SMTP not configured or transporter not ready! Please configure SMTP settings in .env file',
+        );
+
+        // For development, log the OTP to console
+        console.log(
+          `\n=== CURRENT EMAIL VERIFICATION OTP (SMTP NOT CONFIGURED) ===`,
+        );
+        console.log(`To: ${email}`);
+        console.log(`Subject: Email Change Verification - Current Email`);
+        console.log(`OTP Code: ${otp}`);
+        console.log(`Expires in: 10 minutes`);
+        console.log(`Note: SMTP not configured - email not sent`);
+        console.log(
+          `============================================================\n`,
+        );
+
+        throw new Error(
+          'Email service not configured. Please contact the administrator.',
+        );
+      }
+
+      const mailOptions = {
+        from: `"${process.env.SMTP_FROM_NAME || 'LANMIC Admin'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+        to: email,
+        subject: 'Email Change Verification - Current Email - LANMIC Admin',
+        html: this.getCurrentEmailVerificationTemplate(otp),
+        text: `Your current email verification OTP is: ${otp}. This code will expire in 10 minutes.`,
+      };
+
+      const result = (await this.transporter.sendMail(mailOptions)) as {
+        messageId?: string;
+      };
+      const messageId = result?.messageId || 'N/A';
+      this.logger.log(
+        `Current email verification OTP sent successfully to ${email}. Message ID: ${messageId}`,
+      );
+    } catch (error: unknown) {
+      this.logger.error(
+        `Failed to send current email verification OTP to ${email}:`,
+        error,
+      );
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+
+      // For development, also log to console
+      console.log(`\n=== CURRENT EMAIL VERIFICATION OTP (SMTP FAILED) ===`);
+      console.log(`To: ${email}`);
+      console.log(`Subject: Email Change Verification - Current Email`);
+      console.log(`OTP Code: ${otp}`);
+      console.log(`Expires in: 10 minutes`);
+      console.log(`Error: ${errorMessage}`);
+      console.log(`==================================================\n`);
+
+      // Re-throw the error so the user knows email sending failed
+      throw new Error(
+        'Failed to send verification email. Please try again or contact the administrator.',
+      );
+    }
+  }
+
+  async sendNewEmailVerificationOtp(email: string, otp: string): Promise<void> {
+    try {
+      // Check if transporter is ready
+      if (!this.isTransporterReady || !this.transporter) {
+        this.logger.error(
+          'SMTP not configured or transporter not ready! Please configure SMTP settings in .env file',
+        );
+
+        // For development, log the OTP to console
+        console.log(
+          `\n=== NEW EMAIL VERIFICATION OTP (SMTP NOT CONFIGURED) ===`,
+        );
+        console.log(`To: ${email}`);
+        console.log(`Subject: Email Change Verification - New Email`);
+        console.log(`OTP Code: ${otp}`);
+        console.log(`Expires in: 10 minutes`);
+        console.log(`Note: SMTP not configured - email not sent`);
+        console.log(
+          `========================================================\n`,
+        );
+
+        throw new Error(
+          'Email service not configured. Please contact the administrator.',
+        );
+      }
+
+      const mailOptions = {
+        from: `"${process.env.SMTP_FROM_NAME || 'LANMIC Admin'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+        to: email,
+        subject: 'Email Change Verification - New Email - LANMIC Admin',
+        html: this.getNewEmailVerificationTemplate(otp),
+        text: `Your new email verification OTP is: ${otp}. This code will expire in 10 minutes.`,
+      };
+
+      const result = (await this.transporter.sendMail(mailOptions)) as {
+        messageId?: string;
+      };
+      const messageId = result?.messageId || 'N/A';
+      this.logger.log(
+        `New email verification OTP sent successfully to ${email}. Message ID: ${messageId}`,
+      );
+    } catch (error: unknown) {
+      this.logger.error(
+        `Failed to send new email verification OTP to ${email}:`,
+        error,
+      );
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+
+      // For development, also log to console
+      console.log(`\n=== NEW EMAIL VERIFICATION OTP (SMTP FAILED) ===`);
+      console.log(`To: ${email}`);
+      console.log(`Subject: Email Change Verification - New Email`);
+      console.log(`OTP Code: ${otp}`);
+      console.log(`Expires in: 10 minutes`);
+      console.log(`Error: ${errorMessage}`);
+      console.log(`===============================================\n`);
+
+      // Re-throw the error so the user knows email sending failed
+      throw new Error(
+        'Failed to send verification email. Please try again or contact the administrator.',
+      );
+    }
+  }
+
+  async sendEmailChangeConfirmationEmail(
+    newEmail: string,
+    oldEmail: string,
+  ): Promise<void> {
+    try {
+      // Check if transporter is ready
+      if (!this.isTransporterReady || !this.transporter) {
+        this.logger.warn(
+          'SMTP not configured or transporter not ready, skipping confirmation email',
+        );
+
+        // For development, log to console
+        console.log(
+          `\n=== EMAIL CHANGE CONFIRMATION (SMTP NOT CONFIGURED) ===`,
+        );
+        console.log(`To: ${newEmail}`);
+        console.log(`Subject: Email Address Changed Successfully`);
+        console.log(
+          `Your email address has been successfully changed from ${oldEmail} to ${newEmail}.`,
+        );
+        console.log(`Note: SMTP not configured - email not sent`);
+        console.log(`=====================================================\n`);
+
+        return; // Don't throw error for confirmation email, just skip it
+      }
+
+      const mailOptions = {
+        from: `"${process.env.SMTP_FROM_NAME || 'LANMIC Admin'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+        to: newEmail,
+        subject: 'Email Address Changed Successfully - LANMIC Admin',
+        html: this.getEmailChangeConfirmationTemplate(newEmail, oldEmail),
+        text: `Your email address has been successfully changed from ${oldEmail} to ${newEmail}.`,
+      };
+
+      const result = (await this.transporter.sendMail(mailOptions)) as {
+        messageId?: string;
+      };
+      const messageId = result?.messageId || 'N/A';
+      this.logger.log(
+        `Email change confirmation sent to ${newEmail}. Message ID: ${messageId}`,
+      );
+    } catch (error: unknown) {
+      this.logger.error(
+        `Failed to send email change confirmation to ${newEmail}:`,
+        error,
+      );
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+
+      // For development, also log to console
+      console.log(`\n=== EMAIL CHANGE CONFIRMATION (SMTP FAILED) ===`);
+      console.log(`To: ${newEmail}`);
+      console.log(`Subject: Email Address Changed Successfully`);
+      console.log(
+        `Your email address has been successfully changed from ${oldEmail} to ${newEmail}.`,
+      );
+      console.log(`Error: ${errorMessage}`);
+      console.log(`=============================================\n`);
+
+      // Don't throw error for confirmation email, just log it
+    }
+  }
+
+  async sendPasswordChangeConfirmationEmail(email: string): Promise<void> {
+    try {
+      // Check if transporter is ready
+      if (!this.isTransporterReady || !this.transporter) {
+        this.logger.warn(
+          'SMTP not configured or transporter not ready, skipping password change confirmation email',
+        );
+
+        // For development, log to console
+        console.log(
+          `\n=== PASSWORD CHANGE CONFIRMATION (SMTP NOT CONFIGURED) ===`,
+        );
+        console.log(`To: ${email}`);
+        console.log(`Subject: Password Changed Successfully`);
+        console.log(
+          `Your password has been successfully changed. If you did not make this change, please contact support immediately.`,
+        );
+        console.log(`Note: SMTP not configured - email not sent`);
+        console.log(`=====================================================\n`);
+
+        return; // Don't throw error for confirmation email, just skip it
+      }
+
+      const mailOptions = {
+        from: `"${process.env.SMTP_FROM_NAME || 'LANMIC Admin'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+        to: email,
+        subject: 'Password Changed Successfully - LANMIC Admin',
+        html: this.getPasswordChangeConfirmationTemplate(email),
+        text: `Your password has been successfully changed. If you did not make this change, please contact support immediately.`,
+      };
+
+      const result = (await this.transporter.sendMail(mailOptions)) as {
+        messageId?: string;
+      };
+      const messageId = result?.messageId || 'N/A';
+      this.logger.log(
+        `Password change confirmation sent to ${email}. Message ID: ${messageId}`,
+      );
+    } catch (error: unknown) {
+      this.logger.error(
+        `Failed to send password change confirmation to ${email}:`,
+        error,
+      );
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+
+      // For development, also log to console
+      console.log(`\n=== PASSWORD CHANGE CONFIRMATION (SMTP FAILED) ===`);
+      console.log(`To: ${email}`);
+      console.log(`Subject: Password Changed Successfully`);
+      console.log(
+        `Your password has been successfully changed. If you did not make this change, please contact support immediately.`,
+      );
+      console.log(`Error: ${errorMessage}`);
+      console.log(`=============================================\n`);
+
+      // Don't throw error for confirmation email, just log it
+    }
+  }
+
+  private getCurrentEmailVerificationTemplate(otp: string): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Current Email Verification</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .otp-code { background: #fff; border: 2px dashed #ff6b6b; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px; }
+          .otp-number { font-size: 32px; font-weight: bold; color: #ff6b6b; letter-spacing: 5px; }
+          .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; }
+          .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🔐 Current Email Verification</h1>
+            <p>LANMIC Admin Panel</p>
+          </div>
+          <div class="content">
+            <h2>Email Change Request</h2>
+            <p>You have requested to change your email address. To proceed, we need to verify that you have access to your current email address.</p>
+            
+            <div class="otp-code">
+              <p style="margin: 0 0 10px 0; color: #666;">Your Verification Code:</p>
+              <div class="otp-number">${otp}</div>
+            </div>
+            
+            <div class="warning">
+              <strong>⚠️ Important:</strong>
+              <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                <li>This code will expire in <strong>10 minutes</strong></li>
+                <li>Enter this code to verify your current email</li>
+                <li>After verification, you can enter your new email address</li>
+                <li>If you didn't request this change, please contact the administrator</li>
+              </ul>
+            </div>
+            
+            <p>Once verified, you'll be able to enter your new email address and complete the change process.</p>
+          </div>
+          <div class="footer">
+            <p>This is an automated message from LANMIC Admin Panel. Please do not reply to this email.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  private getNewEmailVerificationTemplate(otp: string): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Email Verification</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .otp-code { background: #fff; border: 2px dashed #4ecdc4; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px; }
+          .otp-number { font-size: 32px; font-weight: bold; color: #4ecdc4; letter-spacing: 5px; }
+          .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; }
+          .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>📧 New Email Verification</h1>
+            <p>LANMIC Admin Panel</p>
+          </div>
+          <div class="content">
+            <h2>Verify Your New Email Address</h2>
+            <p>You have requested to change your email address to this new address. To complete the change, please verify that you have access to this email.</p>
+            
+            <div class="otp-code">
+              <p style="margin: 0 0 10px 0; color: #666;">Your Verification Code:</p>
+              <div class="otp-number">${otp}</div>
+            </div>
+            
+            <div class="warning">
+              <strong>⚠️ Important:</strong>
+              <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                <li>This code will expire in <strong>10 minutes</strong></li>
+                <li>Enter this code to verify your new email address</li>
+                <li>After verification, you'll need to confirm with your password</li>
+                <li>If you didn't request this change, please ignore this email</li>
+              </ul>
+            </div>
+            
+            <p>Once verified, you'll be able to confirm the email change with your current password.</p>
+          </div>
+          <div class="footer">
+            <p>This is an automated message from LANMIC Admin Panel. Please do not reply to this email.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  private getEmailChangeConfirmationTemplate(
+    newEmail: string,
+    oldEmail: string,
+  ): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Address Changed Successfully</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .success-icon { font-size: 48px; margin: 20px 0; }
+          .email-change { background: #e8f5e8; border: 1px solid #28a745; padding: 15px; border-radius: 5px; margin: 20px 0; }
+          .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>✅ Email Address Changed Successfully</h1>
+            <p>LANMIC Admin Panel</p>
+          </div>
+          <div class="content">
+            <div class="success-icon">🎉</div>
+            <h2>Email Change Confirmed!</h2>
+            <p>Your email address has been successfully changed in the LANMIC Admin Panel.</p>
+            
+            <div class="email-change">
+              <p><strong>Email Change Details:</strong></p>
+              <p><strong>Previous Email:</strong> ${oldEmail}</p>
+              <p><strong>New Email:</strong> ${newEmail}</p>
+              <p><strong>Changed On:</strong> ${new Date().toLocaleString()}</p>
+            </div>
+            
+            <p><strong>What's next?</strong></p>
+            <ul>
+              <li>Use your new email address for future logins</li>
+              <li>All future notifications will be sent to this new address</li>
+              <li>Your account security remains unchanged</li>
+            </ul>
+            
+            <p>If you didn't request this change, please contact the system administrator immediately.</p>
+          </div>
+          <div class="footer">
+            <p>This is an automated message from LANMIC Admin Panel. Please do not reply to this email.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  private getPasswordChangeConfirmationTemplate(email: string): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Password Changed Successfully</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background-color: #4CAF50; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+          .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }
+          .footer { background-color: #333; color: white; padding: 15px; text-align: center; border-radius: 0 0 5px 5px; font-size: 12px; }
+          .alert { background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 5px; margin: 20px 0; }
+          .success { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🔒 Password Changed Successfully</h1>
+          </div>
+          <div class="content">
+            <div class="success">
+              <h2>✅ Password Update Confirmed</h2>
+              <p>Your password has been successfully changed for your LANMIC Admin account.</p>
+            </div>
+            
+            <p><strong>Account Details:</strong></p>
+            <ul>
+              <li><strong>Email:</strong> ${email}</li>
+              <li><strong>Date:</strong> ${new Date().toLocaleString()}</li>
+              <li><strong>Status:</strong> Password successfully updated</li>
+            </ul>
+            
+            <div class="alert">
+              <h3>⚠️ Security Notice</h3>
+              <p>If you did not make this password change, please:</p>
+              <ul>
+                <li>Contact the system administrator immediately</li>
+                <li>Check your account for any unauthorized activity</li>
+                <li>Consider changing your password again if you suspect unauthorized access</li>
+              </ul>
+            </div>
+            
+            <p><strong>Next Steps:</strong></p>
+            <ul>
+              <li>You can now log in with your new password</li>
+              <li>Make sure to use a strong, unique password</li>
+              <li>Consider enabling two-factor authentication if available</li>
+            </ul>
+          </div>
+          <div class="footer">
+            <p>This is an automated message from LANMIC Admin Panel. Please do not reply to this email.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
 }

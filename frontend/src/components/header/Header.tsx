@@ -40,6 +40,7 @@ const Header = () => {
             width={60}
             height={60}
             className="w-15 h-15 object-contain"
+            style={{ width: 'auto', height: 'auto' }}
             priority
           />
           <div className="text-xl font-bold text-primary-500 hidden sm:block">

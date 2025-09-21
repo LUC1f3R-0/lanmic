@@ -4,51 +4,32 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useBlog } from '@/contexts/BlogContext';
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
-interface BlogPost {
-  id: number;
-  title: string;
-  description: string;
-  content: string;
-  category: string;
-  readTime: string;
-  authorName: string;
-  authorPosition: string;
-  authorImage: string;
-  blogImage: string;
-  createdAt: Date;
-  published: boolean;
-}
-
 export default function DashboardPage() {
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
-  const { blogPosts, setBlogPosts, addBlogPost, updateBlogPost, deleteBlogPost } = useBlog();
+  const { user, isAuthenticated, isLoading, logout, sendVerificationEmail } = useAuth();
   const router = useRouter();
-  const [newPost, setNewPost] = useState({ 
-    title: '', 
-    description: '', 
-    content: '', 
-    category: 'Technology', 
-    readTime: '', 
-    authorName: '', 
-    authorPosition: '', 
-    authorImage: '', 
-    blogImage: '' 
-  });
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editPost, setEditPost] = useState({ 
-    title: '', 
-    description: '', 
-    content: '', 
-    category: 'Technology', 
-    readTime: '', 
-    authorName: '', 
-    authorPosition: '', 
-    authorImage: '', 
-    blogImage: '' 
-  });
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+
+  // Handle sending verification email
+  const handleSendVerificationEmail = async () => {
+    if (!user?.email) {
+      console.error('No user email available');
+      return;
+    }
+    
+    try {
+      setIsSendingEmail(true);
+      setEmailSent(false);
+      await sendVerificationEmail(user.email);
+      setEmailSent(true);
+    } catch (error) {
+      console.error('Failed to send verification email:', error);
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
   
   // Use auth redirect hook to handle authentication failures
   useAuthRedirect();
@@ -57,12 +38,21 @@ export default function DashboardPage() {
   useEffect(() => {
     const verifyAuth = async () => {
       if (!isLoading && !isAuthenticated) {
+        console.log('Dashboard: User not authenticated, redirecting to admin');
         router.push('/admin');
       }
     };
 
     verifyAuth();
   }, [isAuthenticated, isLoading, router]);
+
+  // Additional check: If user becomes null while on dashboard, redirect immediately
+  useEffect(() => {
+    if (user === null && !isLoading) {
+      console.log('Dashboard: User became null, redirecting to admin');
+      router.push('/admin');
+    }
+  }, [user, isLoading, router]);
 
   const handleLogout = async () => {
     try {
@@ -73,110 +63,12 @@ export default function DashboardPage() {
     }
   };
 
-  // CRUD Operations
-  const handleCreate = () => {
-    if (newPost.title.trim() && newPost.authorName.trim()) {
-      const post: BlogPost = {
-        id: Date.now(),
-        title: newPost.title,
-        description: newPost.description,
-        content: newPost.content,
-        category: newPost.category,
-        readTime: newPost.readTime,
-        authorName: newPost.authorName,
-        authorPosition: newPost.authorPosition,
-        authorImage: newPost.authorImage || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format&q=80",
-        blogImage: newPost.blogImage || "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=250&fit=crop&auto=format&q=80",
-        createdAt: new Date(),
-        published: true
-      };
-      addBlogPost(post);
-      setNewPost({ 
-        title: '', 
-        description: '', 
-        content: '', 
-        category: 'Technology', 
-        readTime: '', 
-        authorName: '', 
-        authorPosition: '', 
-        authorImage: '', 
-        blogImage: '' 
-      });
-    }
+  const handleNavigateToBlogs = () => {
+    router.push('/dashboard/blogs');
   };
 
-  const handleUpdate = (id: number) => {
-    if (editPost.title.trim() && editPost.authorName.trim()) {
-      const updatedPost: BlogPost = {
-        id,
-        title: editPost.title,
-        description: editPost.description,
-        content: editPost.content,
-        category: editPost.category,
-        readTime: editPost.readTime,
-        authorName: editPost.authorName,
-        authorPosition: editPost.authorPosition,
-        authorImage: editPost.authorImage || blogPosts.find(p => p.id === id)?.authorImage || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format&q=80",
-        blogImage: editPost.blogImage || blogPosts.find(p => p.id === id)?.blogImage || "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=250&fit=crop&auto=format&q=80",
-        createdAt: blogPosts.find(p => p.id === id)?.createdAt || new Date(),
-        published: blogPosts.find(p => p.id === id)?.published || true
-      };
-      updateBlogPost(id, updatedPost);
-      setEditingId(null);
-      setEditPost({ 
-        title: '', 
-        description: '', 
-        content: '', 
-        category: 'Technology', 
-        readTime: '', 
-        authorName: '', 
-        authorPosition: '', 
-        authorImage: '', 
-        blogImage: '' 
-      });
-    }
-  };
-
-  const handleDelete = (id: number) => {
-    deleteBlogPost(id);
-  };
-
-  const handleTogglePublish = (id: number) => {
-    const post = blogPosts.find(p => p.id === id);
-    if (post) {
-      const updatedPost = { ...post, published: !post.published };
-      updateBlogPost(id, updatedPost);
-    }
-  };
-
-  const startEdit = (post: BlogPost) => {
-    setEditingId(post.id);
-    setEditPost({ 
-      title: post.title, 
-      description: post.description,
-      content: post.content,
-      category: post.category,
-      readTime: post.readTime,
-      authorName: post.authorName,
-      authorPosition: post.authorPosition,
-      authorImage: post.authorImage,
-      blogImage: post.blogImage
-    });
-  };
-
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditPost({ 
-      title: '', 
-      description: '', 
-      content: '', 
-      category: 'Technology', 
-      readTime: '', 
-      authorName: '', 
-      authorPosition: '', 
-      authorImage: '', 
-      blogImage: '' 
-    });
+  const handleNavigateToSettings = () => {
+    router.push('/dashboard/settings');
   };
 
 
@@ -210,6 +102,7 @@ export default function DashboardPage() {
                 width={60}
                 height={60}
                 className="w-15 h-15 object-contain mr-3"
+                style={{ width: 'auto', height: 'auto' }}
               />
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Blog Management</h1>
@@ -217,6 +110,38 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              {/* Email Verification Status */}
+              {user?.isVerified ? (
+                <div className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                  <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Verified
+                </div>
+              ) : (
+                <button
+                  onClick={handleSendVerificationEmail}
+                  disabled={isSendingEmail}
+                  className="bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center"
+                >
+                  {isSendingEmail ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Verify Email
+                    </>
+                  )}
+                </button>
+              )}
+              
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-900">{user?.username || user?.email}</p>
                 <p className="text-xs text-gray-500">Admin User</p>
@@ -237,334 +162,155 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {/* Create New Blog Post Form */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Create New Blog Post</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
-              <input
-                type="text"
-                value={newPost.title}
-                onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter blog post title"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-              <select
-                value={newPost.category}
-                onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="Technology">Technology</option>
-                <option value="Innovation">Innovation</option>
-                <option value="Industry">Industry</option>
-                <option value="Research">Research</option>
-                <option value="Sustainability">Sustainability</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Author Name *</label>
-              <input
-                type="text"
-                value={newPost.authorName}
-                onChange={(e) => setNewPost({ ...newPost, authorName: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter author name"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Author Position</label>
-              <input
-                type="text"
-                value={newPost.authorPosition}
-                onChange={(e) => setNewPost({ ...newPost, authorPosition: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter author position"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Read Time</label>
-              <input
-                type="text"
-                value={newPost.readTime}
-                onChange={(e) => setNewPost({ ...newPost, readTime: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="e.g., 5 min read"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Author Image URL</label>
-              <input
-                type="url"
-                value={newPost.authorImage}
-                onChange={(e) => setNewPost({ ...newPost, authorImage: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter author image URL"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Blog Image URL</label>
-              <input
-                type="url"
-                value={newPost.blogImage}
-                onChange={(e) => setNewPost({ ...newPost, blogImage: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter blog image URL"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-              <textarea
-                value={newPost.description}
-                onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter blog post description"
-                rows={3}
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
-              <textarea
-                value={newPost.content}
-                onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter blog post content"
-                rows={4}
-              />
+        {/* Email Verification Notice */}
+        {!user?.isVerified && (
+          <div className={`border rounded-xl p-6 mb-8 ${
+            emailSent 
+              ? 'bg-green-50 border-green-200' 
+              : 'bg-orange-50 border-orange-200'
+          }`}>
+            <div className="flex items-center">
+              <div className={`h-10 w-10 rounded-full flex items-center justify-center mr-4 ${
+                emailSent ? 'bg-green-100' : 'bg-orange-100'
+              }`}>
+                {emailSent ? (
+                  <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                ) : (
+                  <svg className="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 18.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1">
+                {emailSent ? (
+                  <>
+                    <h3 className="text-lg font-semibold text-green-900 mb-1">Verification Email Sent!</h3>
+                    <p className="text-green-700 mb-3">
+                      We've sent a verification link to your email address. Please check your inbox and click the link to verify your email. You'll be redirected to the dashboard once verified.
+                    </p>
+                    <button
+                      onClick={handleSendVerificationEmail}
+                      disabled={isSendingEmail}
+                      className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center"
+                    >
+                      {isSendingEmail ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          Resend Email
+                        </>
+                      )}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-lg font-semibold text-orange-900 mb-1">Email Verification Required</h3>
+                    <p className="text-orange-700 mb-3">
+                      Please verify your email address to access the dashboard features. Click the "Verify Email" button above to get started.
+                    </p>
+                    <button
+                      onClick={handleSendVerificationEmail}
+                      disabled={isSendingEmail}
+                      className="bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center"
+                    >
+                      {isSendingEmail ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          Verify Email Now
+                        </>
+                      )}
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-          <button
-            onClick={handleCreate}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
-          >
-            <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Create Blog Post
-          </button>
-        </div>
+        )}
 
-        {/* Blog Posts List */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Blog Posts ({blogPosts.length})</h2>
-          
-          {blogPosts.length === 0 ? (
-            <div className="text-center py-8">
-              <svg className="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-              </svg>
-              <p className="text-gray-500">No blog posts yet. Create your first blog post above!</p>
+        {/* Dashboard Cards - Only show if verified */}
+        {user?.isVerified && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Blog Management Card */}
+            <div 
+              onClick={handleNavigateToBlogs}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
+            >
+              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-4 group-hover:bg-blue-200 transition-colors duration-200">
+                <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Blog Management</h3>
+              <p className="text-gray-600 text-sm mb-4">
+                Create, edit, and manage your blog posts. Upload images, set categories, and control publishing.
+              </p>
+              <div className="flex items-center text-blue-600 text-sm font-medium group-hover:text-blue-700">
+                <span>Manage Blogs</span>
+                <svg className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-6">
-              {blogPosts.map((post) => (
-                <div key={post.id} className={`border rounded-lg p-6 ${!post.published ? 'bg-gray-50' : 'bg-white'}`}>
-                  {editingId === post.id ? (
-                    // Edit Mode
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                          <input
-                            type="text"
-                            value={editPost.title}
-                            onChange={(e) => setEditPost({ ...editPost, title: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                          <select
-                            value={editPost.category}
-                            onChange={(e) => setEditPost({ ...editPost, category: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          >
-                            <option value="Technology">Technology</option>
-                            <option value="Innovation">Innovation</option>
-                            <option value="Industry">Industry</option>
-                            <option value="Research">Research</option>
-                            <option value="Sustainability">Sustainability</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Author Name</label>
-                          <input
-                            type="text"
-                            value={editPost.authorName}
-                            onChange={(e) => setEditPost({ ...editPost, authorName: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Author Position</label>
-                          <input
-                            type="text"
-                            value={editPost.authorPosition}
-                            onChange={(e) => setEditPost({ ...editPost, authorPosition: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Read Time</label>
-                          <input
-                            type="text"
-                            value={editPost.readTime}
-                            onChange={(e) => setEditPost({ ...editPost, readTime: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Author Image URL</label>
-                          <input
-                            type="url"
-                            value={editPost.authorImage}
-                            onChange={(e) => setEditPost({ ...editPost, authorImage: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          />
-                        </div>
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Blog Image URL</label>
-                          <input
-                            type="url"
-                            value={editPost.blogImage}
-                            onChange={(e) => setEditPost({ ...editPost, blogImage: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          />
-                        </div>
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                          <textarea
-                            value={editPost.description}
-                            onChange={(e) => setEditPost({ ...editPost, description: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            rows={3}
-                          />
-                        </div>
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
-                          <textarea
-                            value={editPost.content}
-                            onChange={(e) => setEditPost({ ...editPost, content: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            rows={4}
-                          />
-                        </div>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleUpdate(post.id)}
-                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                        >
-                          Save Changes
-                        </button>
-                        <button
-                          onClick={cancelEdit}
-                          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    // View Mode
-                    <div className="space-y-4">
-                      {/* Blog Image Preview */}
-                      <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
-                        <Image
-                          src={post.blogImage}
-                          alt={post.title}
-                          fill
-                          className="object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
-                        />
-                        <div className="absolute top-3 left-3">
-                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            post.category === 'Technology' ? 'bg-orange-100 text-orange-800' :
-                            post.category === 'Innovation' ? 'bg-teal-100 text-teal-800' :
-                            post.category === 'Industry' ? 'bg-purple-100 text-purple-800' :
-                            'bg-blue-100 text-blue-800'
-                          }`}>
-                            {post.category}
-                          </span>
-                        </div>
-                        <div className="absolute top-3 right-3">
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            post.published ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {post.published ? 'Published' : 'Draft'}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-bold text-gray-900 mb-2">{post.title}</h3>
-                          <p className="text-gray-600 mb-3">{post.description}</p>
-                          <div className="flex items-center text-sm text-gray-500 mb-3">
-                            <span>{post.createdAt.toLocaleDateString()}</span>
-                            {post.readTime && (
-                              <>
-                                <span className="mx-2">•</span>
-                                <span>{post.readTime}</span>
-                              </>
-                            )}
-                          </div>
-                          <div className="flex items-center">
-                            <Image
-                              src={post.authorImage}
-                              alt={post.authorName}
-                              width={32}
-                              height={32}
-                              className="w-8 h-8 rounded-full mr-3"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                              }}
-                            />
-                            <div>
-                              <div className="font-semibold text-gray-900 text-sm">{post.authorName}</div>
-                              <div className="text-xs text-gray-600">{post.authorPosition}</div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2 ml-4">
-                          <button
-                            onClick={() => handleTogglePublish(post.id)}
-                            className={`px-3 py-1 rounded text-sm font-medium transition-colors duration-200 ${
-                              post.published 
-                                ? 'bg-yellow-600 hover:bg-yellow-700 text-white' 
-                                : 'bg-green-600 hover:bg-green-700 text-white'
-                            }`}
-                          >
-                            {post.published ? 'Unpublish' : 'Publish'}
-                          </button>
-                          <button
-                            onClick={() => startEdit(post)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(post.id)}
-                            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+
+            {/* User Settings Card */}
+            <div 
+              onClick={handleNavigateToSettings}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
+            >
+              <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mb-4 group-hover:bg-green-200 transition-colors duration-200">
+                <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">User Settings</h3>
+              <p className="text-gray-600 text-sm mb-4">
+                Update your profile information, change email address, and manage your account settings.
+              </p>
+              <div className="flex items-center text-green-600 text-sm font-medium group-hover:text-green-700">
+                <span>Manage Settings</span>
+                <svg className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* Coming Soon Card */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 opacity-60">
+              <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-lg mb-4">
+                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">More Features</h3>
+              <p className="text-gray-600 text-sm mb-4">
+                Additional features and tools will be available here in future updates.
+              </p>
+              <div className="flex items-center text-gray-400 text-sm font-medium">
+                <span>Coming Soon</span>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

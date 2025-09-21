@@ -10,12 +10,16 @@ import * as bcrypt from 'bcrypt';
 import { DatabaseService } from '../database.service';
 import { CookieService } from './cookie.service';
 import { EmailService } from './email.service';
+import { TokenCleanupService } from './token-cleanup.service';
 import {
   LoginDto,
   RefreshTokenDto,
   ForgotPasswordDto,
   VerifyOtpDto,
+  VerifyEmailChangeOtpDto,
   ResetPasswordDto,
+  ConfirmEmailChangeDto,
+  ChangePasswordDto,
 } from './dto';
 
 @Injectable()
@@ -25,47 +29,80 @@ export class AuthService {
     private jwtService: JwtService,
     private cookieService: CookieService,
     private emailService: EmailService,
+    private tokenCleanupService: TokenCleanupService,
   ) {}
 
   async login(loginDto: LoginDto, res: Response) {
     const { email, password, rememberMe } = loginDto;
+
+    // Debug logging for login attempts
+    console.log('Auth Service: Login attempt:', {
+      email: email,
+      hasPassword: !!password,
+      passwordLength: password?.length,
+      rememberMe: rememberMe,
+    });
 
     const user = await this.databaseService.getPrismaClient().user.findUnique({
       where: { email },
     });
 
     if (!user) {
+      console.log('Auth Service: User not found for email:', email);
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    console.log('Auth Service: User found:', {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      hasPassword: !!user.password,
+      isVerified: user.isVerified,
+    });
 
     // Remove this check - we want users to be able to login even if unverified
     // They will need to verify email to access dashboard content
 
     if (!user.password) {
+      console.log('Auth Service: User has no password set');
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log('Auth Service: Password validation result:', isPasswordValid);
+
     if (!isPasswordValid) {
+      console.log(
+        'Auth Service: Password validation failed for user:',
+        user.id,
+      );
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Clear OTP data but keep verification status
+    // Clear OTP data and reset verification status for new session
+    // BUT preserve email change OTP data if it exists
+    const updateData: any = {
+      isVerified: false, // Reset email verification on every login - user must verify email for each session
+    };
+
+    // Only clear OTP data if it's not for email change process
+    if (!user.newEmail) {
+      updateData.otp = null;
+      updateData.otpExpiresAt = null;
+    }
+
     await this.databaseService.getPrismaClient().user.update({
       where: { id: user.id },
-      data: {
-        otp: null,
-        otpExpiresAt: null,
-      },
+      data: updateData,
     });
 
-    // Clean up old tokens for this user before generating new ones
+    // Clean up ALL existing tokens for this user before generating new ones
     const beforeCleanup = await this.getUserTokenCount(user.id);
-    await this.cleanupUserTokens(user.id);
+    await this.cleanupAllUserTokens(user.id);
     const afterCleanup = await this.getUserTokenCount(user.id);
 
     // Generate tokens
-    const tokens = await this.generateTokens(user.id);
+    const tokens = await this.generateTokens(user.id, rememberMe);
     const afterLogin = await this.getUserTokenCount(user.id);
 
     console.log(
@@ -137,6 +174,8 @@ export class AuthService {
     }
 
     if (new Date() > tokenRecord.expiresAt) {
+      // Clean up expired tokens for this user before throwing error
+      await this.cleanupUserTokens(tokenRecord.userId);
       throw new UnauthorizedException('Refresh token has expired');
     }
 
@@ -152,8 +191,21 @@ export class AuthService {
     // Don't reset verification status on token refresh
     // Let the user's current verification status persist
 
-    // Generate new tokens
-    const tokens = await this.generateTokens(tokenRecord.user.id);
+    // Check if user should be logged out based on rememberMe status
+    if (!tokenRecord.rememberMe) {
+      // If rememberMe was false, log out the user by clearing tokens
+      await this.tokenCleanupService.cleanupAllTokensForUser(
+        tokenRecord.user.id,
+      );
+      this.cookieService.clearAllAuthCookies(res);
+      throw new UnauthorizedException('Session expired - please login again');
+    }
+
+    // Generate new tokens with the same rememberMe status
+    const tokens = await this.generateTokens(
+      tokenRecord.user.id,
+      tokenRecord.rememberMe,
+    );
 
     // Set new secure HTTP-only cookies
     this.cookieService.setAccessTokenCookie(
@@ -168,7 +220,9 @@ export class AuthService {
     );
 
     return {
-      message: tokenRecord.user.isVerified ? 'Tokens refreshed successfully' : 'Tokens refreshed successfully - Email verification required',
+      message: tokenRecord.user.isVerified
+        ? 'Tokens refreshed successfully'
+        : 'Tokens refreshed successfully - Email verification required',
       user: {
         id: tokenRecord.user.id,
         email: tokenRecord.user.email,
@@ -178,29 +232,47 @@ export class AuthService {
     };
   }
 
-  async logout(refreshToken: string, res: Response) {
+  async logout(refreshToken: string, res: Response, userId?: number | null) {
     try {
-      // Find and completely delete the specific refresh token
-      if (refreshToken) {
+      let targetUserId: number | null = userId || null;
+
+      // Find the user from the refresh token if userId not provided
+      if (!targetUserId && refreshToken) {
         const tokenRecord = await this.databaseService
           .getPrismaClient()
           .refreshToken.findUnique({
             where: { token: refreshToken },
+            include: { user: true },
           });
 
         if (tokenRecord) {
-          const beforeDelete = await this.getTotalTokenCount();
-          await this.databaseService.getPrismaClient().refreshToken.delete({
-            where: { id: tokenRecord.id },
-          });
-          const afterDelete = await this.getTotalTokenCount();
+          targetUserId = tokenRecord.userId;
           console.log(
-            `Auth Service: Deleted refresh token with ID ${tokenRecord.id} on logout. Total tokens: ${beforeDelete} -> ${afterDelete}`,
+            `Auth Service: Logout requested for user ${tokenRecord.user.email} (ID: ${targetUserId})`,
           );
-
-          // Don't reset verification status on logout
-          // Let the user's verification status persist
         }
+      } else if (targetUserId) {
+        console.log(
+          `Auth Service: Logout requested for user ID ${targetUserId}`,
+        );
+      }
+
+      // Clean up ALL tokens for this user on logout and reset email verification
+      if (targetUserId) {
+        const deletedCount =
+          await this.tokenCleanupService.cleanupAllTokensForUser(targetUserId);
+        console.log(
+          `Auth Service: Logout cleanup - Deleted ${deletedCount} tokens for user ${targetUserId}`,
+        );
+
+        // Reset email verification on logout - user must verify email again on next login
+        await this.databaseService.getPrismaClient().user.update({
+          where: { id: targetUserId },
+          data: { isVerified: false },
+        });
+        console.log(
+          `Auth Service: Reset email verification for user ${targetUserId} on logout`,
+        );
       }
 
       // Clear all authentication cookies
@@ -233,7 +305,7 @@ export class AuthService {
     };
   }
 
-  private async generateTokens(userId: number) {
+  private async generateTokens(userId: number, rememberMe: boolean = false) {
     const payload = {
       sub: userId,
       type: 'access',
@@ -256,6 +328,7 @@ export class AuthService {
         token: refreshToken,
         expiresAt: refreshTokenExpiry,
         userId,
+        rememberMe: rememberMe,
         createdAt: new Date(),
       },
     });
@@ -305,19 +378,17 @@ export class AuthService {
 
   // Method to clean up old tokens for a user (delete expired tokens)
   async cleanupUserTokens(userId: number) {
-    const result = await this.databaseService
-      .getPrismaClient()
-      .refreshToken.deleteMany({
-        where: {
-          userId,
-          expiresAt: { lt: new Date() }, // Only expired tokens
-        },
-      });
-    if (result.count > 0) {
-      console.log(
-        `Auth Service: Cleaned up ${result.count} expired tokens for user ${userId}`,
-      );
-    }
+    return await this.tokenCleanupService.cleanupExpiredTokensForUser(userId);
+  }
+
+  // Method to clean up ALL tokens for a user (used for logout)
+  async cleanupAllUserTokens(userId: number) {
+    return await this.tokenCleanupService.cleanupAllTokensForUser(userId);
+  }
+
+  // Manual cleanup method for administrators
+  async manualCleanup(): Promise<number> {
+    return await this.tokenCleanupService.manualCleanup();
   }
 
   // Method to get token count for a user (for debugging/testing)
@@ -482,6 +553,18 @@ export class AuthService {
     // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
+    // CRITICAL SECURITY FIX: Clean up ALL tokens for this user before password reset
+    // This prevents session hijacking and ensures the user must re-authenticate
+    console.log(
+      'Auth Service: Cleaning up all tokens for user before password reset:',
+      user.id,
+    );
+    const tokensCleaned =
+      await this.tokenCleanupService.cleanupAllTokensForUser(user.id);
+    console.log(
+      `Auth Service: Cleaned up ${tokensCleaned} tokens for user ${user.id}`,
+    );
+
     // Update user password and clear OTP
     await this.databaseService.getPrismaClient().user.update({
       where: { id: user.id },
@@ -495,7 +578,82 @@ export class AuthService {
     // Send success email
     await this.emailService.sendPasswordResetSuccessEmail(email);
 
-    return { message: 'Password reset successfully' };
+    return {
+      message:
+        'Password reset successfully. You will need to login again with your new password.',
+      requiresReauth: true, // Signal to frontend that re-authentication is required
+    };
+  }
+
+  async changePassword(user: any, changePasswordDto: ChangePasswordDto) {
+    const { currentPassword, newPassword, confirmPassword } = changePasswordDto;
+
+    // Validate that new password and confirm password match
+    if (newPassword !== confirmPassword) {
+      throw new BadRequestException('New passwords do not match');
+    }
+
+    // Validate that new password is different from current password
+    if (currentPassword === newPassword) {
+      throw new BadRequestException(
+        'New password must be different from current password',
+      );
+    }
+
+    // Get fresh user data from database
+    const userRecord = await this.databaseService
+      .getPrismaClient()
+      .user.findUnique({
+        where: { id: user.id },
+      });
+
+    if (!userRecord) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await bcrypt.compare(
+      currentPassword,
+      userRecord.password,
+    );
+
+    if (!isCurrentPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    // Hash the new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+
+    // CRITICAL SECURITY FIX: Clean up ALL tokens for this user before password change
+    // This prevents session hijacking and ensures the user must re-authenticate
+    console.log(
+      'Auth Service: Cleaning up all tokens for user before password change:',
+      user.id,
+    );
+    const tokensCleaned =
+      await this.tokenCleanupService.cleanupAllTokensForUser(user.id);
+    console.log(
+      `Auth Service: Cleaned up ${tokensCleaned} tokens for user ${user.id}`,
+    );
+
+    // Update user password
+    await this.databaseService.getPrismaClient().user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedNewPassword,
+      },
+    });
+
+    // Send password change confirmation email
+    await this.emailService.sendPasswordChangeConfirmationEmail(
+      userRecord.email,
+    );
+
+    return {
+      message:
+        'Password changed successfully. You will need to login again with your new password.',
+      requiresReauth: true, // Signal to frontend that re-authentication is required
+    };
   }
 
   async debugUserLookup(email: string) {
@@ -685,7 +843,7 @@ export class AuthService {
         data: {
           username,
           password: hashedPassword,
-          isVerified: true, // Mark as verified after successful registration
+          isVerified: true, // Mark as verified after successful registration - user can see dashboard cards
           otp: null,
           otpExpiresAt: null,
         },
@@ -702,8 +860,15 @@ export class AuthService {
     };
   }
 
-  async sendVerificationEmail(user: any) {
-    const { email } = user;
+  async sendVerificationEmail(user: any, providedEmail?: string) {
+    const email = providedEmail || user.email;
+
+    // Validate that the provided email matches the logged-in user's email
+    if (providedEmail && providedEmail !== user.email) {
+      throw new BadRequestException(
+        'Email must match your logged-in email address',
+      );
+    }
 
     // Generate verification token
     const verificationToken = this.generateVerificationToken();
@@ -768,7 +933,7 @@ export class AuthService {
 
   async verifyEmailByToken(token: string, res: Response) {
     console.log('AuthService: Starting email verification for token:', token);
-    
+
     // Find user by verification token
     const user = await this.databaseService.getPrismaClient().user.findFirst({
       where: { otp: token },
@@ -792,11 +957,11 @@ export class AuthService {
     }
 
     console.log('AuthService: Updating user as verified');
-    // Update user as verified and clear token
+    // Update user as verified and clear token - this is when user can see dashboard cards
     await this.databaseService.getPrismaClient().user.update({
       where: { id: user.id },
       data: {
-        isVerified: true,
+        isVerified: true, // Now user can see dashboard cards
         otp: null,
         otpExpiresAt: null,
       },
@@ -840,5 +1005,286 @@ export class AuthService {
       default:
         return 7 * 24 * 60 * 60 * 1000; // Default to 7 days
     }
+  }
+
+  // Email Change Methods
+  async sendCurrentEmailOtp(user: any) {
+    const email = user.email;
+
+    // Generate 5-digit OTP
+    const otp = this.generateOtp();
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Update user with current email OTP - KEEP isVerified = true during email change process
+    await this.databaseService.getPrismaClient().user.update({
+      where: { id: user.id },
+      data: {
+        otp,
+        otpExpiresAt,
+        // Keep isVerified = true during email change process
+        isVerified: true,
+      },
+    });
+
+    // Send OTP email using SMTP
+    await this.emailService.sendCurrentEmailVerificationOtp(email, otp);
+
+    return {
+      message:
+        'OTP has been sent to your current email address. Please check your inbox and enter the 5-digit code.',
+      expiresInMinutes: 10,
+    };
+  }
+
+  async verifyCurrentEmailOtp(
+    user: any,
+    verifyOtpDto: VerifyEmailChangeOtpDto,
+  ) {
+    const { otp } = verifyOtpDto;
+
+    // Get fresh user data
+    const userRecord = await this.databaseService
+      .getPrismaClient()
+      .user.findUnique({
+        where: { id: user.id },
+      });
+
+    if (!userRecord) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!userRecord.otp || !userRecord.otpExpiresAt) {
+      throw new BadRequestException(
+        'No OTP found for current email verification',
+      );
+    }
+
+    if (new Date() > userRecord.otpExpiresAt) {
+      throw new BadRequestException('OTP has expired');
+    }
+
+    if (userRecord.otp !== otp) {
+      throw new BadRequestException('Invalid OTP');
+    }
+
+    // Mark current email as verified (but don't clear OTP yet - we'll use it for new email)
+    // Keep isVerified = true throughout the email change process
+    await this.databaseService.getPrismaClient().user.update({
+      where: { id: user.id },
+      data: {
+        // Keep OTP for new email verification
+        // Keep isVerified = true during email change process
+        isVerified: true,
+      },
+    });
+
+    return {
+      message:
+        'Current email verified successfully. You can now enter your new email address.',
+      canProceedToNewEmail: true,
+    };
+  }
+
+  async sendNewEmailOtp(user: any, forgotPasswordDto: ForgotPasswordDto) {
+    const { email: newEmail } = forgotPasswordDto;
+
+    // Check if new email is different from current email
+    if (newEmail === user.email) {
+      throw new BadRequestException(
+        'New email must be different from current email',
+      );
+    }
+
+    // Check if new email already exists
+    const existingUser = await this.databaseService
+      .getPrismaClient()
+      .user.findUnique({
+        where: { email: newEmail },
+      });
+
+    if (existingUser) {
+      throw new BadRequestException('Email address is already registered');
+    }
+
+    // Generate new OTP for new email
+    const newOtp = this.generateOtp();
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Update user with new email OTP and store new email temporarily
+    await this.databaseService.getPrismaClient().user.update({
+      where: { id: user.id },
+      data: {
+        otp: newOtp,
+        otpExpiresAt,
+        newEmail: newEmail, // Store the new email temporarily
+        isVerified: true, // Keep verified during email change process
+      },
+    });
+
+    // Send OTP email to new email address
+    await this.emailService.sendNewEmailVerificationOtp(newEmail, newOtp);
+
+    return {
+      message:
+        'OTP has been sent to your new email address. Please check your inbox and enter the 5-digit code.',
+      expiresInMinutes: 10,
+      newEmail: newEmail, // Return the new email for frontend reference
+    };
+  }
+
+  async verifyNewEmailOtp(user: any, verifyOtpDto: VerifyEmailChangeOtpDto) {
+    const { otp } = verifyOtpDto;
+
+    // Get fresh user data
+    const userRecord = await this.databaseService
+      .getPrismaClient()
+      .user.findUnique({
+        where: { id: user.id },
+      });
+
+    if (!userRecord) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!userRecord.otp || !userRecord.otpExpiresAt) {
+      throw new BadRequestException('No OTP found for new email verification');
+    }
+
+    if (new Date() > userRecord.otpExpiresAt) {
+      throw new BadRequestException('OTP has expired');
+    }
+
+    if (userRecord.otp !== otp) {
+      throw new BadRequestException('Invalid OTP');
+    }
+
+    // Mark new email as verified (but don't update email yet - wait for password confirmation)
+    // Keep isVerified = true during email change process
+    // Note: We don't update newEmail here - it should already be set from sendNewEmailOtp
+    await this.databaseService.getPrismaClient().user.update({
+      where: { id: user.id },
+      data: {
+        // Keep OTP for final confirmation
+        // Keep newEmail for final confirmation (already set)
+        // Keep isVerified = true during email change process
+        isVerified: true,
+      },
+    });
+
+    return {
+      message:
+        'New email verified successfully. You can now confirm the change with your password.',
+      canProceedToPasswordConfirmation: true,
+    };
+  }
+
+  async confirmEmailChange(
+    user: any,
+    confirmEmailChangeDto: ConfirmEmailChangeDto,
+  ) {
+    const { newEmail, newPassword } = confirmEmailChangeDto;
+
+    // Get fresh user data
+    const userRecord = await this.databaseService
+      .getPrismaClient()
+      .user.findUnique({
+        where: { id: user.id },
+      });
+
+    if (!userRecord) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!userRecord.otp || !userRecord.otpExpiresAt) {
+      throw new BadRequestException(
+        'Email change verification not completed. Please start the process again.',
+      );
+    }
+
+    if (new Date() > userRecord.otpExpiresAt) {
+      throw new BadRequestException(
+        'Email change verification has expired. Please start the process again.',
+      );
+    }
+
+    if (!userRecord.newEmail) {
+      throw new BadRequestException(
+        'New email not found. Please start the email change process again.',
+      );
+    }
+
+    // No password verification needed - just update with new data
+
+    // Update user's email and password, clear temporary data
+    const oldEmail = userRecord.email;
+    const finalNewEmail = newEmail;
+
+    console.log('Auth Service: Updating email and password:', {
+      userId: user.id,
+      oldEmail: oldEmail,
+      newEmail: finalNewEmail,
+      hasNewPassword: !!newPassword,
+    });
+
+    // CRITICAL SECURITY FIX: Clean up ALL tokens for this user before email/password change
+    // This prevents session hijacking and ensures the user must re-authenticate
+    console.log(
+      'Auth Service: Cleaning up all tokens for user before email/password change:',
+      user.id,
+    );
+    const tokensCleaned =
+      await this.tokenCleanupService.cleanupAllTokensForUser(user.id);
+    console.log(
+      `Auth Service: Cleaned up ${tokensCleaned} tokens for user ${user.id}`,
+    );
+
+    // Prepare update data - always update with new email and password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+    
+    const updateData: any = {
+      email: finalNewEmail,
+      password: hashedNewPassword,
+      newEmail: null, // Clear temporary new email
+      otp: null, // Clear OTP
+      otpExpiresAt: null, // Clear OTP expiration
+      isVerified: false, // Reset verification status - user must verify new email
+    };
+
+    console.log('Auth Service: Updating with new email and password');
+
+    await this.databaseService.getPrismaClient().user.update({
+      where: { id: user.id },
+      data: updateData,
+    });
+
+    console.log('Auth Service: Email and password change completed successfully');
+
+    // Send confirmation email to new address
+    await this.emailService.sendEmailChangeConfirmationEmail(
+      finalNewEmail,
+      oldEmail,
+    );
+
+    // Get the updated user data after email/password change
+    const updatedUser = await this.databaseService
+      .getPrismaClient()
+      .user.findUnique({
+        where: { id: user.id },
+      });
+
+    return {
+      message:
+        'Email address and password updated successfully. You will receive a confirmation email at your new address. Please login again with your new email address and password.',
+      newEmail: finalNewEmail,
+      user: updatedUser
+        ? {
+            id: updatedUser.id,
+            email: updatedUser.email,
+            username: updatedUser.username,
+            isVerified: updatedUser.isVerified,
+          }
+        : null,
+      requiresReauth: true, // Signal to frontend that re-authentication is required
+    };
   }
 }
