@@ -18,9 +18,9 @@ interface AuthContextType {
     password: string;
     confirmPassword: string;
   }) => Promise<void>;
-  sendVerificationEmail: () => Promise<void>;
-  verifyEmail: (otp: string) => Promise<void>;
+  sendVerificationEmail: (email: string) => Promise<void>;
   checkAuthStatus: () => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string, confirmPassword: string) => Promise<{ message: string; requiresReauth?: boolean }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -43,13 +43,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const isAuthenticated = !!user;
   
-  // Debug authentication state
+  // Debug authentication state (only in development)
   useEffect(() => {
-    console.log('AuthContext: Authentication state changed', {
-      user: !!user,
-      isAuthenticated,
-      userData: user
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('AuthContext: Authentication state changed', {
+        user: !!user,
+        isAuthenticated,
+        userData: user
+      });
+    }
   }, [user, isAuthenticated]);
 
   // Initialize auth state on mount
@@ -57,25 +59,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const initializeAuth = async () => {
       try {
         // Check if user is authenticated by calling the profile endpoint
-        console.log('AuthContext: Checking authentication status...');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('AuthContext: Checking authentication status...');
+        }
         
         try {
           const response = await apiService.request<{ user: User }>('/auth/profile', { method: 'GET' });
           if (response.user) {
-            console.log('AuthContext: User is authenticated, setting user data');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('AuthContext: User is authenticated, setting user data');
+            }
             setUser(response.user);
           }
         } catch (error: any) {
-          // Handle 401 errors gracefully (expected after logout)
+          // Handle 401 errors gracefully (expected when not logged in)
           if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
-            console.log('AuthContext: Not authenticated (expected after logout)');
+            // This is expected behavior - user is not authenticated
+            // Don't log this as an error to reduce console noise
+            if (process.env.NODE_ENV === 'development') {
+              console.log('AuthContext: User not authenticated (this is normal)');
+            }
           } else {
-            console.log('AuthContext: Authentication check failed:', error.message);
+            // Only log unexpected errors
+            if (process.env.NODE_ENV === 'development') {
+              console.log('AuthContext: Authentication check failed with unexpected error:', error.message);
+            }
           }
           setUser(null);
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -84,22 +98,67 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initializeAuth();
   }, []);
 
+  // Listen for token expiration events and periodic checks
+  useEffect(() => {
+    const handleTokenExpiration = () => {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext: Token expired event received, logging out user');
+      }
+      setUser(null);
+      apiService.clearTokens();
+    };
+
+    // Periodic token validation (every 2 minutes for better security)
+    const tokenValidationInterval = setInterval(async () => {
+      if (user) {
+        try {
+          // Make a lightweight request to check if token is still valid
+          await apiService.request<{ user: User }>('/auth/profile', { method: 'GET' });
+        } catch (error: any) {
+          if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+            if (process.env.NODE_ENV === 'development') {
+              console.log('AuthContext: Periodic check detected token expiration');
+            }
+            handleTokenExpiration();
+          }
+        }
+      }
+    }, 120000); // Check every 2 minutes for better security
+
+    // Add event listener for token expiration
+    window.addEventListener('tokenExpired', handleTokenExpiration);
+
+    // Cleanup event listener and interval on unmount
+    return () => {
+      window.removeEventListener('tokenExpired', handleTokenExpiration);
+      clearInterval(tokenValidationInterval);
+    };
+  }, [user]);
+
   const login = async (email: string, password: string, rememberMe: boolean = false) => {
     try {
       setIsLoading(true);
-      console.log('AuthContext: Starting login process...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext: Starting login process...');
+      }
       const response = await apiService.login(email, password, rememberMe);
-      console.log('AuthContext: Login response received:', response);
-      console.log('AuthContext: Response user data:', response.user);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext: Login response received:', response);
+        console.log('AuthContext: Response user data:', response.user);
+      }
       
       // Set user state first
       setUser(response.user);
-      console.log('AuthContext: User state updated with:', response.user);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext: User state updated with:', response.user);
+      }
       
       // Force a small delay to ensure state updates
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      console.log('AuthContext: Login completed, isAuthenticated should be true');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext: Login completed, isAuthenticated should be true');
+      }
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -114,6 +173,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
+      // Reset user state completely on logout
       setUser(null);
       apiService.clearTokens();
     }
@@ -164,46 +224,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const sendVerificationEmail = async () => {
+  const sendVerificationEmail = async (email: string) => {
     try {
-      await apiService.sendVerificationEmail();
+      await apiService.sendVerificationEmail(email);
     } catch (error) {
       console.error('Send verification email failed:', error);
       throw error;
     }
   };
 
-  const verifyEmail = async (otp: string) => {
-    try {
-      console.log('AuthContext: Starting email verification...');
-      await apiService.verifyEmail(otp);
-      console.log('AuthContext: Email verification successful, refreshing user data...');
-      
-      // Refresh user data to get updated verification status
-      const response = await apiService.request<{ user: User }>('/auth/profile', { method: 'GET' });
-      console.log('AuthContext: Profile response after verification:', response);
-      
-      if (response.user) {
-        console.log('AuthContext: Updating user state with verified user:', response.user);
-        setUser(response.user);
-      }
-    } catch (error) {
-      console.error('Verify email failed:', error);
-      throw error;
-    }
-  };
 
   const checkAuthStatus = async () => {
     try {
-      console.log('AuthContext: Manually checking authentication status...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext: Manually checking authentication status...');
+      }
       const response = await apiService.request<{ user: User }>('/auth/profile', { method: 'GET' });
       if (response.user) {
-        console.log('AuthContext: User is authenticated, updating user data');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('AuthContext: User is authenticated, updating user data');
+        }
         setUser(response.user);
       }
     } catch (error: any) {
-      console.log('AuthContext: Authentication check failed:', error.message);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext: Authentication check failed:', error.message);
+      }
       setUser(null);
+    }
+  };
+
+  const changePassword = async (currentPassword: string, newPassword: string, confirmPassword: string) => {
+    try {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext: Changing password...');
+      }
+      const response = await apiService.changePassword(currentPassword, newPassword, confirmPassword);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext: Password changed successfully');
+      }
+      return response;
+    } catch (error: any) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext: Password change failed:', error.message);
+      }
+      throw error;
     }
   };
 
@@ -218,8 +283,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     verifyOtp,
     registerDetails,
     sendVerificationEmail,
-    verifyEmail,
     checkAuthStatus,
+    changePassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

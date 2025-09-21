@@ -21,7 +21,10 @@ import {
   LogoutResponseDto,
   ForgotPasswordDto,
   VerifyOtpDto,
+  VerifyEmailChangeOtpDto,
   ResetPasswordDto,
+  ConfirmEmailChangeDto,
+  ChangePasswordDto,
 } from './dto';
 
 @ApiTags('Auth')
@@ -83,7 +86,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     // Get refresh token from HTTP-only cookie
-    const refreshToken = (req.cookies as any)?.refresh_token || '';
+    const refreshToken = req.cookies?.refresh_token || '';
     const refreshTokenDto: RefreshTokenDto = { refreshToken };
     return this.authService.refreshToken(refreshTokenDto, res);
   }
@@ -120,8 +123,34 @@ export class AuthController {
   })
   async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
     // Get refresh token from HTTP-only cookie
-    const refreshToken = (req.cookies as any)?.refresh_token || '';
-    return this.authService.logout(refreshToken, res);
+    const refreshToken = req.cookies?.refresh_token || '';
+
+    // Try to get user ID from JWT token if available (optional)
+    let userId: number | null = null;
+    if (req.user && req.user.id) {
+      userId = req.user.id;
+    }
+
+    return this.authService.logout(refreshToken, res, userId);
+  }
+
+  @Post('cleanup-tokens')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Clean up expired tokens',
+    description: 'Manually clean up expired tokens from the database',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Tokens cleaned up successfully',
+  })
+  async cleanupTokens() {
+    const result = await this.authService.manualCleanup();
+    return {
+      message: `Cleaned up ${result} expired tokens`,
+      count: result,
+    };
   }
 
   @Post('forgot-password')
@@ -189,6 +218,33 @@ export class AuthController {
     return this.authService.resetPassword(resetPasswordDto);
   }
 
+  @Post('change-password')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Change password',
+    description: 'Changes user password while authenticated (requires current password)',
+  })
+  @ApiBody({ type: ChangePasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Password changed successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input, passwords do not match, or current password is incorrect',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Not authenticated or invalid current password',
+  })
+  async changePassword(
+    @Req() req: any,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(req.user, changePasswordDto);
+  }
+
   @Post('register/email')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -250,12 +306,15 @@ export class AuthController {
     status: 404,
     description: 'User not found',
   })
-  async registerDetails(@Body() registerDetailsDto: {
-    email: string;
-    username: string;
-    password: string;
-    confirmPassword: string;
-  }) {
+  async registerDetails(
+    @Body()
+    registerDetailsDto: {
+      email: string;
+      username: string;
+      password: string;
+      confirmPassword: string;
+    },
+  ) {
     return this.authService.registerDetails(registerDetailsDto);
   }
 
@@ -274,8 +333,12 @@ export class AuthController {
     status: 401,
     description: 'Not authenticated',
   })
-  async sendVerificationEmail(@Req() req: any) {
-    return this.authService.sendVerificationEmail((req as any).user);
+  async sendVerificationEmail(
+    @Req() req: any,
+    @Body() body: { email: string },
+  ) {
+    const { email } = body;
+    return this.authService.sendVerificationEmail(req.user, email);
   }
 
   @Post('verify-email')
@@ -299,14 +362,15 @@ export class AuthController {
     description: 'Not authenticated',
   })
   async verifyEmail(@Req() req: any, @Body() verifyOtpDto: VerifyOtpDto) {
-    return this.authService.verifyEmail((req as any).user, verifyOtpDto);
+    return this.authService.verifyEmail(req.user, verifyOtpDto);
   }
 
   @Get('verify-email/:token')
   @HttpCode(HttpStatus.FOUND)
   @ApiOperation({
     summary: 'Verify email with token',
-    description: 'Verifies user email using token from email link, logs user in, and redirects to dashboard',
+    description:
+      'Verifies user email using token from email link, logs user in, and redirects to dashboard',
   })
   @ApiResponse({
     status: 302,
@@ -328,10 +392,10 @@ export class AuthController {
     console.log('Token received:', token);
     console.log('BACKEND_URL:', process.env.BACKEND_URL);
     console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
-    
+
     try {
       await this.authService.verifyEmailByToken(token, res);
-      
+
       // Redirect to frontend dashboard
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
       console.log(`Redirecting to: ${frontendUrl}/dashboard`);
@@ -340,7 +404,9 @@ export class AuthController {
       console.error('Email verification error:', error);
       // Redirect to frontend with error
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      console.log(`Redirecting to error page: ${frontendUrl}/admin?error=verification_failed`);
+      console.log(
+        `Redirecting to error page: ${frontendUrl}/admin?error=verification_failed`,
+      );
       res.redirect(`${frontendUrl}/admin?error=verification_failed`);
     }
   }
@@ -352,11 +418,11 @@ export class AuthController {
     description: 'Simple test endpoint to verify server is running',
   })
   async test() {
-    return { 
-      message: 'Backend server is running!', 
+    return {
+      message: 'Backend server is running!',
       timestamp: new Date().toISOString(),
       backendUrl: process.env.BACKEND_URL,
-      frontendUrl: process.env.FRONTEND_URL
+      frontendUrl: process.env.FRONTEND_URL,
     };
   }
 
@@ -368,5 +434,135 @@ export class AuthController {
   })
   async debugUserLookup(@Param('email') email: string) {
     return this.authService.debugUserLookup(email);
+  }
+
+  @Post('change-email/verify-current')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Send OTP to current email for verification',
+    description:
+      'Sends an OTP to the current email address to verify ownership before changing email',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'OTP sent to current email successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Not authenticated',
+  })
+  async sendCurrentEmailOtp(@Req() req: any) {
+    return this.authService.sendCurrentEmailOtp(req.user);
+  }
+
+  @Post('change-email/verify-current-otp')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Verify OTP from current email',
+    description: 'Verifies the OTP sent to current email address',
+  })
+  @ApiBody({ type: VerifyEmailChangeOtpDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Current email OTP verified successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid or expired OTP',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Not authenticated',
+  })
+  async verifyCurrentEmailOtp(
+    @Req() req: any,
+    @Body() verifyOtpDto: VerifyEmailChangeOtpDto,
+  ) {
+    return this.authService.verifyCurrentEmailOtp(req.user, verifyOtpDto);
+  }
+
+  @Post('change-email/verify-new')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Send OTP to new email for verification',
+    description: 'Sends an OTP to the new email address to verify ownership',
+  })
+  @ApiBody({ type: ForgotPasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'OTP sent to new email successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input or email already exists',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Not authenticated',
+  })
+  async sendNewEmailOtp(
+    @Req() req: any,
+    @Body() forgotPasswordDto: ForgotPasswordDto,
+  ) {
+    return this.authService.sendNewEmailOtp(req.user, forgotPasswordDto);
+  }
+
+  @Post('change-email/verify-new-otp')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Verify OTP from new email',
+    description: 'Verifies the OTP sent to new email address',
+  })
+  @ApiBody({ type: VerifyEmailChangeOtpDto })
+  @ApiResponse({
+    status: 200,
+    description: 'New email OTP verified successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid or expired OTP',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Not authenticated',
+  })
+  async verifyNewEmailOtp(
+    @Req() req: any,
+    @Body() verifyOtpDto: VerifyEmailChangeOtpDto,
+  ) {
+    return this.authService.verifyNewEmailOtp(req.user, verifyOtpDto);
+  }
+
+  @Post('change-email/confirm')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Confirm email change with password',
+    description:
+      'Confirms the email change by providing current password twice',
+  })
+  @ApiBody({ type: ConfirmEmailChangeDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Email changed successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'Invalid input, passwords do not match, or verification not completed',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Not authenticated or invalid password',
+  })
+  async confirmEmailChange(
+    @Req() req: any,
+    @Body() confirmEmailChangeDto: ConfirmEmailChangeDto,
+  ) {
+    return this.authService.confirmEmailChange(req.user, confirmEmailChangeDto);
   }
 }

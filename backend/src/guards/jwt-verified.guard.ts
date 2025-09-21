@@ -1,4 +1,8 @@
-import { Injectable, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  ExecutionContext,
+  ForbiddenException,
+} from '@nestjs/common';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Injectable()
@@ -6,7 +10,7 @@ export class JwtVerifiedGuard extends JwtAuthGuard {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // First check JWT authentication
     const isAuthenticated = await super.canActivate(context);
-    
+
     if (!isAuthenticated) {
       return false;
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -8,6 +8,7 @@ import AOS from "aos";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBlog } from "@/contexts/BlogContext";
 import { useRouter } from "next/navigation";
+import { getDisplayImageUrl } from "@/lib/imageUtils";
 
 // Import Swiper styles
 import "swiper/css";
@@ -17,8 +18,24 @@ export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();
   const { getPublishedPosts } = useBlog();
   const router = useRouter();
-  
-  const publishedPosts = getPublishedPosts();
+  const [publishedPosts, setPublishedPosts] = useState<any[]>([]);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+
+  useEffect(() => {
+    const loadPublishedPosts = async () => {
+      try {
+        setIsLoadingPosts(true);
+        const posts = await getPublishedPosts();
+        setPublishedPosts(posts);
+      } catch (error) {
+        console.error('Error loading published posts:', error);
+      } finally {
+        setIsLoadingPosts(false);
+      }
+    };
+
+    loadPublishedPosts();
+  }, [getPublishedPosts]);
 
   useEffect(() => {
     // Initialize AOS
@@ -52,6 +69,7 @@ export default function Home() {
                 width={180}
                 height={180}
                 className="w-36 h-36 sm:w-48 sm:h-48 object-contain"
+                style={{ width: 'auto', height: 'auto' }}
                 priority
               />
             </div>
@@ -502,7 +520,12 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {publishedPosts.length === 0 ? (
+            {isLoadingPosts ? (
+              <div className="col-span-full text-center py-12">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading blog posts...</p>
+              </div>
+            ) : publishedPosts.length === 0 ? (
               <div className="col-span-full text-center py-12">
                 <svg className="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -522,7 +545,7 @@ export default function Home() {
                 >
                   <div className="relative overflow-hidden">
                     <Image
-                      src={post.blogImage}
+                      src={getDisplayImageUrl(post.blogImage)}
                       alt={post.title}
                       width={400}
                       height={250}
@@ -545,7 +568,7 @@ export default function Home() {
                   </div>
                   <div className="p-6">
                     <div className="flex items-center text-sm text-gray-500 mb-3">
-                      <span>{post.createdAt.toLocaleDateString()}</span>
+                      <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                       {post.readTime && (
                         <>
                           <span className="mx-2">•</span>
@@ -563,7 +586,7 @@ export default function Home() {
                     </p>
                     <div className="flex items-center">
                       <Image
-                        src={post.authorImage}
+                        src={getDisplayImageUrl(post.authorImage, 'author')}
                         alt={post.authorName}
                         width={40}
                         height={40}

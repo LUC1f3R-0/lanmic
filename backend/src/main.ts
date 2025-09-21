@@ -11,6 +11,8 @@ import { DatabaseService } from './database.service';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import * as dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 dotenv.config({ path: __dirname + '/../.env' });
 
@@ -18,7 +20,7 @@ const PORT = process.env.PORT || 3002;
 const logger = new Logger('Bootstrap');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Test database connection
   const databaseService = app.get(DatabaseService);
@@ -37,6 +39,11 @@ async function bootstrap() {
 
   // Enable cookie parser
   app.use(cookieParser());
+
+  // Serve static files from uploads directory (includes all subdirectories)
+  app.useStaticAssets(join(process.cwd(), 'uploads'), {
+    prefix: '/uploads/',
+  });
 
   // Security headers
   app.use((req, res, next) => {

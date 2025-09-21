@@ -113,6 +113,7 @@ export default function AdminLogin() {
               width={96}
               height={96}
               className="w-24 h-24 object-contain"
+              style={{ width: 'auto', height: 'auto' }}
             />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">

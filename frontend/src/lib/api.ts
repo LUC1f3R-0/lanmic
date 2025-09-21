@@ -114,9 +114,19 @@ class ApiService {
           });
         }
 
-        // If we get a 401, clear authentication state
+        // If we get a 401, clear authentication state and trigger logout
         if (error.response?.status === 401) {
+          // Only log if we were previously authenticated (to reduce noise for initial auth checks)
+          if (this.accessToken) {
+            console.log('API Service: Received 401 - Token expired, clearing authentication state');
+          }
           this.accessToken = null;
+          this.clearTokens();
+          
+          // Dispatch a custom event to notify AuthContext of token expiration
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('tokenExpired'));
+          }
         }
 
         return Promise.reject(error);
@@ -164,38 +174,17 @@ class ApiService {
     }
   }
 
-  // Token management
+  // Token management - HTTP-only cookies only
   setAccessToken(token: string | null) {
+    // Only store in memory for authentication state tracking
+    // Actual tokens are stored in HTTP-only cookies by the backend
     this.accessToken = token;
-    if (typeof window !== 'undefined') {
-      if (token) {
-        localStorage.setItem(config.security.tokenStorageKey, token);
-      } else {
-        localStorage.removeItem(config.security.tokenStorageKey);
-      }
-    }
-  }
-
-  setRefreshToken(token: string | null) {
-    if (typeof window !== 'undefined') {
-      if (token) {
-        localStorage.setItem(config.security.refreshTokenKey, token);
-      } else {
-        localStorage.removeItem(config.security.refreshTokenKey);
-      }
-    }
-  }
-
-  getRefreshToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(config.security.refreshTokenKey);
-    }
-    return null;
   }
 
   clearTokens() {
-    this.setAccessToken(null);
-    this.setRefreshToken(null);
+    // Only clear in-memory state
+    // HTTP-only cookies are cleared by the backend on logout
+    this.accessToken = null;
   }
 
   // Authentication endpoints
@@ -328,10 +317,10 @@ class ApiService {
   }
 
   // Email verification endpoints
-  async sendVerificationEmail(): Promise<{ message: string }> {
+  async sendVerificationEmail(email: string): Promise<{ message: string }> {
     return this.request<{ message: string }>('/auth/send-verification-email', {
       method: 'POST',
-      data: {},
+      data: { email },
     });
   }
 
@@ -339,6 +328,48 @@ class ApiService {
     return this.request<{ message: string }>('/auth/verify-email', {
       method: 'POST',
       data: { otp },
+    });
+  }
+
+  // Email change endpoints
+  async sendCurrentEmailOtp(): Promise<{ message: string; expiresInMinutes: number }> {
+    return this.request<{ message: string; expiresInMinutes: number }>('/auth/change-email/verify-current', {
+      method: 'POST',
+    });
+  }
+
+  async verifyCurrentEmailOtp(otp: string): Promise<{ message: string; canProceedToNewEmail: boolean }> {
+    return this.request<{ message: string; canProceedToNewEmail: boolean }>('/auth/change-email/verify-current-otp', {
+      method: 'POST',
+      data: { otp },
+    });
+  }
+
+  async sendNewEmailOtp(email: string): Promise<{ message: string; expiresInMinutes: number; newEmail: string }> {
+    return this.request<{ message: string; expiresInMinutes: number; newEmail: string }>('/auth/change-email/verify-new', {
+      method: 'POST',
+      data: { email },
+    });
+  }
+
+  async verifyNewEmailOtp(otp: string): Promise<{ message: string; canProceedToPasswordConfirmation: boolean }> {
+    return this.request<{ message: string; canProceedToPasswordConfirmation: boolean }>('/auth/change-email/verify-new-otp', {
+      method: 'POST',
+      data: { otp },
+    });
+  }
+
+  async confirmEmailChange(newEmail: string, newPassword: string): Promise<{ message: string; newEmail: string; user?: User; requiresReauth?: boolean }> {
+    return this.request<{ message: string; newEmail: string; user?: User; requiresReauth?: boolean }>('/auth/change-email/confirm', {
+      method: 'POST',
+      data: { newEmail, newPassword },
+    });
+  }
+
+  async changePassword(currentPassword: string, newPassword: string, confirmPassword: string): Promise<{ message: string; requiresReauth?: boolean }> {
+    return this.request<{ message: string; requiresReauth?: boolean }>('/auth/change-password', {
+      method: 'POST',
+      data: { currentPassword, newPassword, confirmPassword },
     });
   }
 
