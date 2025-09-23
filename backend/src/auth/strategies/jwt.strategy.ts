@@ -1,0 +1,117 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { DatabaseService } from '../../database.service';
+import { TokenCleanupService } from '../token-cleanup.service';
+
+interface JwtPayload {
+  sub: number;
+  iat: number;
+  exp: number;
+  type: 'access';
+}
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor(
+    private databaseService: DatabaseService,
+    private tokenCleanupService: TokenCleanupService,
+  ) {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET environment variable is not defined');
+    }
+
+    super({
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        // Extract from cookies
+        (req: any) => {
+          const token = req.cookies?.access_token || null;
+          // Only log when token is found to reduce noise
+          if (token && process.env.NODE_ENV === 'development') {
+            console.log('JWT Strategy: Found access token in cookies');
+          }
+          return token;
+        },
+        // Fallback to Authorization header
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
+      ignoreExpiration: false,
+      secretOrKey: jwtSecret,
+      algorithms: ['HS256'], // Explicitly specify algorithm
+    });
+  }
+
+  async validate(payload: JwtPayload) {
+    // Only log successful validations to reduce noise
+    if (process.env.NODE_ENV === 'development') {
+      console.log('JWT Strategy: Validating token for user:', payload.sub);
+    }
+
+    // Validate token type to ensure it's an access token
+    if (payload.type !== 'access') {
+      console.log('JWT Strategy: Invalid token type:', payload.type);
+      throw new UnauthorizedException('Invalid token type');
+    }
+
+    // Check if token is expired (additional check)
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.exp < now) {
+      console.log(
+        'JWT Strategy: Access token has expired, cleaning up refresh tokens for user:',
+        payload.sub,
+      );
+
+      // Clean up all refresh tokens for this user when access token expires
+      await this.tokenCleanupService.cleanupAllTokensForUser(payload.sub);
+
+      throw new UnauthorizedException('Token has expired');
+    }
+
+    const user = await this.databaseService.getPrismaClient().user.findUnique({
+      where: { id: payload.sub },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        isVerified: true,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    // Check if user has any valid refresh tokens in the database
+    // If no valid refresh tokens exist, the access token should be considered invalid
+    const validRefreshToken = await this.databaseService
+      .getPrismaClient()
+      .refreshToken.findFirst({
+        where: {
+          userId: user.id,
+          revoked: false,
+          expiresAt: {
+            gt: new Date(),
+          },
+        },
+      });
+
+    if (!validRefreshToken) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log(
+          'JWT Strategy: No valid refresh tokens found for user, access token invalid:',
+          user.id,
+        );
+      }
+      throw new UnauthorizedException('Session expired - please login again');
+    }
+
+    // Don't block unverified users at JWT level
+    // Let individual endpoints handle verification requirements
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('JWT Strategy: Access token is valid for user:', user.id);
+    }
+    return user;
+  }
+}

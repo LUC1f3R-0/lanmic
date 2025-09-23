@@ -1,22 +1,38 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/header/Header";
-import Footer from "@/components/footer/Footer";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import "aos/dist/aos.css";
+import { geistSans, geistMono } from "@/lib/fonts";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { BlogProvider } from "@/contexts/BlogContext";
 
 export const metadata: Metadata = {
   title: "LANMIC Polymers",
   description: "LANMIC Polymers - Your trusted partner in polymer solutions",
+  icons: {
+    icon: [
+      { url: '/lanmic_logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo.png', sizes: '16x16', type: 'image/png' }
+    ],
+    apple: '/lanmic_logo.png',
+  },
+  openGraph: {
+    title: "LANMIC Polymers",
+    description: "Your trusted partner in innovative polymer solutions",
+    images: [
+      {
+        url: '/lanmic_logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'LANMIC Polymers Logo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "LANMIC Polymers",
+    description: "Your trusted partner in innovative polymer solutions",
+    images: ['/lanmic_logo.png'],
+  },
 };
 
 export default function RootLayout({
@@ -25,15 +41,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning={true}
       >
-        <Header />
-        <main>
-          {children}
-        </main>
-        <Footer />
+        <AuthProvider>
+          <BlogProvider>
+            {children}
+          </BlogProvider>
+        </AuthProvider>
       </body>
     </html>
   );

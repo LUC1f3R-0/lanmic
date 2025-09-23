@@ -1,26 +1,222 @@
-@import "tailwindcss";
+/* Import AOS CSS */
+@import 'aos/dist/aos.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #4c5a1c;
+  --primary: #3e9aba;
+  --secondary: #bc851d;
+  --text-primary: #4c5a1c;
+  --text-secondary: #5c5c1c;
+  --text-muted: #848180;
+  --background-secondary: #e0ded3;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Custom Swiper Styles */
+.testimonials-swiper {
+  width: 100%;
+  height: auto;
+  min-height: 400px;
+  display: block;
+  background: #ffffff;
+  border: 1px solid #e0ded3;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.testimonials-swiper .swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  width: 100%;
+}
+
+.testimonials-pagination {
+  position: relative;
+  bottom: auto;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.testimonials-pagination .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background: #e0ded3;
+  opacity: 1;
+  margin: 0 6px;
+  border-radius: 50%;
+}
+
+.testimonials-pagination .swiper-pagination-bullet-active {
+  background: #3e9aba;
+  transform: scale(1.2);
+}
+
+.about-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-pagination .swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background: #e0ded3;
+  opacity: 1;
+  margin: 0 4px;
+  border-radius: 50%;
+}
+
+.about-pagination .swiper-pagination-bullet-active {
+  background: #3e9aba;
+  transform: scale(1.1);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Professional animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Subtle hover effects */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Professional grid pattern */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(rgba(62, 154, 186, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(62, 154, 186, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Professional card hover effects */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Professional button styles */
+.btn-primary {
+  background: #3e9aba;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #2d7a9a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(62, 154, 186, 0.3);
+}
+
+.btn-secondary {
+  background: #bc851d;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: #a6731a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(188, 133, 29, 0.3);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #3e9aba;
+  border: 2px solid #3e9aba;
+  transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+  background: #3e9aba;
+  color: white;
+}
+
+/* Professional section backgrounds */
+.section-bg-primary {
+  background: #ffffff;
+}
+
+.section-bg-secondary {
+  background: #e0ded3;
+}
+
+.section-bg-accent {
+  background: #f8f9fa;
+}
+
+/* Professional cards */
+.card-primary {
+  background: #ffffff;
+  border: 1px solid #e0ded3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card-secondary {
+  background: #f8f9fa;
+  border: 1px solid #e0ded3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Professional text styles */
+.text-primary {
+  color: #4c5a1c;
+}
+
+.text-secondary {
+  color: #5c5c1c;
+}
+
+.text-muted {
+  color: #848180;
+}
+
+.text-accent {
+  color: #3e9aba;
+}
+
+.text-highlight {
+  color: #bc851d;
 }
