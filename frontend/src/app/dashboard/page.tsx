@@ -38,7 +38,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const verifyAuth = async () => {
       if (!isLoading && !isAuthenticated) {
-        console.log('Dashboard: User not authenticated, redirecting to admin');
+        // User not authenticated, redirecting to admin
         router.push('/admin');
       }
     };
@@ -49,7 +49,7 @@ export default function DashboardPage() {
   // Additional check: If user becomes null while on dashboard, redirect immediately
   useEffect(() => {
     if (user === null && !isLoading) {
-      console.log('Dashboard: User became null, redirecting to admin');
+      // User became null, redirecting to admin
       router.push('/admin');
     }
   }, [user, isLoading, router]);

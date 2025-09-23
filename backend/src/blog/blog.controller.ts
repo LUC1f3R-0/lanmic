@@ -12,13 +12,13 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
-import { BlogService } from './blog.service';
+import { SimpleBlogService } from './simple-blog.service';
 import { CreateBlogPostDto, UpdateBlogPostDto } from './dto/blog.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('blog')
 export class BlogController {
-  constructor(private readonly blogService: BlogService) {}
+  constructor(private readonly blogService: SimpleBlogService) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)

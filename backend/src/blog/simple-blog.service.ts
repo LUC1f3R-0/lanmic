@@ -1,17 +1,27 @@
 import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
 import { DatabaseService } from '../database.service';
 import { CreateBlogPostDto, UpdateBlogPostDto } from './dto/blog.dto';
-import { KafkaService } from '../kafka/kafka.service';
-import { WebSocketGateway } from '../websocket/websocket.gateway';
+import { SimpleWebSocketGateway } from '../websocket/simple-websocket.gateway';
 
+/**
+ * Simple Blog Service with Real-time Updates
+ * 
+ * This service provides real-time blog updates WITHOUT requiring Kafka.
+ * It directly broadcasts events via WebSocket when blog operations occur.
+ * 
+ * Benefits of this approach:
+ * - No Docker or Kafka setup required
+ * - Simpler to understand and maintain
+ * - Still provides real-time updates
+ * - Perfect for development and small applications
+ * - Faster setup and deployment
+ */
 @Injectable()
-export class BlogService {
+export class SimpleBlogService {
   constructor(
     private databaseService: DatabaseService,
-    @Inject(forwardRef(() => KafkaService))
-    private kafkaService: KafkaService,
-    @Inject(forwardRef(() => WebSocketGateway))
-    private webSocketGateway: WebSocketGateway,
+    @Inject(forwardRef(() => SimpleWebSocketGateway))
+    private webSocketGateway: SimpleWebSocketGateway,
   ) {}
 
   private get prisma() {
@@ -62,12 +72,9 @@ export class BlogService {
       },
     });
 
-    // Publish blog created event to Kafka for real-time updates
-    // This allows other services to react to blog creation
-    await this.kafkaService.publishBlogCreated(newBlogPost.id, newBlogPost);
-
-    // Broadcast the blog created event to connected WebSocket clients
+    // Broadcast the blog created event directly via WebSocket
     // This provides immediate real-time updates to admin users
+    // WITHOUT requiring Kafka or Docker!
     this.webSocketGateway.broadcastBlogCreated(newBlogPost);
 
     return newBlogPost;
@@ -92,14 +99,7 @@ export class BlogService {
       data: updateBlogPostDto,
     });
 
-    // Publish blog updated event to Kafka for real-time updates
-    // This allows other services to react to blog updates
-    await this.kafkaService.publishBlogUpdated(
-      updatedBlogPost.id,
-      updatedBlogPost,
-    );
-
-    // Broadcast the blog updated event to connected WebSocket clients
+    // Broadcast the blog updated event directly via WebSocket
     // This provides immediate real-time updates to admin users
     this.webSocketGateway.broadcastBlogUpdated(updatedBlogPost);
 
@@ -120,11 +120,7 @@ export class BlogService {
       where: { id },
     });
 
-    // Publish blog deleted event to Kafka for real-time updates
-    // This allows other services to react to blog deletion
-    await this.kafkaService.publishBlogDeleted(id);
-
-    // Broadcast the blog deleted event to connected WebSocket clients
+    // Broadcast the blog deleted event directly via WebSocket
     // This provides immediate real-time updates to admin users
     this.webSocketGateway.broadcastBlogDeleted(id);
 
@@ -146,11 +142,7 @@ export class BlogService {
       data: { published: !existingPost.published },
     });
 
-    // Publish blog published event to Kafka for real-time updates
-    // This allows other services to react to publish status changes
-    await this.kafkaService.publishBlogPublished(id, updatedBlogPost.published);
-
-    // Broadcast the blog published event to connected WebSocket clients
+    // Broadcast the blog published event directly via WebSocket
     // This provides immediate real-time updates to admin users
     this.webSocketGateway.broadcastBlogPublished(updatedBlogPost);
 

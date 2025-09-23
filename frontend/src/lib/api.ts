@@ -74,12 +74,7 @@ class ApiService {
         config.withCredentials = true;
         
         if (isDebugMode()) {
-          console.log('API Request:', {
-            method: config.method?.toUpperCase(),
-            url: config.url,
-            baseURL: config.baseURL,
-            withCredentials: config.withCredentials,
-          });
+          // API Request logged
         }
         
         return config;
@@ -96,11 +91,7 @@ class ApiService {
     this.axiosInstance.interceptors.response.use(
       (response) => {
         if (isDebugMode()) {
-          console.log('API Response:', {
-            status: response.status,
-            url: response.config.url,
-            data: response.data,
-          });
+          // API Response logged
         }
         return response;
       },
@@ -118,7 +109,7 @@ class ApiService {
         if (error.response?.status === 401) {
           // Only log if we were previously authenticated (to reduce noise for initial auth checks)
           if (this.accessToken) {
-            console.log('API Service: Received 401 - Token expired, clearing authentication state');
+            // Token expired, clearing authentication state
           }
           this.accessToken = null;
           this.clearTokens();
@@ -215,20 +206,14 @@ class ApiService {
   }
 
   async login(email: string, password: string, rememberMe: boolean = false): Promise<AuthResponse> {
-    console.log('API Service: Starting login request...');
     const authData = await this.request<AuthResponse>('/auth/login', {
       method: 'POST',
       data: { email, password, rememberMe },
     });
     
-    console.log('API Service: Raw login response received:', authData);
-    console.log('API Service: User data from response:', authData.user);
-    
     // Backend sets HTTP-only cookies, so we don't need to store tokens in localStorage
     // Just mark that we're authenticated
     this.accessToken = 'authenticated'; // Placeholder to indicate authentication
-    
-    console.log('API Service: Authentication successful, cookies set by backend');
     
     // Return the response with user data (tokens are in HTTP-only cookies)
     const response = {
@@ -237,7 +222,6 @@ class ApiService {
       user: authData.user
     };
     
-    console.log('API Service: Returning login response:', response);
     return response;
   }
 

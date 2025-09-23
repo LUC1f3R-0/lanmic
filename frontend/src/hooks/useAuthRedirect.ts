@@ -12,7 +12,7 @@ export const useAuthRedirect = () => {
       // Check if we're on a protected route
       const currentPath = window.location.pathname;
       if (currentPath.startsWith('/dashboard')) {
-        console.log('useAuthRedirect: User not authenticated, redirecting to admin');
+        // User not authenticated, redirecting to admin
         router.push('/admin');
       }
     }
