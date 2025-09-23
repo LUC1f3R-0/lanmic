@@ -81,7 +81,7 @@ class ApiService {
       },
       (error) => {
         if (isDebugMode()) {
-          console.error('Request Error:', error);
+          // Request Error logged
         }
         return Promise.reject(error);
       }
@@ -97,12 +97,7 @@ class ApiService {
       },
       async (error) => {
         if (isDebugMode()) {
-          console.error('Response Error:', {
-            status: error.response?.status,
-            url: error.config?.url,
-            message: error.message,
-            data: error.response?.data,
-          });
+          // Response Error logged
         }
 
         // If we get a 401, clear authentication state and trigger logout
@@ -258,7 +253,7 @@ class ApiService {
       return response;
     } catch (error) {
       // Even if logout fails on backend, clear local state
-      console.error('Logout request failed:', error);
+      // Logout request failed
       this.accessToken = null;
       this.clearTokens();
       return { message: 'Logged out successfully' };

@@ -89,7 +89,7 @@ export default function BlogManagementPage() {
           blogImage: '' 
         });
       } catch (error) {
-        console.error('Error creating blog post:', error);
+        // Error creating blog post
       }
     }
   };
@@ -122,7 +122,7 @@ export default function BlogManagementPage() {
           blogImage: '' 
         });
       } catch (error) {
-        console.error('Error updating blog post:', error);
+        // Error updating blog post
       }
     }
   };
@@ -131,7 +131,7 @@ export default function BlogManagementPage() {
     try {
       await deleteBlogPost(id);
     } catch (error) {
-      console.error('Error deleting blog post:', error);
+      // Error deleting blog post
     }
   };
 
@@ -139,7 +139,7 @@ export default function BlogManagementPage() {
     try {
       await togglePublish(id);
     } catch (error) {
-      console.error('Error toggling publish status:', error);
+      // Error toggling publish status
     }
   };
 

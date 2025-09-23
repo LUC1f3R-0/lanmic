@@ -15,7 +15,7 @@ export default function DashboardPage() {
   // Handle sending verification email
   const handleSendVerificationEmail = async () => {
     if (!user?.email) {
-      console.error('No user email available');
+      // No user email available
       return;
     }
     
@@ -25,7 +25,7 @@ export default function DashboardPage() {
       await sendVerificationEmail(user.email);
       setEmailSent(true);
     } catch (error) {
-      console.error('Failed to send verification email:', error);
+      // Failed to send verification email
     } finally {
       setIsSendingEmail(false);
     }
@@ -59,7 +59,7 @@ export default function DashboardPage() {
       await logout();
       router.push('/admin');
     } catch (error) {
-      console.error('Logout failed:', error);
+      // Logout failed
     }
   };
 
