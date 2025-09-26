@@ -15,7 +15,7 @@ export default function DashboardPage() {
   // Handle sending verification email
   const handleSendVerificationEmail = async () => {
     if (!user?.email) {
-      console.error('No user email available');
+      // No user email available
       return;
     }
     
@@ -25,7 +25,7 @@ export default function DashboardPage() {
       await sendVerificationEmail(user.email);
       setEmailSent(true);
     } catch (error) {
-      console.error('Failed to send verification email:', error);
+      // Failed to send verification email
     } finally {
       setIsSendingEmail(false);
     }
@@ -38,7 +38,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const verifyAuth = async () => {
       if (!isLoading && !isAuthenticated) {
-        console.log('Dashboard: User not authenticated, redirecting to admin');
+        // User not authenticated, redirecting to admin
         router.push('/admin');
       }
     };
@@ -49,7 +49,7 @@ export default function DashboardPage() {
   // Additional check: If user becomes null while on dashboard, redirect immediately
   useEffect(() => {
     if (user === null && !isLoading) {
-      console.log('Dashboard: User became null, redirecting to admin');
+      // User became null, redirecting to admin
       router.push('/admin');
     }
   }, [user, isLoading, router]);
@@ -59,7 +59,7 @@ export default function DashboardPage() {
       await logout();
       router.push('/admin');
     } catch (error) {
-      console.error('Logout failed:', error);
+      // Logout failed
     }
   };
 

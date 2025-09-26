@@ -223,7 +223,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Change password',
-    description: 'Changes user password while authenticated (requires current password)',
+    description:
+      'Changes user password while authenticated (requires current password)',
   })
   @ApiBody({ type: ChangePasswordDto })
   @ApiResponse({
@@ -232,7 +233,8 @@ export class AuthController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid input, passwords do not match, or current password is incorrect',
+    description:
+      'Invalid input, passwords do not match, or current password is incorrect',
   })
   @ApiResponse({
     status: 401,
