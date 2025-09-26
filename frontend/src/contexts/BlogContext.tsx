@@ -168,7 +168,13 @@ export const BlogProvider: React.FC<BlogProviderProps> = ({ children }) => {
         ...newPost,
         createdAt: new Date(newPost.createdAt)
       };
-      setBlogPosts(prev => [parsedPost, ...prev]);
+      
+      // Only add to local state if WebSocket is not connected
+      // This prevents duplicates when WebSocket event is received
+      if (!isWebSocketConnected) {
+        setBlogPosts(prev => [parsedPost, ...prev]);
+      }
+      
       return parsedPost;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create blog post');
@@ -183,7 +189,13 @@ export const BlogProvider: React.FC<BlogProviderProps> = ({ children }) => {
         ...updatedPost,
         createdAt: new Date(updatedPost.createdAt)
       };
-      setBlogPosts(prev => prev.map(post => post.id === id ? parsedPost : post));
+      
+      // Only update local state if WebSocket is not connected
+      // This prevents duplicates when WebSocket event is received
+      if (!isWebSocketConnected) {
+        setBlogPosts(prev => prev.map(post => post.id === id ? parsedPost : post));
+      }
+      
       return parsedPost;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update blog post');
@@ -194,7 +206,13 @@ export const BlogProvider: React.FC<BlogProviderProps> = ({ children }) => {
   const deleteBlogPost = async (id: number) => {
     try {
       await blogApi.deleteBlogPost(id);
-      setBlogPosts(prev => prev.filter(post => post.id !== id));
+      
+      // Only update local state if WebSocket is not connected
+      // This prevents duplicates when WebSocket event is received
+      if (!isWebSocketConnected) {
+        setBlogPosts(prev => prev.filter(post => post.id !== id));
+      }
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete blog post');
       throw err;
@@ -208,7 +226,13 @@ export const BlogProvider: React.FC<BlogProviderProps> = ({ children }) => {
         ...updatedPost,
         createdAt: new Date(updatedPost.createdAt)
       };
-      setBlogPosts(prev => prev.map(post => post.id === id ? parsedPost : post));
+      
+      // Only update local state if WebSocket is not connected
+      // This prevents duplicates when WebSocket event is received
+      if (!isWebSocketConnected) {
+        setBlogPosts(prev => prev.map(post => post.id === id ? parsedPost : post));
+      }
+      
       return parsedPost;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to toggle publish status');
