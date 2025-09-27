@@ -20,6 +20,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
   blogPosts     BlogPost[]
+  teamMembers   TeamMember[]
 
   @@map("users")
 }
@@ -60,4 +61,24 @@ model BlogPost {
   @@index([published], map: "blog_posts_published_idx")
   @@index([category], map: "blog_posts_category_idx")
   @@map("blog_posts")
+}
+
+model TeamMember {
+  id            Int      @id @default(autoincrement())
+  name          String
+  position      String
+  description   String   @db.Text
+  image         String?  // Store only the image filename, not full URL
+  department    String?
+  isActive      Boolean  @default(true)
+  displayOrder  Int      @default(1) // For ordering team members (minimum 1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "team_members_userId_fkey")
+  @@index([isActive], map: "team_members_isActive_idx")
+  @@index([displayOrder], map: "team_members_displayOrder_idx")
+  @@map("team_members")
 }

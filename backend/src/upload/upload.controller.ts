@@ -31,6 +31,8 @@ export class UploadController {
             destination = join(process.cwd(), 'uploads', 'author-images');
           } else if (type === 'blogImage') {
             destination = join(process.cwd(), 'uploads', 'blog-images');
+          } else if (type === 'teamImage') {
+            destination = join(process.cwd(), 'uploads', 'team-images');
           }
 
           // Ensure directory exists
@@ -75,6 +77,8 @@ export class UploadController {
       urlPath = '/uploads/author-images';
     } else if (file.destination.includes('blog-images')) {
       urlPath = '/uploads/blog-images';
+    } else if (file.destination.includes('team-images')) {
+      urlPath = '/uploads/team-images';
     }
 
     const response = {

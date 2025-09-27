@@ -220,3 +220,35 @@ html {
 .text-highlight {
   color: #bc851d;
 }
+
+/* Line clamp utility for text truncation */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Team pagination styles */
+.team-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.team-pagination .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background: #e0ded3;
+  opacity: 1;
+  margin: 0 6px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.team-pagination .swiper-pagination-bullet-active {
+  background: #3e9aba;
+  transform: scale(1.2);
+}

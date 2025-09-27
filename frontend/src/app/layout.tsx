@@ -4,6 +4,7 @@ import "aos/dist/aos.css";
 import { geistSans, geistMono } from "@/lib/fonts";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { BlogProvider } from "@/contexts/BlogContext";
+import { TeamProvider } from "@/contexts/TeamContext";
 
 export const metadata: Metadata = {
   title: "LANMIC Polymers",
@@ -48,7 +49,9 @@ export default function RootLayout({
       >
         <AuthProvider>
           <BlogProvider>
-            {children}
+            <TeamProvider>
+              {children}
+            </TeamProvider>
           </BlogProvider>
         </AuthProvider>
       </body>
