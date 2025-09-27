@@ -183,6 +183,68 @@ export class WebSocketGateway
   }
 
   /**
+   * Broadcast team member created event to all connected admin clients
+   * This method is called when a new team member is created
+   *
+   * @param teamMemberData - The created team member data
+   */
+  broadcastTeamMemberCreated(teamMemberData: any) {
+    this.logger.log(`Broadcasting team member created: ${teamMemberData.id}`);
+    this.server.to('admin-room').emit('team-member-created', {
+      type: 'team-member-created',
+      data: teamMemberData,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Broadcast team member updated event to all connected admin clients
+   * This method is called when a team member is updated
+   *
+   * @param teamMemberData - The updated team member data
+   */
+  broadcastTeamMemberUpdated(teamMemberData: any) {
+    this.logger.log(`Broadcasting team member updated: ${teamMemberData.id}`);
+    this.server.to('admin-room').emit('team-member-updated', {
+      type: 'team-member-updated',
+      data: teamMemberData,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Broadcast team member deleted event to all connected admin clients
+   * This method is called when a team member is deleted
+   *
+   * @param teamMemberId - The ID of the deleted team member
+   */
+  broadcastTeamMemberDeleted(teamMemberId: number) {
+    this.logger.log(`Broadcasting team member deleted: ${teamMemberId}`);
+    this.server.to('admin-room').emit('team-member-deleted', {
+      type: 'team-member-deleted',
+      data: { id: teamMemberId },
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Broadcast team member active event to all connected admin clients
+   * This method is called when a team member's active status changes
+   *
+   * @param teamMemberData - The team member data with updated active status
+   */
+  broadcastTeamMemberActive(teamMemberData: any) {
+    this.logger.log(
+      `Broadcasting team member active status changed: ${teamMemberData.id}`,
+    );
+    this.server.to('admin-room').emit('team-member-active', {
+      type: 'team-member-active',
+      data: teamMemberData,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
    * Get the number of connected clients
    * Useful for monitoring and debugging
    *

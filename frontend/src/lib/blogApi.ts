@@ -1,5 +1,6 @@
 import { BlogPost } from '@/contexts/BlogContext';
 import { config } from './config';
+import { apiService } from './api';
 
 class BlogApiService {
   private async request<T>(
@@ -29,22 +30,26 @@ class BlogApiService {
     const formData = new FormData();
     formData.append('file', file); // Always use 'file' as the field name
 
-    // Use query parameter instead of form field for type
-    const url = `${config.api.baseURL}/upload/image?type=${fieldName}`;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      credentials: 'include', // Important: Include cookies in requests
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Upload failed');
+    // Map field names to upload types
+    let uploadType = 'file';
+    if (fieldName === 'authorImage') {
+      uploadType = 'authorImage';
+    } else if (fieldName === 'blogImage') {
+      uploadType = 'blogImage';
+    } else if (fieldName === 'team-images') {
+      uploadType = 'teamImage';
     }
 
-    const result = await response.json();
-    return result.url;
+    // Use the authenticated axios instance from apiService
+    const axiosInstance = apiService.getAxiosInstance();
+    
+    const response = await axiosInstance.post(`/upload/image?type=${uploadType}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data.url;
   }
 
   async getAllBlogPosts(): Promise<BlogPost[]> {

@@ -71,6 +71,10 @@ export default function DashboardPage() {
     router.push('/dashboard/settings');
   };
 
+  const handleNavigateToTeam = () => {
+    router.push('/dashboard/team');
+  };
+
 
   // Show loading spinner while checking authentication
   if (isLoading) {
@@ -271,6 +275,28 @@ export default function DashboardPage() {
               </div>
             </div>
 
+            {/* Team Management Card */}
+            <div 
+              onClick={handleNavigateToTeam}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
+            >
+              <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg mb-4 group-hover:bg-purple-200 transition-colors duration-200">
+                <svg className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Team Management</h3>
+              <p className="text-gray-600 text-sm mb-4">
+                Manage your team members. Add, edit, delete, and control visibility of team members on the about page.
+              </p>
+              <div className="flex items-center text-purple-600 text-sm font-medium group-hover:text-purple-700">
+                <span>Manage Team</span>
+                <svg className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+
             {/* User Settings Card */}
             <div 
               onClick={handleNavigateToSettings}
@@ -291,22 +317,6 @@ export default function DashboardPage() {
                 <svg className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </div>
-            </div>
-
-            {/* Coming Soon Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 opacity-60">
-              <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-lg mb-4">
-                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">More Features</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                Additional features and tools will be available here in future updates.
-              </p>
-              <div className="flex items-center text-gray-400 text-sm font-medium">
-                <span>Coming Soon</span>
               </div>
             </div>
           </div>

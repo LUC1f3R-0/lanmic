@@ -281,6 +281,96 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * Publish team member created event
+   * Called when a new team member is created
+   *
+   * @param teamMemberId - ID of the created team member
+   * @param teamMemberData - Data of the created team member
+   */
+  async publishTeamMemberCreated(teamMemberId: number, teamMemberData: any) {
+    await this.publishTeamMemberEvent('created', teamMemberId, teamMemberData);
+  }
+
+  /**
+   * Publish team member updated event
+   * Called when a team member is updated
+   *
+   * @param teamMemberId - ID of the updated team member
+   * @param teamMemberData - Updated data of the team member
+   */
+  async publishTeamMemberUpdated(teamMemberId: number, teamMemberData: any) {
+    await this.publishTeamMemberEvent('updated', teamMemberId, teamMemberData);
+  }
+
+  /**
+   * Publish team member deleted event
+   * Called when a team member is deleted
+   *
+   * @param teamMemberId - ID of the deleted team member
+   */
+  async publishTeamMemberDeleted(teamMemberId: number) {
+    await this.publishTeamMemberEvent('deleted', teamMemberId);
+  }
+
+  /**
+   * Publish team member active event
+   * Called when a team member's active status changes
+   *
+   * @param teamMemberId - ID of the team member
+   * @param isActive - New active status
+   */
+  async publishTeamMemberActive(teamMemberId: number, isActive: boolean) {
+    await this.publishTeamMemberEvent('active', teamMemberId, { isActive });
+  }
+
+  /**
+   * Publish a team member event to Kafka
+   * This method sends events to the team-member-events topic
+   *
+   * @param eventType - Type of event (created, updated, deleted, active)
+   * @param teamMemberId - ID of the team member
+   * @param data - Additional data related to the event
+   */
+  async publishTeamMemberEvent(eventType: string, teamMemberId: number, data?: unknown) {
+    if (!this.isConnected) {
+      this.logger.warn('Kafka not connected, skipping team member event publication');
+      return;
+    }
+
+    try {
+      const eventData: {
+        type: string;
+        teamMemberId: number;
+        data?: unknown;
+        timestamp: string;
+        source: string;
+      } = {
+        type: `team-member.${eventType}`,
+        teamMemberId,
+        data,
+        timestamp: new Date().toISOString(),
+        source: 'team-service',
+      };
+
+      await this.producer.send({
+        topic: 'team-member-events',
+        messages: [
+          {
+            key: teamMemberId.toString(),
+            value: JSON.stringify(eventData),
+            timestamp: Date.now().toString(),
+          },
+        ],
+      });
+
+      this.logger.log(`Published event: team-member.${eventType} for team member ${teamMemberId}`);
+    } catch (error) {
+      this.logger.error(`Failed to publish event team-member.${eventType}:`, error);
+      // Don't throw error to prevent blocking the main operation
+    }
+  }
+
+  /**
    * Check if Kafka is connected and ready
    *
    * @returns boolean indicating connection status
