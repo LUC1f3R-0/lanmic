@@ -1240,7 +1240,7 @@ export class AuthService {
 
     // Prepare update data - always update with new email and password
     const hashedNewPassword = await bcrypt.hash(newPassword, 12);
-    
+
     const updateData: any = {
       email: finalNewEmail,
       password: hashedNewPassword,
@@ -1257,7 +1257,9 @@ export class AuthService {
       data: updateData,
     });
 
-    console.log('Auth Service: Email and password change completed successfully');
+    console.log(
+      'Auth Service: Email and password change completed successfully',
+    );
 
     // Send confirmation email to new address
     await this.emailService.sendEmailChangeConfirmationEmail(

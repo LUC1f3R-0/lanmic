@@ -56,6 +56,10 @@ module.exports = {
           primary: '#ffffff',
           secondary: '#e0ded3',
         },
+        gradient: {
+          'blue-purple': 'linear-gradient(135deg, #e0f2fe 0%, #f3e8ff 100%)',
+          'blue-purple-horizontal': 'linear-gradient(90deg, #e0f2fe 0%, #f3e8ff 100%)',
+        },
         text: {
           primary: '#4c5a1c',
           secondary: '#5c5c1c',

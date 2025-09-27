@@ -11,7 +11,7 @@ import { getDisplayImageUrl } from '@/lib/imageUtils';
 
 export default function BlogManagementPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { blogPosts, isLoading: blogLoading, error: blogError, addBlogPost, updateBlogPost, deleteBlogPost, togglePublish } = useBlog();
+  const { blogPosts, isLoading: blogLoading, error: blogError, isWebSocketConnected, addBlogPost, updateBlogPost, deleteBlogPost, togglePublish } = useBlog();
   const router = useRouter();
   
   const [newPost, setNewPost] = useState({ 
@@ -89,7 +89,7 @@ export default function BlogManagementPage() {
           blogImage: '' 
         });
       } catch (error) {
-        console.error('Error creating blog post:', error);
+        // Error creating blog post
       }
     }
   };
@@ -122,7 +122,7 @@ export default function BlogManagementPage() {
           blogImage: '' 
         });
       } catch (error) {
-        console.error('Error updating blog post:', error);
+        // Error updating blog post
       }
     }
   };
@@ -131,7 +131,7 @@ export default function BlogManagementPage() {
     try {
       await deleteBlogPost(id);
     } catch (error) {
-      console.error('Error deleting blog post:', error);
+      // Error deleting blog post
     }
   };
 
@@ -139,7 +139,7 @@ export default function BlogManagementPage() {
     try {
       await togglePublish(id);
     } catch (error) {
-      console.error('Error toggling publish status:', error);
+      // Error toggling publish status
     }
   };
 
@@ -218,8 +218,17 @@ export default function BlogManagementPage() {
                 style={{ width: 'auto', height: 'auto' }}
               />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Blog Management</h1>
-                <p className="text-sm text-gray-500">Content Management System</p>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-bold text-gray-900">Blog Management</h1>
+                  {/* Real-time connection status indicator */}
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${isWebSocketConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                    <span className={`text-xs font-medium ${isWebSocketConnected ? 'text-green-600' : 'text-red-600'}`}>
+                      {isWebSocketConnected ? 'Real-time Connected' : 'Real-time Disconnected'}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500">Content Management System with Real-time Updates</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -355,8 +364,8 @@ export default function BlogManagementPage() {
             </div>
           ) : (
             <div className="space-y-6">
-              {blogPosts.map((post) => (
-                <div key={post.id} className={`border rounded-lg p-6 ${!post.published ? 'bg-gray-50' : 'bg-white'}`}>
+              {blogPosts.map((post, index) => (
+                <div key={`${post.id}-${index}`} className={`border rounded-lg p-6 ${!post.published ? 'bg-gray-50' : 'bg-white'}`}>
                   {editingId === post.id ? (
                     // Edit Mode
                     <div className="space-y-4">

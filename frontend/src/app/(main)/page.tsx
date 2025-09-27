@@ -53,7 +53,7 @@ export default function Home() {
   return (
     <main className="main">
       {/* Hero Section */}
-      <section className="hero-section relative min-h-screen flex items-center justify-center bg-background-primary overflow-hidden">
+      <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden" style={{background: 'linear-gradient(90deg, #e0f2fe 0%, #f3e8ff 100%)'}}>
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
@@ -74,7 +74,7 @@ export default function Home() {
               />
             </div>
             <h1
-              className="text-4xl sm:text-5xl lg:text-7xl font-bold text-text-primary mb-6 leading-tight"
+              className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-800 mb-6 leading-tight"
               data-aos="fade-up"
               data-aos-delay="200"
               data-aos-duration="1200"
@@ -82,11 +82,14 @@ export default function Home() {
             >
               Welcome to{" "}
               <span className="text-primary-500">
-                LANMIC Polymers
+                LANMIC
+              </span>{" "}
+              <span className="text-purple-600">
+                Polymers
               </span>
             </h1>
             <p
-              className="text-lg sm:text-xl lg:text-2xl text-text-secondary mb-8 leading-relaxed max-w-3xl mx-auto"
+              className="text-lg sm:text-xl lg:text-2xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto"
               data-aos="fade-up"
               data-aos-delay="400"
               data-aos-duration="1000"
@@ -105,9 +108,16 @@ export default function Home() {
             >
               <button 
                 onClick={() => router.push('/contact')}
-                className="btn-primary px-8 py-4 rounded-md font-semibold text-lg"
+                className="px-8 py-4 rounded-md font-semibold text-lg text-white transition-all duration-300 hover:scale-105"
+                style={{background: 'linear-gradient(90deg, #3e9aba 0%, #8b5cf6 100%)'}}
               >
-                Contact Us
+                Get Started
+              </button>
+              <button 
+                onClick={() => router.push('/about')}
+                className="px-8 py-4 rounded-md font-semibold text-lg bg-white border-2 border-green-500 text-green-600 transition-all duration-300 hover:scale-105 hover:bg-green-50"
+              >
+                Learn More
               </button>
             </div>
           </div>

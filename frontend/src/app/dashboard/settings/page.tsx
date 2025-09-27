@@ -193,7 +193,7 @@ export default function UserSettingsPage() {
       
       // CRITICAL SECURITY FIX: If re-authentication is required, logout and redirect
       if (response.requiresReauth) {
-        console.log('Email and password change completed - tokens invalidated, logging out user');
+        // Email and password change completed - tokens invalidated, logging out user
         
         // Clear localStorage after successful update
         localStorage.removeItem('pendingNewEmail');
@@ -201,7 +201,7 @@ export default function UserSettingsPage() {
         
         // Update user details with the latest information before logout
         if (response.user) {
-          console.log('Updating user details with latest information:', response.user);
+          // Updating user details with latest information
           // The user context will be cleared by logout, but we can show the updated email in the success message
           const passwordMessage = storedNewPassword ? ' and password' : '';
           setSuccess(`Email address${passwordMessage} changed successfully to ${response.user.email}! Please login again with your new credentials.`);
@@ -265,7 +265,7 @@ export default function UserSettingsPage() {
       
       // CRITICAL SECURITY FIX: If re-authentication is required, logout and redirect
       if (response.requiresReauth) {
-        console.log('Password change completed - tokens invalidated, logging out user');
+        // Password change completed - tokens invalidated, logging out user
         
         // Clear authentication state immediately
         await logout();

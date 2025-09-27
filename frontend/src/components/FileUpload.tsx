@@ -2,10 +2,12 @@
 
 import React, { useState, useRef } from 'react';
 import { blogApi } from '@/lib/blogApi';
+import { getDisplayImageUrl } from '@/lib/imageUtils';
 
 interface FileUploadProps {
-  onUpload: (url: string) => void;
-  currentUrl?: string;
+  onUpload: (filename: string) => void;
+  currentImage?: string; // Now expects filename, not full URL
+  uploadPath?: string; // Path for upload (e.g., 'team-images', 'blog-images')
   placeholder?: string;
   className?: string;
   fieldName?: string; // Add field name to determine upload destination
@@ -13,11 +15,14 @@ interface FileUploadProps {
 
 export const FileUpload: React.FC<FileUploadProps> = ({
   onUpload,
-  currentUrl,
+  currentImage,
+  uploadPath = "blog-images",
   placeholder = "Upload image",
   className = "",
-  fieldName = "file"
+  fieldName
 }) => {
+  // Use uploadPath as fieldName if fieldName is not provided
+  const actualFieldName = fieldName || uploadPath;
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -42,10 +47,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     setError(null);
 
     try {
-      const url = await blogApi.uploadImage(file, fieldName);
-      // Convert relative URL to full URL for display
-      const fullUrl = url.startsWith('http') ? url : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}${url}`;
-      onUpload(fullUrl);
+      const url = await blogApi.uploadImage(file, actualFieldName);
+      // Extract only the filename from the URL
+      let filename = url;
+      if (url.includes('/')) {
+        filename = url.split('/').pop() || url;
+      }
+      onUpload(filename);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed');
     } finally {
@@ -84,11 +92,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           )}
         </button>
         
-        {currentUrl && (
+        {currentImage && (
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-600">Current:</span>
             <a
-              href={currentUrl}
+              href={getDisplayImageUrl(currentImage, uploadPath as 'blog' | 'author' | 'team-images')}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-blue-600 hover:text-blue-800 underline"
@@ -111,10 +119,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         <p className="text-sm text-red-600">{error}</p>
       )}
 
-      {currentUrl && (
+      {currentImage && (
         <div className="mt-2">
           <img
-            src={currentUrl}
+            src={getDisplayImageUrl(currentImage, uploadPath as 'blog' | 'author' | 'team-images')}
             alt="Preview"
             className="w-20 h-20 object-cover rounded-lg border border-gray-200"
             onError={(e) => {
