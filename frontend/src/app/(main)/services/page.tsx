@@ -18,8 +18,14 @@ export default function Services() {
       {/* Services 2 Section */}
       <section
         id="services-2"
-        className="services-2-section py-20 lg:py-32 bg-gray-100 relative"
+        className="services-2-section py-20 lg:py-32 bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 relative overflow-hidden"
       >
+        {/* Enhanced Animated Background */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-cyan-400 to-blue-500 rounded-full morphing"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-indigo-400 to-purple-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div
             className="flex flex-col lg:flex-row items-start gap-12 lg:gap-20"
@@ -28,7 +34,7 @@ export default function Services() {
             data-aos-easing="ease-out-cubic"
           >
             <div className="lg:w-2/5">
-              <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
+              <span className="inline-block bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-4 hover-glow-intense glass-effect">
                 Our Services
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
@@ -43,7 +49,7 @@ export default function Services() {
                 Separated they live in Bookmarksgrove right at the coast of the
                 Semantics, a large language ocean.
               </p>
-              <button className="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+              <button className="btn-primary px-8 py-4 rounded-full font-semibold text-lg hover-glow-intense hover-slide">
                 Get Started
               </button>
             </div>
@@ -51,13 +57,13 @@ export default function Services() {
             <div className="lg:w-3/5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div
-                  className="services-item bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="zoom-in"
+                  className="services-item bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-lg hover-tilt border border-blue-200 glass-effect group"
+                  data-aos="zoom-in-rotate"
                   data-aos-delay="0"
-                  data-aos-duration="800"
+                  data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6">
+                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                     <svg
                       className="w-8 h-8 text-white"
                       fill="currentColor"
@@ -81,13 +87,13 @@ export default function Services() {
                 </div>
 
                 <div
-                  className="services-item bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="zoom-in"
+                  className="services-item bg-gradient-to-br from-white to-green-50 rounded-2xl p-6 shadow-lg hover-tilt border border-green-200 glass-effect group"
+                  data-aos="zoom-in-rotate"
                   data-aos-delay="100"
-                  data-aos-duration="800"
+                  data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl flex items-center justify-center mb-6">
+                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-green-600 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                     <svg
                       className="w-8 h-8 text-white"
                       fill="currentColor"
@@ -111,13 +117,13 @@ export default function Services() {
                 </div>
 
                 <div
-                  className="services-item bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="zoom-in"
+                  className="services-item bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 shadow-lg hover-tilt border border-purple-200 glass-effect group"
+                  data-aos="zoom-in-rotate"
                   data-aos-delay="200"
-                  data-aos-duration="800"
+                  data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center mb-6">
+                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                     <svg
                       className="w-8 h-8 text-white"
                       fill="currentColor"
@@ -137,13 +143,13 @@ export default function Services() {
                 </div>
 
                 <div
-                  className="services-item bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="zoom-in"
+                  className="services-item bg-gradient-to-br from-white to-orange-50 rounded-2xl p-6 shadow-lg hover-tilt border border-orange-200 glass-effect group"
+                  data-aos="zoom-in-rotate"
                   data-aos-delay="300"
-                  data-aos-duration="800"
+                  data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-orange-600 to-orange-700 rounded-2xl flex items-center justify-center mb-6">
+                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-orange-600 to-red-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                     <svg
                       className="w-8 h-8 text-white"
                       fill="currentColor"

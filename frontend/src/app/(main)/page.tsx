@@ -53,26 +53,58 @@ export default function Home() {
   return (
     <main className="main">
       {/* Hero Section */}
-      <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-100">
+      <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        {/* Enhanced Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-20 morphing"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-indigo-400 to-pink-500 rounded-full opacity-20 morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-10 wave"></div>
+          <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full opacity-15 float"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-to-r from-rose-400 to-pink-500 rounded-full opacity-15 pulse"></div>
+        </div>
+        
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
+            {/* Enhanced Floating Logo */}
+            <div 
+              className="mb-8 flex justify-center float"
+              data-aos="zoom-in-rotate"
+              data-aos-duration="1200"
+              data-aos-easing="ease-out-cubic"
+            >
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full blur-xl opacity-30 neon-glow"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+                <Image
+                  src="/lanmic_logo.png"
+                  alt="LANMIC Polymers Logo"
+                  width={120}
+                  height={120}
+                  className="relative w-24 h-24 sm:w-32 sm:h-32 object-contain hover-tilt transition-all duration-700 group-hover:scale-110"
+                  style={{ width: 'auto', height: 'auto' }}
+                  priority
+                />
+              </div>
+            </div>
+            
             <h1
               className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight"
-              data-aos="fade-up"
+              data-aos="text-reveal"
               data-aos-delay="200"
               data-aos-duration="1200"
               data-aos-easing="ease-out-cubic"
             >
-              <span className="text-gray-800">Welcome to </span>
-              <span className="text-blue-600">
+              <span className="text-gray-800 slide-in-left">Welcome to </span>
+              <span className="gradient-text text-transparent bg-clip-text">
                 LANMIC
               </span>{" "}
-              <span className="text-purple-600">
+              <span className="gradient-text text-transparent bg-clip-text" style={{animationDelay: '0.5s'}}>
                 Polymers
               </span>
             </h1>
+            
             <p
-              className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
+              className="text-lg sm:text-xl lg:text-2xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto"
               data-aos="fade-up"
               data-aos-delay="400"
               data-aos-duration="1000"
@@ -82,25 +114,25 @@ export default function Home() {
               deliver excellence through cutting-edge technology and
               sustainable practices.
             </p>
+            
             <div
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-              data-aos="zoom-in"
+              className="flex flex-col sm:flex-row gap-6 justify-center"
+              data-aos="zoom-in-rotate"
               data-aos-delay="600"
-              data-aos-duration="800"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <button 
                 onClick={() => router.push('/contact')}
-                className="px-8 py-4 rounded-md font-semibold text-lg text-white transition-all duration-300 hover:scale-105"
-                style={{background: 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%)'}}
+                className="btn-primary px-8 py-4 rounded-xl font-semibold text-lg text-white hover-glow-intense hover-slide relative overflow-hidden group"
               >
-                Get Started
+                <span className="relative z-10 group-hover:scale-105 transition-transform duration-300">Get Started</span>
               </button>
               <button 
                 onClick={() => router.push('/about')}
-                className="px-8 py-4 rounded-md font-semibold text-lg bg-white border-2 border-gray-300 text-gray-700 transition-all duration-300 hover:scale-105 hover:bg-gray-50"
+                className="btn-outline px-8 py-4 rounded-xl font-semibold text-lg border-2 border-blue-600 text-blue-600 hover-morph hover-slide relative overflow-hidden group"
               >
-                Learn More
+                <span className="relative z-10 group-hover:scale-105 transition-transform duration-300">Learn More</span>
               </button>
             </div>
           </div>
@@ -110,8 +142,14 @@ export default function Home() {
       {/* About Section */}
       <section
         id="about"
-        className="about-section py-20 lg:py-32 bg-background-secondary relative"
+        className="about-section py-20 lg:py-32 bg-gradient-to-br from-white via-blue-50 to-indigo-50 relative overflow-hidden"
       >
+        {/* Enhanced Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full -translate-y-48 translate-x-48 morphing"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-cyan-400 to-blue-500 rounded-full translate-y-40 -translate-x-40 morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             <div
@@ -210,8 +248,8 @@ export default function Home() {
             <div className="w-full lg:w-1/2 order-2 lg:order-2">
               <div className="space-y-6">
                 <span
-                  className="inline-block bg-primary-500 text-white px-4 py-2 rounded-md text-sm font-semibold uppercase tracking-wide"
-                  data-aos="fade-up"
+                  className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide hover-glow-intense glass-effect"
+                  data-aos="slide-in-left"
                   data-aos-duration="800"
                   data-aos-easing="ease-out-cubic"
                 >
@@ -238,19 +276,19 @@ export default function Home() {
                   and technological advancement has made us a trusted partner for businesses worldwide.
                 </p>
                 <div className="grid grid-cols-2 gap-6 pt-6">
-                  <div className="text-center p-4 card-primary rounded-lg hover-lift">
-                    <div className="text-2xl font-bold text-primary-500 mb-2">
+                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl hover-tilt border border-blue-200 glass-effect group">
+                    <div className="text-3xl font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-300">
                       25+
                     </div>
-                    <div className="text-sm text-text-secondary">
+                    <div className="text-sm text-gray-600 font-medium">
                       Years Experience
                     </div>
                   </div>
-                  <div className="text-center p-4 card-primary rounded-lg hover-lift">
-                    <div className="text-2xl font-bold text-secondary-500 mb-2">
+                  <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-100 rounded-2xl hover-tilt border border-purple-200 glass-effect group">
+                    <div className="text-3xl font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-300" style={{animationDelay: '0.5s'}}>
                       500+
                     </div>
-                    <div className="text-sm text-text-secondary">
+                    <div className="text-sm text-gray-600 font-medium">
                       Projects Completed
                     </div>
                   </div>
@@ -264,13 +302,19 @@ export default function Home() {
       {/* Services Section */}
       <section
         id="services"
-        className="services-section py-20 lg:py-32 bg-background-primary"
+        className="services-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 relative overflow-hidden"
       >
+        {/* Enhanced Background Elements */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-1/4 left-0 w-72 h-72 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full morphing"></div>
+          <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-gradient-to-l from-cyan-400 to-blue-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span
-              className="inline-block bg-primary-500 text-white px-4 py-2 rounded-md text-sm font-semibold uppercase tracking-wide mb-4"
-              data-aos="fade-up"
+              className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-4 hover-glow-intense glass-effect"
+              data-aos="slide-in-right"
             >
               Our Services
             </span>
@@ -293,13 +337,13 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div
-              className="group card-primary rounded-lg p-8 card-hover"
-              data-aos="zoom-in"
+              className="group bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 hover-tilt border border-blue-200 shadow-lg glass-effect"
+              data-aos="zoom-in-rotate"
               data-aos-delay="100"
-              data-aos-duration="800"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-primary-500 rounded-lg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate neon-glow">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -322,13 +366,13 @@ export default function Home() {
             </div>
 
             <div
-              className="group card-primary rounded-lg p-8 card-hover"
-              data-aos="zoom-in"
+              className="group bg-gradient-to-br from-white to-purple-50 rounded-2xl p-8 hover-tilt border border-purple-200 shadow-lg glass-effect"
+              data-aos="zoom-in-rotate"
               data-aos-delay="200"
-              data-aos-duration="800"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-secondary-500 rounded-lg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate neon-glow">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -351,13 +395,13 @@ export default function Home() {
             </div>
 
             <div
-              className="group card-primary rounded-lg p-8 card-hover"
-              data-aos="zoom-in"
+              className="group bg-gradient-to-br from-white to-green-50 rounded-2xl p-8 hover-tilt border border-green-200 shadow-lg glass-effect"
+              data-aos="zoom-in-rotate"
               data-aos-delay="300"
-              data-aos-duration="800"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-accent-sage rounded-lg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate neon-glow">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"

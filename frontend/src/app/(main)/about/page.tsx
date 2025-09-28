@@ -49,14 +49,23 @@ export default function About() {
       {/* LANMIC Group Values Section */}
       <section
         id="values"
-        className="values-section py-20 lg:py-32 bg-gray-100"
+        className="values-section py-20 lg:py-32 bg-white relative overflow-hidden"
       >
+        {/* Enhanced Animated Background */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full morphing"></div>
+          <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-indigo-400 to-cyan-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span
-              className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
-              data-aos="fade-up"
+              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-bold uppercase tracking-wide mb-6 hover-glow-intense shadow-xl border-2 border-white flex items-center justify-center gap-2"
+              data-aos="slide-in-left"
             >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 2L8.5 6.5L4 6.5L7.5 9.5L6 14L10 11.5L14 14L12.5 9.5L16 6.5L11.5 6.5L10 2Z" clipRule="evenodd" />
+              </svg>
               LANMIC GROUP VALUES
             </span>
             <h2
@@ -77,14 +86,14 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-blue-600"
-              data-aos="zoom-in"
+              className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-blue-600 glass-effect group"
+              data-aos="zoom-in-rotate"
               data-aos-delay="100"
-              data-aos-duration="800"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl flex items-center justify-center mr-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center mr-4 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="currentColor"
@@ -116,14 +125,14 @@ export default function About() {
             </div>
 
             <div
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-green-600"
-              data-aos="zoom-in"
+              className="bg-gradient-to-br from-white to-green-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-green-600 glass-effect group"
+              data-aos="zoom-in-rotate"
               data-aos-delay="200"
-              data-aos-duration="800"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-green-700 rounded-xl flex items-center justify-center mr-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-500 rounded-xl flex items-center justify-center mr-4 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="currentColor"
@@ -140,14 +149,14 @@ export default function About() {
             </div>
 
             <div
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-purple-600"
-              data-aos="zoom-in"
+              className="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-purple-600 glass-effect group"
+              data-aos="zoom-in-rotate"
               data-aos-delay="300"
-              data-aos-duration="800"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl flex items-center justify-center mr-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl flex items-center justify-center mr-4 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="currentColor"
@@ -164,14 +173,14 @@ export default function About() {
             </div>
 
             <div
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-teal-600"
-              data-aos="zoom-in"
+              className="bg-gradient-to-br from-white to-teal-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-teal-600 glass-effect group"
+              data-aos="zoom-in-rotate"
               data-aos-delay="400"
-              data-aos-duration="800"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-teal-700 rounded-xl flex items-center justify-center mr-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-cyan-500 rounded-xl flex items-center justify-center mr-4 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="currentColor"

@@ -17,12 +17,18 @@ export default function Team() {
   return (
     <main className="main">
       {/* Hero Section */}
-      <section className="hero-section py-20 lg:py-32 bg-gray-100 relative">
+      <section className="hero-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
+        {/* Enhanced Animated Background */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full morphing"></div>
+          <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-pink-400 to-rose-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <span
-              className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
-              data-aos="fade-up"
+              className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-4 hover-glow-intense glass-effect"
+              data-aos="slide-in-left"
             >
               Our Team
             </span>
@@ -34,7 +40,7 @@ export default function Team() {
               data-aos-easing="ease-out-cubic"
             >
               Meet Our{" "}
-              <span className="text-blue-600">
+              <span className="gradient-text text-transparent bg-clip-text">
                 Expert Team
               </span>
             </h1>
@@ -53,12 +59,18 @@ export default function Team() {
       </section>
 
       {/* Leadership Team */}
-      <section className="leadership-section py-20 lg:py-32 bg-white relative">
+      <section className="leadership-section py-20 lg:py-32 bg-gradient-to-br from-white via-blue-50 to-indigo-50 relative overflow-hidden">
+        {/* Enhanced Background Elements */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-1/4 right-0 w-72 h-72 bg-gradient-to-l from-blue-400 to-indigo-500 rounded-full morphing"></div>
+          <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span
-              className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
-              data-aos="fade-up"
+              className="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-4 hover-glow-intense glass-effect"
+              data-aos="slide-in-right"
             >
               Leadership
             </span>
@@ -80,10 +92,10 @@ export default function Team() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             <div
-              className="group bg-gradient-to-br from-white to-cyan-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-cyan-100"
-              data-aos="zoom-in"
+              className="group bg-gradient-to-br from-white to-cyan-50 rounded-2xl p-8 shadow-lg hover-tilt border border-cyan-200 glass-effect"
+              data-aos="zoom-in-rotate"
               data-aos-delay="100"
-              data-aos-duration="800"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <div className="relative mb-6">
@@ -134,10 +146,10 @@ export default function Team() {
             </div>
 
             <div
-              className="group bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-emerald-100"
-              data-aos="zoom-in"
+              className="group bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover-tilt border border-emerald-200 glass-effect"
+              data-aos="zoom-in-rotate"
               data-aos-delay="200"
-              data-aos-duration="800"
+              data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <div className="relative mb-6">
