@@ -34,16 +34,7 @@ const Header = () => {
       <div className="container mx-auto flex items-center justify-between px-4 py-4">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-3">
-          <Image
-            src="/lanmic_logo.png"
-            alt="LANMIC Polymers Logo"
-            width={60}
-            height={60}
-            className="w-15 h-15 object-contain"
-            style={{ width: 'auto', height: 'auto' }}
-            priority
-          />
-          <div className="text-xl font-bold text-primary-500 hidden sm:block">
+          <div className="text-xl font-bold text-blue-600 hidden sm:block">
             LANMIC POLYMERS
           </div>
         </Link>
@@ -56,8 +47,8 @@ const Header = () => {
               href={item.href}
               className={`${
                 pathname === item.href
-                  ? "text-primary-500 font-semibold border-b-2 border-primary-500"
-                  : "text-text-primary hover:text-primary-500 transition-colors"
+                  ? "text-blue-600 font-semibold border-b-2 border-blue-600"
+                  : "text-gray-600 hover:text-blue-600 transition-colors"
               }`}
             >
               {item.label}
@@ -69,7 +60,7 @@ const Header = () => {
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="text-text-primary hover:text-primary-500 font-medium transition-colors"
+                className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
               >
                 Dashboard
               </Link>
@@ -93,7 +84,7 @@ const Header = () => {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="text-2xl text-text-primary md:hidden hover:text-primary-500 transition-colors"
+          className="text-2xl text-gray-600 md:hidden hover:text-blue-600 transition-colors"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
@@ -104,7 +95,7 @@ const Header = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <nav className="md:hidden bg-white border-t border-neutral-200 shadow-sm">
-          <ul className="flex flex-col space-y-4 px-4 py-6 font-medium text-text-primary">
+          <ul className="flex flex-col space-y-4 px-4 py-6 font-medium text-gray-600">
             {navItems.map((item) => (
               <li key={item.href}>
                 <Link
@@ -112,8 +103,8 @@ const Header = () => {
                   onClick={() => setIsOpen(false)}
                   className={`${
                     pathname === item.href
-                      ? "text-primary-500 font-semibold border-l-4 border-primary-500 pl-2"
-                      : "hover:text-primary-500 transition-colors"
+                      ? "text-blue-600 font-semibold border-l-4 border-blue-600 pl-2"
+                      : "hover:text-blue-600 transition-colors"
                   }`}
                 >
                   {item.label}
@@ -128,7 +119,7 @@ const Header = () => {
                   <Link
                     href="/dashboard"
                     onClick={() => setIsOpen(false)}
-                    className="block text-text-primary hover:text-primary-500 font-medium transition-colors"
+                    className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                   >
                     Dashboard
                   </Link>

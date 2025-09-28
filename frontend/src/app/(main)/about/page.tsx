@@ -49,12 +49,12 @@ export default function About() {
       {/* LANMIC Group Values Section */}
       <section
         id="values"
-        className="values-section py-20 lg:py-32 bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50"
+        className="values-section py-20 lg:py-32 bg-gray-100"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span
-              className="inline-block bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
+              className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
               data-aos="fade-up"
             >
               LANMIC GROUP VALUES
@@ -197,17 +197,17 @@ export default function About() {
       {/* Services Section */}
       <section
         id="services"
-        className="services-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-cyan-50 to-emerald-50"
+        className="services-section py-20 lg:py-32 bg-white"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div
-              className="services-item bg-gradient-to-br from-white to-cyan-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-cyan-100"
+              className="services-item bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200"
               data-aos="zoom-in"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="services-icon w-16 h-16 bg-gradient-to-r from-cyan-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6">
+              <div className="services-icon w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-6">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -231,13 +231,13 @@ export default function About() {
             </div>
 
             <div
-              className="services-item bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-emerald-100"
+              className="services-item bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200"
               data-aos="zoom-in"
               data-aos-delay="100"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="services-icon w-16 h-16 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6">
+              <div className="services-icon w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mb-6">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -261,13 +261,13 @@ export default function About() {
             </div>
 
             <div
-              className="services-item bg-gradient-to-br from-white to-violet-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-violet-100"
+              className="services-item bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200"
               data-aos="zoom-in"
               data-aos-delay="200"
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="services-icon w-16 h-16 bg-gradient-to-r from-violet-600 to-purple-700 rounded-2xl flex items-center justify-center mb-6">
+              <div className="services-icon w-16 h-16 bg-gray-600 rounded-2xl flex items-center justify-center mb-6">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"

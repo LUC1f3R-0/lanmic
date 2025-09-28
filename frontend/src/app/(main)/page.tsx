@@ -53,35 +53,18 @@ export default function Home() {
   return (
     <main className="main">
       {/* Hero Section */}
-      <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden" style={{background: 'linear-gradient(90deg, #e0f2fe 0%, #f3e8ff 100%)'}}>
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-100">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <div 
-              className="mb-8 flex justify-center"
-              data-aos="fade-up"
-              data-aos-duration="1000"
-              data-aos-easing="ease-out-cubic"
-            >
-              <Image
-                src="/lanmic_logo.png"
-                alt="LANMIC Polymers Logo"
-                width={180}
-                height={180}
-                className="w-36 h-36 sm:w-48 sm:h-48 object-contain"
-                style={{ width: 'auto', height: 'auto' }}
-                priority
-              />
-            </div>
             <h1
-              className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-800 mb-6 leading-tight"
+              className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight"
               data-aos="fade-up"
               data-aos-delay="200"
               data-aos-duration="1200"
               data-aos-easing="ease-out-cubic"
             >
-              Welcome to{" "}
-              <span className="text-primary-500">
+              <span className="text-gray-800">Welcome to </span>
+              <span className="text-blue-600">
                 LANMIC
               </span>{" "}
               <span className="text-purple-600">
@@ -89,7 +72,7 @@ export default function Home() {
               </span>
             </h1>
             <p
-              className="text-lg sm:text-xl lg:text-2xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto"
+              className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
               data-aos="fade-up"
               data-aos-delay="400"
               data-aos-duration="1000"
@@ -109,13 +92,13 @@ export default function Home() {
               <button 
                 onClick={() => router.push('/contact')}
                 className="px-8 py-4 rounded-md font-semibold text-lg text-white transition-all duration-300 hover:scale-105"
-                style={{background: 'linear-gradient(90deg, #3e9aba 0%, #8b5cf6 100%)'}}
+                style={{background: 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%)'}}
               >
                 Get Started
               </button>
               <button 
                 onClick={() => router.push('/about')}
-                className="px-8 py-4 rounded-md font-semibold text-lg bg-white border-2 border-green-500 text-green-600 transition-all duration-300 hover:scale-105 hover:bg-green-50"
+                className="px-8 py-4 rounded-md font-semibold text-lg bg-white border-2 border-gray-300 text-gray-700 transition-all duration-300 hover:scale-105 hover:bg-gray-50"
               >
                 Learn More
               </button>

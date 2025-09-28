@@ -17,11 +17,11 @@ export default function Team() {
   return (
     <main className="main">
       {/* Hero Section */}
-      <section className="hero-section py-20 lg:py-32 bg-gradient-to-br from-indigo-100 via-cyan-50 to-emerald-100 relative">
+      <section className="hero-section py-20 lg:py-32 bg-gray-100 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <span
-              className="inline-block bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
+              className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
               data-aos="fade-up"
             >
               Our Team
@@ -34,7 +34,7 @@ export default function Team() {
               data-aos-easing="ease-out-cubic"
             >
               Meet Our{" "}
-              <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-blue-600">
                 Expert Team
               </span>
             </h1>
@@ -53,11 +53,11 @@ export default function Team() {
       </section>
 
       {/* Leadership Team */}
-      <section className="leadership-section py-20 lg:py-32 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative">
+      <section className="leadership-section py-20 lg:py-32 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span
-              className="inline-block bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
+              className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
               data-aos="fade-up"
             >
               Leadership
@@ -191,11 +191,11 @@ export default function Team() {
       </section>
 
       {/* Our Team Section */}
-      <section className="our-team-section py-20 lg:py-32 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 relative">
+      <section className="our-team-section py-20 lg:py-32 bg-gray-100 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span
-              className="inline-block bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
+              className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
               data-aos="fade-up"
             >
               Our Team
@@ -229,7 +229,7 @@ export default function Team() {
       </section>
 
       {/* Team Stats */}
-      <section className="stats-section py-20 lg:py-32 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 relative">
+      <section className="stats-section py-20 lg:py-32 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div
@@ -281,8 +281,8 @@ export default function Team() {
       </section>
 
       {/* Join Our Team */}
-      <section className="join-team-section py-20 lg:py-32 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/20 via-blue-600/20 to-purple-600/20"></div>
+      <section className="join-team-section py-20 lg:py-32 bg-blue-600 relative overflow-hidden">
+        <div className="absolute inset-0 bg-blue-600/20"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <h2
@@ -291,20 +291,20 @@ export default function Team() {
             >
               Join Our Team
             </h2>
-            <p
-              className="text-xl text-cyan-100 mb-8 leading-relaxed"
-              data-aos="fade-up"
-              data-aos-delay="100"
-            >
-              Be part of our innovative team and help shape the future of
-              polymer technology
-            </p>
+              <p
+                className="text-xl text-blue-100 mb-8 leading-relaxed"
+                data-aos="fade-up"
+                data-aos-delay="100"
+              >
+                Be part of our innovative team and help shape the future of
+                polymer technology
+              </p>
             <div
               className="flex justify-center"
               data-aos="fade-up"
               data-aos-delay="200"
             >
-              <button className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-cyan-600 transition-all duration-300">
+              <button className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-blue-600 transition-all duration-300">
                 Contact HR
               </button>
             </div>

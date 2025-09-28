@@ -18,7 +18,7 @@ export default function Services() {
       {/* Services 2 Section */}
       <section
         id="services-2"
-        className="services-2-section py-20 lg:py-32 bg-white relative"
+        className="services-2-section py-20 lg:py-32 bg-gray-100 relative"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div
@@ -28,7 +28,7 @@ export default function Services() {
             data-aos-easing="ease-out-cubic"
           >
             <div className="lg:w-2/5">
-              <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
+              <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
                 Our Services
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
@@ -43,7 +43,7 @@ export default function Services() {
                 Separated they live in Bookmarksgrove right at the coast of the
                 Semantics, a large language ocean.
               </p>
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+              <button className="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
                 Get Started
               </button>
             </div>
@@ -174,11 +174,11 @@ export default function Services() {
       {/* Services Section */}
       <section
         id="services"
-        className="services-section py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-blue-50"
+        className="services-section py-20 lg:py-32 bg-white"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
+            <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
               What We Offer
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
@@ -283,7 +283,7 @@ export default function Services() {
       <section className="additional-services-section py-20 lg:py-32 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
+            <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
               Specialized Solutions
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">

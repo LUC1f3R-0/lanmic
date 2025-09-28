@@ -40,11 +40,11 @@ export default function Contact() {
   return (
     <main className="main">
       {/* Hero Section */}
-      <section className="hero-section py-20 lg:py-32 bg-gradient-to-br from-blue-50 via-white to-purple-50 relative">
+      <section className="hero-section py-20 lg:py-32 bg-gray-100 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <span
-              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
+              className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
               data-aos="fade-up"
             >
               Get In Touch
@@ -57,7 +57,7 @@ export default function Contact() {
               data-aos-easing="ease-out-cubic"
             >
               Let&apos;s{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-blue-600">
                 Connect
               </span>
             </h1>
@@ -186,7 +186,7 @@ export default function Contact() {
                   <div data-aos="fade-up" data-aos-delay="600">
                     <button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-8 rounded-lg font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform"
+                      className="w-full bg-blue-600 text-white py-4 px-8 rounded-lg font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform"
                     >
                       Send Message
                     </button>
@@ -202,7 +202,7 @@ export default function Contact() {
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8">
+              <div className="bg-gray-50 rounded-2xl p-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
                   Contact Information
                 </h3>
@@ -301,7 +301,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-8">
+              <div className="bg-gray-50 rounded-2xl p-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
                   Business Hours
                 </h3>
@@ -330,7 +330,7 @@ export default function Contact() {
       </section>
 
       {/* Map Section */}
-      <section className="map-section py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-blue-50 relative">
+      <section className="map-section py-20 lg:py-32 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2
