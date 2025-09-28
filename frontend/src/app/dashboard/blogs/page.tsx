@@ -305,7 +305,7 @@ export default function BlogManagementPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Author Image</label>
               <FileUpload
                 onUpload={(url) => setNewPost({ ...newPost, authorImage: url })}
-                currentUrl={newPost.authorImage}
+                currentImage={newPost.authorImage}
                 placeholder="Upload Author Image"
                 fieldName="authorImage"
               />
@@ -314,7 +314,7 @@ export default function BlogManagementPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Blog Image</label>
               <FileUpload
                 onUpload={(url) => setNewPost({ ...newPost, blogImage: url })}
-                currentUrl={newPost.blogImage}
+                currentImage={newPost.blogImage}
                 placeholder="Upload Blog Image"
                 fieldName="blogImage"
               />
@@ -424,7 +424,7 @@ export default function BlogManagementPage() {
                           <label className="block text-sm font-medium text-gray-700 mb-2">Author Image</label>
                           <FileUpload
                             onUpload={(url) => setEditPost({ ...editPost, authorImage: url })}
-                            currentUrl={editPost.authorImage}
+                            currentImage={editPost.authorImage}
                             placeholder="Upload Author Image"
                             fieldName="authorImage"
                           />
@@ -433,7 +433,7 @@ export default function BlogManagementPage() {
                           <label className="block text-sm font-medium text-gray-700 mb-2">Blog Image</label>
                           <FileUpload
                             onUpload={(url) => setEditPost({ ...editPost, blogImage: url })}
-                            currentUrl={editPost.blogImage}
+                            currentImage={editPost.blogImage}
                             placeholder="Upload Blog Image"
                             fieldName="blogImage"
                           />
