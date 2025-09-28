@@ -5,12 +5,22 @@ import Image from "next/image";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLogoVisibility } from "@/hooks/useLogoVisibility";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); // current route
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
+  const isLargeLogoVisible = useLogoVisibility();
+  
+  // Show navbar logo when large logo is not visible (or on non-home pages)
+  const shouldShowNavbarLogo = !isLargeLogoVisible;
+  
+  // Debug logging (remove in production)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Header - Path:', pathname, 'Large logo visible:', isLargeLogoVisible, 'Show navbar logo:', shouldShowNavbarLogo);
+  }
 
   const handleLogout = async () => {
     try {
@@ -34,8 +44,25 @@ const Header = () => {
       <div className="container mx-auto flex items-center justify-between px-4 py-4">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-3">
-          <div className="text-xl font-bold text-blue-600 hidden sm:block">
-            LANMIC POLYMERS
+          {/* Navbar Logo - Only visible when large logo is not visible */}
+          <div 
+            className={`flex items-center space-x-3 transition-all duration-500 ease-in-out ${
+              shouldShowNavbarLogo 
+                ? 'opacity-100 scale-100 pointer-events-auto' 
+                : 'opacity-0 scale-95 pointer-events-none'
+            }`}
+          >
+            <Image
+              src="/lanmic_logo.png"
+              alt="LANMIC Polymers Logo"
+              width={40}
+              height={40}
+              className="w-10 h-10 object-contain"
+              priority
+            />
+            <div className="text-xl font-bold text-blue-600 hidden sm:block">
+              LANMIC POLYMERS
+            </div>
           </div>
         </Link>
 

@@ -38,16 +38,13 @@ export default function Services() {
                 Our Services
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                Far far away, behind the word mountains, far from the countries
-                Vokalia
+                Our Services
               </h2>
               <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                Far far away, behind the word mountains, far from the countries
-                Vokalia and Consonantia, there live the blind texts.
+                "Comprehensive Polymer Solutions, Expertise in Polymer Innovation, Reliable Industrial Solutions"
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Separated they live in Bookmarksgrove right at the coast of the
-                Semantics, a large language ocean.
+                Our company specializes in providing high-quality polymer solutions for various industries, focusing on innovation, reliability, and sustainability to meet the highest standards and meet diverse client needs.
               </p>
               <button className="btn-primary px-8 py-4 rounded-full font-semibold text-lg hover-glow-intense hover-slide">
                 Get Started
@@ -78,10 +75,10 @@ export default function Services() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Square
+                      High-Quality Products
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Separated they live in Bookmarksgrove right at the coast
+                      Delivering premium polymer solutions that meet industry standards.
                     </p>
                   </div>
                 </div>
@@ -108,10 +105,10 @@ export default function Services() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Technology
+                      Innovative Solutions
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Separated they live in Bookmarksgrove right at the coast
+                      Developing advanced products through cutting-edge technology and research.
                     </p>
                   </div>
                 </div>
@@ -134,10 +131,10 @@ export default function Services() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Brilliant Ideas
+                      Customized Services
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Separated they live in Bookmarksgrove right at the coast
+                      Tailoring polymer solutions to meet the unique needs of each client.
                     </p>
                   </div>
                 </div>
@@ -164,10 +161,10 @@ export default function Services() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Blueprint
+                      Sustainability & Reliability
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Separated they live in Bookmarksgrove right at the coast
+                      Ensuring eco-friendly practices while providing consistent, dependable products.
                     </p>
                   </div>
                 </div>
@@ -191,8 +188,7 @@ export default function Services() {
               Our Core Services
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Comprehensive solutions tailored to meet your specific needs and
-              requirements
+              Leading polymer innovation through advanced research, quality assurance, and sustainable practices
             </p>
           </div>
 
@@ -209,19 +205,15 @@ export default function Services() {
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Technology
+                  R&D and Innovation
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Separated they live in Bookmarksgrove right at the coast
+                  Advanced product development, new formulas, state-of-the-art lab facilities, and continuous innovation pipeline to drive polymer technology forward.
                 </p>
               </div>
             </div>
@@ -241,17 +233,17 @@ export default function Services() {
                 >
                   <path
                     fillRule="evenodd"
-                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                     clipRule="evenodd"
                   />
                 </svg>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Web Design
+                  Quality Assurance
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Separated they live in Bookmarksgrove right at the coast
+                  Comprehensive testing equipment, ISO and ASTM certifications, rigorous internal audit processes, and complete QA protocols ensuring highest standards.
                 </p>
               </div>
             </div>
@@ -269,15 +261,19 @@ export default function Services() {
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
-                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Branding
+                  Sustainability
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Separated they live in Bookmarksgrove right at the coast
+                  Eco-friendly initiatives, advanced recycling programs, energy-efficient processes, and comprehensive green product lines for environmental responsibility.
                 </p>
               </div>
             </div>

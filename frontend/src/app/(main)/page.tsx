@@ -71,6 +71,7 @@ export default function Home() {
               data-aos="zoom-in-rotate"
               data-aos-duration="1200"
               data-aos-easing="ease-out-cubic"
+              data-large-logo
             >
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full blur-xl opacity-30 neon-glow"></div>

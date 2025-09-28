@@ -46,6 +46,51 @@ export default function About() {
   return (
     <main className="main">
 
+      {/* Company Introduction Section */}
+      <section
+        id="company-intro"
+        className="company-intro-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 relative overflow-hidden"
+      >
+        {/* Enhanced Animated Background */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-1/4 left-0 w-72 h-72 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full morphing"></div>
+          <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-gradient-to-l from-cyan-400 to-blue-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <span
+              className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-6 hover-glow-intense glass-effect"
+              data-aos="slide-in-right"
+            >
+              About LANMIC Polymers
+            </span>
+            <h1
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              Excellence in Polymer Innovation
+            </h1>
+            <div
+              className="text-lg text-gray-700 leading-relaxed space-y-6"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <p>
+                <strong>LANMIC Polymers (Pvt) Ltd</strong> is a part of the esteemed <strong>LANMIC Group</strong>, Sri Lanka's premier chemicals and minerals conglomerate. Established in 2019, LANMIC Polymers focuses on producing high-quality filler masterbatches and polymer solutions that uphold the Group's legacy of excellence in mineral processing and innovation.
+              </p>
+              <p>
+                With its state-of-the-art facility located in the <strong>Fullerton Industrial Zone, Kalutara</strong>, the company is equipped with modern laboratories and cutting-edge production technology. Being <strong>ISO 9001:2015 certified</strong>, LANMIC Polymers ensures that its products meet stringent quality standards and international norms.
+              </p>
+              <p>
+                Our flagship offering, <strong>Polymax Calcium Filler Masterbatch</strong>, exemplifies our commitment to cost-efficiency without compromising performance. Designed to replace virgin polymers, Polymax enhances mechanical properties (such as tensile and impact strength), delivers excellent dispersion, and allows manufacturers to achieve material savings.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* LANMIC Group Values Section */}
       <section
         id="values"
