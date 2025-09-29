@@ -5,6 +5,7 @@ import { geistSans, geistMono } from "@/lib/fonts";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { BlogProvider } from "@/contexts/BlogContext";
 import { TeamProvider } from "@/contexts/TeamContext";
+import { ExecutiveProvider } from "@/contexts/ExecutiveContext";
 
 export const metadata: Metadata = {
   title: "LANMIC Polymers",
@@ -50,7 +51,9 @@ export default function RootLayout({
         <AuthProvider>
           <BlogProvider>
             <TeamProvider>
-              {children}
+              <ExecutiveProvider>
+                {children}
+              </ExecutiveProvider>
             </TeamProvider>
           </BlogProvider>
         </AuthProvider>

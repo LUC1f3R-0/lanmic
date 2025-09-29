@@ -1,6 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { TeamController } from './team.controller';
-import { TeamService } from './team.service';
+import { ExecutiveController } from './executive.controller';
+import { ExecutiveService } from './executive.service';
 import { DatabaseService } from '../database.service';
 import { KafkaModule } from '../kafka/kafka.module';
 import { SimpleWebSocketModule } from '../websocket/simple-websocket.module';
@@ -10,8 +10,8 @@ import { SimpleWebSocketModule } from '../websocket/simple-websocket.module';
     forwardRef(() => KafkaModule),
     forwardRef(() => SimpleWebSocketModule),
   ],
-  controllers: [TeamController],
-  providers: [TeamService, DatabaseService],
-  exports: [TeamService],
+  controllers: [ExecutiveController],
+  providers: [ExecutiveService, DatabaseService],
+  exports: [ExecutiveService],
 })
-export class TeamModule {}
+export class ExecutiveModule {}

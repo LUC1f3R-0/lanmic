@@ -371,6 +371,96 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * Publish executive leadership created event
+   * Called when a new executive leadership is created
+   *
+   * @param executiveLeadershipId - ID of the created executive leadership
+   * @param executiveLeadershipData - Data of the created executive leadership
+   */
+  async publishExecutiveLeadershipCreated(executiveLeadershipId: number, executiveLeadershipData: any) {
+    await this.publishExecutiveLeadershipEvent('created', executiveLeadershipId, executiveLeadershipData);
+  }
+
+  /**
+   * Publish executive leadership updated event
+   * Called when an executive leadership is updated
+   *
+   * @param executiveLeadershipId - ID of the updated executive leadership
+   * @param executiveLeadershipData - Updated data of the executive leadership
+   */
+  async publishExecutiveLeadershipUpdated(executiveLeadershipId: number, executiveLeadershipData: any) {
+    await this.publishExecutiveLeadershipEvent('updated', executiveLeadershipId, executiveLeadershipData);
+  }
+
+  /**
+   * Publish executive leadership deleted event
+   * Called when an executive leadership is deleted
+   *
+   * @param executiveLeadershipId - ID of the deleted executive leadership
+   */
+  async publishExecutiveLeadershipDeleted(executiveLeadershipId: number) {
+    await this.publishExecutiveLeadershipEvent('deleted', executiveLeadershipId);
+  }
+
+  /**
+   * Publish executive leadership active event
+   * Called when an executive leadership's active status changes
+   *
+   * @param executiveLeadershipId - ID of the executive leadership
+   * @param isActive - New active status
+   */
+  async publishExecutiveLeadershipActive(executiveLeadershipId: number, isActive: boolean) {
+    await this.publishExecutiveLeadershipEvent('active', executiveLeadershipId, { isActive });
+  }
+
+  /**
+   * Publish an executive leadership event to Kafka
+   * This method sends events to the executive-leadership-events topic
+   *
+   * @param eventType - Type of event (created, updated, deleted, active)
+   * @param executiveLeadershipId - ID of the executive leadership
+   * @param data - Additional data related to the event
+   */
+  async publishExecutiveLeadershipEvent(eventType: string, executiveLeadershipId: number, data?: unknown) {
+    if (!this.isConnected) {
+      this.logger.warn('Kafka not connected, skipping executive leadership event publication');
+      return;
+    }
+
+    try {
+      const eventData: {
+        type: string;
+        executiveLeadershipId: number;
+        data?: unknown;
+        timestamp: string;
+        source: string;
+      } = {
+        type: `executive-leadership.${eventType}`,
+        executiveLeadershipId,
+        data,
+        timestamp: new Date().toISOString(),
+        source: 'executive-service',
+      };
+
+      await this.producer.send({
+        topic: 'executive-leadership-events',
+        messages: [
+          {
+            key: executiveLeadershipId.toString(),
+            value: JSON.stringify(eventData),
+            timestamp: Date.now().toString(),
+          },
+        ],
+      });
+
+      this.logger.log(`Published event: executive-leadership.${eventType} for executive leadership ${executiveLeadershipId}`);
+    } catch (error) {
+      this.logger.error(`Failed to publish event executive-leadership.${eventType}:`, error);
+      // Don't throw error to prevent blocking the main operation
+    }
+  }
+
+  /**
    * Check if Kafka is connected and ready
    *
    * @returns boolean indicating connection status

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
+import FreeMap from "@/components/FreeMap";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -40,12 +41,18 @@ export default function Contact() {
   return (
     <main className="main">
       {/* Hero Section */}
-      <section className="hero-section py-20 lg:py-32 bg-gradient-to-br from-blue-50 via-white to-purple-50 relative">
+      <section className="hero-section py-20 lg:py-32 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+        {/* Enhanced Animated Background */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full morphing"></div>
+          <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-purple-400 to-pink-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <span
-              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
-              data-aos="fade-up"
+              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-4 hover-glow-intense glass-effect"
+              data-aos="slide-in-left"
             >
               Get In Touch
             </span>
@@ -57,7 +64,7 @@ export default function Contact() {
               data-aos-easing="ease-out-cubic"
             >
               Let&apos;s{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="gradient-text text-transparent bg-clip-text">
                 Connect
               </span>
             </h1>
@@ -186,7 +193,7 @@ export default function Contact() {
                   <div data-aos="fade-up" data-aos-delay="600">
                     <button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-8 rounded-lg font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform"
+                      className="w-full btn-primary py-4 px-8 rounded-xl font-semibold text-lg hover-glow-intense hover-slide"
                     >
                       Send Message
                     </button>
@@ -202,7 +209,7 @@ export default function Contact() {
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 hover-tilt border border-blue-200 glass-effect">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
                   Contact Information
                 </h3>
@@ -234,11 +241,11 @@ export default function Contact() {
                         Address
                       </h4>
                       <p className="text-gray-600 text-sm">
-                        123 Polymer Street
+                        Fullerton Industrial Zone
                         <br />
-                        Innovation District
+                        Kalutara
                         <br />
-                        Tech City, TC 12345
+                        Sri Lanka
                       </p>
                     </div>
                   </div>
@@ -264,9 +271,9 @@ export default function Contact() {
                         Phone
                       </h4>
                       <p className="text-gray-600 text-sm">
-                        +1 (555) 123-4567
+                        +94 34 222 2222
                         <br />
-                        +1 (555) 987-6543
+                        +94 34 333 3333
                       </p>
                     </div>
                   </div>
@@ -301,7 +308,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-8">
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 hover-tilt border border-purple-200 glass-effect">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
                   Business Hours
                 </h3>
@@ -330,7 +337,13 @@ export default function Contact() {
       </section>
 
       {/* Map Section */}
-      <section className="map-section py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-blue-50 relative">
+      <section className="map-section py-20 lg:py-32 bg-gradient-to-br from-white via-gray-50 to-blue-50 relative overflow-hidden">
+        {/* Enhanced Background Elements */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-1/3 left-0 w-72 h-72 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full morphing"></div>
+          <div className="absolute bottom-1/3 right-0 w-80 h-80 bg-gradient-to-l from-purple-400 to-pink-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2
@@ -356,18 +369,11 @@ export default function Contact() {
             data-aos-duration="1000"
             data-aos-easing="ease-out-cubic"
           >
-            <div className="h-96 bg-gray-200 flex items-center justify-center">
-              <div className="text-center">
-                <svg
-                  className="w-16 h-16 text-gray-400 mx-auto mb-4"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                </svg>
-                <p className="text-gray-600">Interactive Map Coming Soon</p>
-              </div>
-            </div>
+            <FreeMap
+              center={[6.57734193713057, 79.99503192168778]} // Exact LANMIC Polymers coordinates [lat, lng]
+              zoom={16}
+              className="h-96 w-full rounded-2xl"
+            />
           </div>
         </div>
       </section>

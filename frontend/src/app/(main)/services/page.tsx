@@ -18,8 +18,14 @@ export default function Services() {
       {/* Services 2 Section */}
       <section
         id="services-2"
-        className="services-2-section py-20 lg:py-32 bg-white relative"
+        className="services-2-section py-20 lg:py-32 bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 relative overflow-hidden"
       >
+        {/* Enhanced Animated Background */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-cyan-400 to-blue-500 rounded-full morphing"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-indigo-400 to-purple-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div
             className="flex flex-col lg:flex-row items-start gap-12 lg:gap-20"
@@ -28,22 +34,19 @@ export default function Services() {
             data-aos-easing="ease-out-cubic"
           >
             <div className="lg:w-2/5">
-              <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
+              <span className="inline-block bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-4 hover-glow-intense glass-effect">
                 Our Services
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                Far far away, behind the word mountains, far from the countries
-                Vokalia
+                Our Services
               </h2>
               <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                Far far away, behind the word mountains, far from the countries
-                Vokalia and Consonantia, there live the blind texts.
+                "Comprehensive Polymer Solutions, Expertise in Polymer Innovation, Reliable Industrial Solutions"
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Separated they live in Bookmarksgrove right at the coast of the
-                Semantics, a large language ocean.
+                Our company specializes in providing high-quality polymer solutions for various industries, focusing on innovation, reliability, and sustainability to meet the highest standards and meet diverse client needs.
               </p>
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+              <button className="btn-primary px-8 py-4 rounded-full font-semibold text-lg hover-glow-intense hover-slide">
                 Get Started
               </button>
             </div>
@@ -51,13 +54,13 @@ export default function Services() {
             <div className="lg:w-3/5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div
-                  className="services-item bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="zoom-in"
+                  className="services-item bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-lg hover-tilt border border-blue-200 glass-effect group"
+                  data-aos="zoom-in-rotate"
                   data-aos-delay="0"
-                  data-aos-duration="800"
+                  data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6">
+                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                     <svg
                       className="w-8 h-8 text-white"
                       fill="currentColor"
@@ -72,22 +75,22 @@ export default function Services() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Square
+                      High-Quality Products
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Separated they live in Bookmarksgrove right at the coast
+                      Delivering premium polymer solutions that meet industry standards.
                     </p>
                   </div>
                 </div>
 
                 <div
-                  className="services-item bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="zoom-in"
+                  className="services-item bg-gradient-to-br from-white to-green-50 rounded-2xl p-6 shadow-lg hover-tilt border border-green-200 glass-effect group"
+                  data-aos="zoom-in-rotate"
                   data-aos-delay="100"
-                  data-aos-duration="800"
+                  data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl flex items-center justify-center mb-6">
+                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-green-600 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                     <svg
                       className="w-8 h-8 text-white"
                       fill="currentColor"
@@ -102,22 +105,22 @@ export default function Services() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Technology
+                      Innovative Solutions
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Separated they live in Bookmarksgrove right at the coast
+                      Developing advanced products through cutting-edge technology and research.
                     </p>
                   </div>
                 </div>
 
                 <div
-                  className="services-item bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="zoom-in"
+                  className="services-item bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 shadow-lg hover-tilt border border-purple-200 glass-effect group"
+                  data-aos="zoom-in-rotate"
                   data-aos-delay="200"
-                  data-aos-duration="800"
+                  data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center mb-6">
+                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                     <svg
                       className="w-8 h-8 text-white"
                       fill="currentColor"
@@ -128,22 +131,22 @@ export default function Services() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Brilliant Ideas
+                      Customized Services
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Separated they live in Bookmarksgrove right at the coast
+                      Tailoring polymer solutions to meet the unique needs of each client.
                     </p>
                   </div>
                 </div>
 
                 <div
-                  className="services-item bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  data-aos="zoom-in"
+                  className="services-item bg-gradient-to-br from-white to-orange-50 rounded-2xl p-6 shadow-lg hover-tilt border border-orange-200 glass-effect group"
+                  data-aos="zoom-in-rotate"
                   data-aos-delay="300"
-                  data-aos-duration="800"
+                  data-aos-duration="1000"
                   data-aos-easing="ease-out-cubic"
                 >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-orange-600 to-orange-700 rounded-2xl flex items-center justify-center mb-6">
+                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-orange-600 to-red-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
                     <svg
                       className="w-8 h-8 text-white"
                       fill="currentColor"
@@ -158,10 +161,10 @@ export default function Services() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Blueprint
+                      Sustainability & Reliability
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Separated they live in Bookmarksgrove right at the coast
+                      Ensuring eco-friendly practices while providing consistent, dependable products.
                     </p>
                   </div>
                 </div>
@@ -174,19 +177,18 @@ export default function Services() {
       {/* Services Section */}
       <section
         id="services"
-        className="services-section py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-blue-50"
+        className="services-section py-20 lg:py-32 bg-white"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
+            <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
               What We Offer
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
               Our Core Services
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Comprehensive solutions tailored to meet your specific needs and
-              requirements
+              Leading polymer innovation through advanced research, quality assurance, and sustainable practices
             </p>
           </div>
 
@@ -203,19 +205,15 @@ export default function Services() {
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Technology
+                  R&D and Innovation
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Separated they live in Bookmarksgrove right at the coast
+                  Advanced product development, new formulas, state-of-the-art lab facilities, and continuous innovation pipeline to drive polymer technology forward.
                 </p>
               </div>
             </div>
@@ -235,17 +233,17 @@ export default function Services() {
                 >
                   <path
                     fillRule="evenodd"
-                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                     clipRule="evenodd"
                   />
                 </svg>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Web Design
+                  Quality Assurance
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Separated they live in Bookmarksgrove right at the coast
+                  Comprehensive testing equipment, ISO and ASTM certifications, rigorous internal audit processes, and complete QA protocols ensuring highest standards.
                 </p>
               </div>
             </div>
@@ -263,15 +261,19 @@ export default function Services() {
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
-                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Branding
+                  Sustainability
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Separated they live in Bookmarksgrove right at the coast
+                  Eco-friendly initiatives, advanced recycling programs, energy-efficient processes, and comprehensive green product lines for environmental responsibility.
                 </p>
               </div>
             </div>
@@ -283,7 +285,7 @@ export default function Services() {
       <section className="additional-services-section py-20 lg:py-32 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
+            <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
               Specialized Solutions
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
