@@ -4,6 +4,9 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { executiveApi, ExecutiveLeadership, CreateExecutiveLeadershipData, UpdateExecutiveLeadershipData } from '@/lib/executiveApi';
 import { websocketService } from '@/lib/websocket.service';
 
+// Re-export types for convenience
+export type { ExecutiveLeadership, CreateExecutiveLeadershipData, UpdateExecutiveLeadershipData };
+
 interface ExecutiveContextType {
   executiveLeadership: ExecutiveLeadership[];
   isLoading: boolean;
