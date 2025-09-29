@@ -26,7 +26,7 @@ export const getFullImageUrl = (url: string): string => {
  * @param type - The type of image (blog, author, team-images, executive, etc.) for appropriate fallback
  * @returns The full URL for display, or a fallback image if filename is empty
  */
-export const getDisplayImageUrl = (filename: string, type: 'blog' | 'author' | 'team-images' | 'executive' = 'blog'): string => {
+export const getDisplayImageUrl = (filename: string | undefined, type: 'blog' | 'author' | 'team-images' | 'executive' = 'blog'): string => {
   if (!filename) {
     // Return fallback image if no filename provided
     if (type === 'author') {
