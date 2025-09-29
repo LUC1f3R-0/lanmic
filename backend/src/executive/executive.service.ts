@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/commo
 import { DatabaseService } from '../database.service';
 import { CreateExecutiveLeadershipDto, UpdateExecutiveLeadershipDto } from './dto/executive-leadership.dto';
 import { KafkaService } from '../kafka/kafka.service';
-import { WebSocketGateway } from '../websocket/websocket.gateway';
+import { SimpleWebSocketGateway } from '../websocket/simple-websocket.gateway';
 
 @Injectable()
 export class ExecutiveService {
@@ -10,8 +10,8 @@ export class ExecutiveService {
     private databaseService: DatabaseService,
     @Inject(forwardRef(() => KafkaService))
     private kafkaService: KafkaService,
-    @Inject(forwardRef(() => WebSocketGateway))
-    private webSocketGateway: WebSocketGateway,
+    @Inject(forwardRef(() => SimpleWebSocketGateway))
+    private webSocketGateway: SimpleWebSocketGateway,
   ) {}
 
   private get prisma() {
