@@ -8,19 +8,20 @@ datasource db {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  email         String         @unique
-  username      String         @unique
-  password      String
-  isVerified    Boolean        @default(false)
-  otp           String?
-  otpExpiresAt  DateTime?
-  newEmail      String?        // Temporary field to store new email during change process
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  refreshTokens RefreshToken[]
-  blogPosts     BlogPost[]
-  teamMembers   TeamMember[]
+  id                   Int                   @id @default(autoincrement())
+  email                String                @unique
+  username             String                @unique
+  password             String
+  isVerified           Boolean               @default(false)
+  otp                  String?
+  otpExpiresAt         DateTime?
+  newEmail             String?               // Temporary field to store new email during change process
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  refreshTokens        RefreshToken[]
+  blogPosts            BlogPost[]
+  teamMembers          TeamMember[]
+  executiveLeadership  ExecutiveLeadership[]
 
   @@map("users")
 }
@@ -81,4 +82,25 @@ model TeamMember {
   @@index([isActive], map: "team_members_isActive_idx")
   @@index([displayOrder], map: "team_members_displayOrder_idx")
   @@map("team_members")
+}
+
+model ExecutiveLeadership {
+  id            Int      @id @default(autoincrement())
+  name          String
+  position      String
+  description   String   @db.Text
+  image         String?  // Store only the image filename, not full URL
+  linkedinUrl   String?
+  twitterUrl    String?
+  isActive      Boolean  @default(true)
+  displayOrder  Int      @default(1) // For ordering executive leadership (minimum 1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "executive_leadership_userId_fkey")
+  @@index([isActive], map: "executive_leadership_isActive_idx")
+  @@index([displayOrder], map: "executive_leadership_displayOrder_idx")
+  @@map("executive_leadership")
 }

@@ -96,7 +96,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-600">Current:</span>
             <a
-              href={getDisplayImageUrl(currentImage, uploadPath as 'blog' | 'author' | 'team-images')}
+              href={getDisplayImageUrl(currentImage, uploadPath as 'blog' | 'author' | 'team-images' | 'executive')}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-blue-600 hover:text-blue-800 underline"
@@ -122,7 +122,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       {currentImage && (
         <div className="mt-2">
           <img
-            src={getDisplayImageUrl(currentImage, uploadPath as 'blog' | 'author' | 'team-images')}
+            src={getDisplayImageUrl(currentImage, uploadPath as 'blog' | 'author' | 'team-images' | 'executive')}
             alt="Preview"
             className="w-20 h-20 object-cover rounded-lg border border-gray-200"
             onError={(e) => {

@@ -38,6 +38,8 @@ class BlogApiService {
       uploadType = 'blogImage';
     } else if (fieldName === 'team-images') {
       uploadType = 'teamImage';
+    } else if (fieldName === 'executiveImage') {
+      uploadType = 'executiveImage';
     }
 
     // Use the authenticated axios instance from apiService

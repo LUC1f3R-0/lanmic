@@ -5,11 +5,12 @@ import { DatabaseService } from './database.service';
 import { AuthModule } from './auth/auth.module';
 import { SimpleBlogModule } from './blog/simple-blog.module';
 import { TeamModule } from './team/team.module';
+import { ExecutiveModule } from './executive/executive.module';
 import { UploadModule } from './upload/upload.module';
 import { SimpleWebSocketModule } from './websocket/simple-websocket.module';
 
 @Module({
-  imports: [AuthModule, SimpleBlogModule, TeamModule, UploadModule, SimpleWebSocketModule],
+  imports: [AuthModule, SimpleBlogModule, TeamModule, ExecutiveModule, UploadModule, SimpleWebSocketModule],
   controllers: [AppController],
   providers: [AppService, DatabaseService],
 })

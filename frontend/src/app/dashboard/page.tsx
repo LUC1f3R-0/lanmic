@@ -75,6 +75,10 @@ export default function DashboardPage() {
     router.push('/dashboard/team');
   };
 
+  const handleNavigateToExecutive = () => {
+    router.push('/dashboard/executive');
+  };
+
 
   // Show loading spinner while checking authentication
   if (isLoading) {
@@ -291,6 +295,28 @@ export default function DashboardPage() {
               </p>
               <div className="flex items-center text-purple-600 text-sm font-medium group-hover:text-purple-700">
                 <span>Manage Team</span>
+                <svg className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Executive Leadership Management Card */}
+            <div 
+              onClick={handleNavigateToExecutive}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
+            >
+              <div className="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-lg mb-4 group-hover:bg-indigo-200 transition-colors duration-200">
+                <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Executive Leadership</h3>
+              <p className="text-gray-600 text-sm mb-4">
+                Manage executive leadership profiles. Add, edit, and control visibility of executive team members with social media links.
+              </p>
+              <div className="flex items-center text-indigo-600 text-sm font-medium group-hover:text-indigo-700">
+                <span>Manage Executives</span>
                 <svg className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>

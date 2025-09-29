@@ -1,10 +1,16 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import AOS from "aos";
+import { useExecutive } from "@/contexts/ExecutiveContext";
+import { getDisplayImageUrl } from "@/lib/imageUtils";
 
 export default function Team() {
+  const { getActiveExecutiveLeadership, isWebSocketConnected } = useExecutive();
+  const [activeExecutives, setActiveExecutives] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     // Initialize AOS
     AOS.init({
@@ -12,7 +18,63 @@ export default function Team() {
       once: true,
       offset: 100,
     });
+
+    // Load active executive leadership
+    loadActiveExecutives();
   }, []);
+
+  // Listen for real-time updates from WebSocket
+  useEffect(() => {
+    const { websocketService } = require('@/lib/websocket.service');
+    
+    // Connect to WebSocket if not already connected
+    const initializeWebSocket = async () => {
+      try {
+        if (!websocketService.isWebSocketConnected()) {
+          await websocketService.connect();
+        }
+      } catch (error) {
+        console.error('Failed to connect to WebSocket:', error);
+      }
+    };
+
+    // Listen for executive leadership updates
+    const handleExecutiveUpdate = () => {
+      loadActiveExecutives(); // Reload data when updates occur
+    };
+
+    // Initialize WebSocket connection
+    initializeWebSocket();
+
+    // Set up event listeners for real-time updates
+    websocketService.on('executive-leadership-created', handleExecutiveUpdate);
+    websocketService.on('executive-leadership-updated', handleExecutiveUpdate);
+    websocketService.on('executive-leadership-deleted', handleExecutiveUpdate);
+    websocketService.on('executive-leadership-active', handleExecutiveUpdate);
+
+    // Cleanup event listeners on unmount
+    return () => {
+      websocketService.off('executive-leadership-created', handleExecutiveUpdate);
+      websocketService.off('executive-leadership-updated', handleExecutiveUpdate);
+      websocketService.off('executive-leadership-deleted', handleExecutiveUpdate);
+      websocketService.off('executive-leadership-active', handleExecutiveUpdate);
+    };
+  }, []);
+
+  const loadActiveExecutives = async () => {
+    try {
+      setIsLoading(true);
+      const executives = await getActiveExecutiveLeadership();
+      // Sort by displayOrder
+      const sortedExecutives = executives.sort((a, b) => a.displayOrder - b.displayOrder);
+      console.log('Loaded executives:', sortedExecutives); // Debug log
+      setActiveExecutives(sortedExecutives);
+    } catch (error) {
+      console.error('Failed to load executive leadership:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <main className="main">
@@ -90,115 +152,117 @@ export default function Team() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            <div
-              className="group bg-gradient-to-br from-white to-cyan-50 rounded-2xl p-8 shadow-lg hover-tilt border border-cyan-200 glass-effect"
-              data-aos="zoom-in-rotate"
-              data-aos-delay="100"
-              data-aos-duration="1000"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="relative mb-6">
-                <Image
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
-                  alt="Chandana Bopitiya"
-                  width={400}
-                  height={400}
-                  className="w-full h-80 object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
-              <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  <span className="text-blue-600">Chandana</span> Bopitiya
-                </h3>
-                <p className="text-gray-600 mb-4">Group Managing Director, LANMIC Group</p>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  As the founder of the LANMIC Group, Chandana brings a wealth of experience and visionary thinking. He continues to guide and mentor the team at LANMIC Polymers, ensuring that the values of integrity, quality, and long-term partnerships remain at the heart of the business.
-                </p>
-                <div className="flex justify-center space-x-4">
-                  <a
-                    href="#"
-                    className="text-blue-600 hover:text-blue-800 transition-colors duration-300"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                    </svg>
-                  </a>
-                  <a
-                    href="#"
-                    className="text-blue-600 hover:text-blue-800 transition-colors duration-300"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="group bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover-tilt border border-emerald-200 glass-effect"
-              data-aos="zoom-in-rotate"
-              data-aos-delay="200"
-              data-aos-duration="1000"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="relative mb-6">
-                <Image
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face"
-                  alt="Udesha Bopitiya"
-                  width={400}
-                  height={400}
-                  className="w-full h-80 object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
-              <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  <span className="text-blue-600">Udesha</span> Bopitiya
-                </h3>
-                <p className="text-gray-600 mb-4">Director</p>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  Udesha leads LANMIC Polymers with fresh energy and a modern outlook. With a strong technical background and a passion for polymers, she is focused on building products that combine performance, sustainability, and value for customers. Her hands-on approach and drive for continuous improvement ensure that the company stays ahead in a fast-changing industry.
-                </p>
-                <div className="flex justify-center space-x-4">
-                  <a
-                    href="#"
-                    className="text-blue-600 hover:text-blue-800 transition-colors duration-300"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                    </svg>
-                  </a>
-                  <a
-                    href="#"
-                    className="text-blue-600 hover:text-blue-800 transition-colors duration-300"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
+          {/* Real-time connection status indicator */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
+              <div className={`w-2 h-2 rounded-full ${isWebSocketConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <span className={`text-xs font-medium ${isWebSocketConnected ? 'text-green-600' : 'text-red-600'}`}>
+                {isWebSocketConnected ? 'Live Updates Active' : 'Live Updates Disconnected'}
+              </span>
             </div>
           </div>
+
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          ) : activeExecutives.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-gray-400 mb-4">
+                <svg className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <p className="text-gray-500 text-lg">No executive leadership information available at the moment.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+              {activeExecutives.map((executive, index) => {
+                const colors = [
+                  'from-white to-cyan-50 border-cyan-200',
+                  'from-white to-emerald-50 border-emerald-200',
+                  'from-white to-violet-50 border-violet-200',
+                  'from-white to-orange-50 border-orange-200',
+                  'from-white to-pink-50 border-pink-200',
+                  'from-white to-indigo-50 border-indigo-200'
+                ];
+                const colorClass = colors[index % colors.length];
+                
+                return (
+                  <div
+                    key={executive.id}
+                    className={`group bg-gradient-to-br ${colorClass} rounded-2xl p-8 shadow-lg hover-tilt border glass-effect`}
+                    data-aos="zoom-in-rotate"
+                    data-aos-delay={`${(index + 1) * 100}`}
+                    data-aos-duration="1000"
+                    data-aos-easing="ease-out-cubic"
+                  >
+                    <div className="relative mb-6">
+                      <Image
+                        src={getDisplayImageUrl(executive.image, 'executive')}
+                        alt={executive.name}
+                        width={400}
+                        height={400}
+                        className="w-full h-80 object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          console.log('Image failed to load:', target.src, 'for executive:', executive.name);
+                          target.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face';
+                        }}
+                        onLoad={() => {
+                          console.log('Image loaded successfully for:', executive.name, 'URL:', getDisplayImageUrl(executive.image, 'executive'));
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                        <span className="text-blue-600">{executive.name}</span>
+                      </h3>
+                      <p className="text-gray-600 mb-4">{executive.position}</p>
+                      <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                        {executive.description}
+                      </p>
+                      <div className="flex justify-center space-x-4">
+                        {executive.linkedinUrl && (
+                          <a
+                            href={executive.linkedinUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 transition-colors duration-300"
+                          >
+                            <svg
+                              className="w-5 h-5"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                            </svg>
+                          </a>
+                        )}
+                        {executive.twitterUrl && (
+                          <a
+                            href={executive.twitterUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-400 hover:text-blue-600 transition-colors duration-300"
+                          >
+                            <svg
+                              className="w-5 h-5"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+                            </svg>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 

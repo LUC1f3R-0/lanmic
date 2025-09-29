@@ -23,16 +23,19 @@ export const getFullImageUrl = (url: string): string => {
 /**
  * Gets the appropriate image URL for display
  * @param filename - The image filename from the database (e.g., "110c1886-6592-454b-a0e5-5a4827df2450.jpeg")
- * @param type - The type of image (blog, author, team-images, etc.) for appropriate fallback
+ * @param type - The type of image (blog, author, team-images, executive, etc.) for appropriate fallback
  * @returns The full URL for display, or a fallback image if filename is empty
  */
-export const getDisplayImageUrl = (filename: string, type: 'blog' | 'author' | 'team-images' = 'blog'): string => {
+export const getDisplayImageUrl = (filename: string, type: 'blog' | 'author' | 'team-images' | 'executive' = 'blog'): string => {
   if (!filename) {
     // Return fallback image if no filename provided
     if (type === 'author') {
       return 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&auto=format&q=80';
     }
     if (type === 'team-images') {
+      return 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face&auto=format&q=80';
+    }
+    if (type === 'executive') {
       return 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face&auto=format&q=80';
     }
     return 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=250&fit=crop&auto=format&q=80';
@@ -51,6 +54,9 @@ export const getDisplayImageUrl = (filename: string, type: 'blog' | 'author' | '
   }
   if (type === 'author') {
     return `${apiBaseUrl}/uploads/author-images/${filename}`;
+  }
+  if (type === 'executive') {
+    return `${apiBaseUrl}/uploads/executive-images/${filename}`;
   }
   // Default to blog images
   return `${apiBaseUrl}/uploads/blog-images/${filename}`;

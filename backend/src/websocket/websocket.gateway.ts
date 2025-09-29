@@ -245,6 +245,68 @@ export class WebSocketGateway
   }
 
   /**
+   * Broadcast executive leadership created event to all connected admin clients
+   * This method is called when a new executive leadership is created
+   *
+   * @param executiveLeadershipData - The created executive leadership data
+   */
+  broadcastExecutiveLeadershipCreated(executiveLeadershipData: any) {
+    this.logger.log(`Broadcasting executive leadership created: ${executiveLeadershipData.id}`);
+    this.server.to('admin-room').emit('executive-leadership-created', {
+      type: 'executive-leadership-created',
+      data: executiveLeadershipData,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Broadcast executive leadership updated event to all connected admin clients
+   * This method is called when an executive leadership is updated
+   *
+   * @param executiveLeadershipData - The updated executive leadership data
+   */
+  broadcastExecutiveLeadershipUpdated(executiveLeadershipData: any) {
+    this.logger.log(`Broadcasting executive leadership updated: ${executiveLeadershipData.id}`);
+    this.server.to('admin-room').emit('executive-leadership-updated', {
+      type: 'executive-leadership-updated',
+      data: executiveLeadershipData,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Broadcast executive leadership deleted event to all connected admin clients
+   * This method is called when an executive leadership is deleted
+   *
+   * @param executiveLeadershipId - The ID of the deleted executive leadership
+   */
+  broadcastExecutiveLeadershipDeleted(executiveLeadershipId: number) {
+    this.logger.log(`Broadcasting executive leadership deleted: ${executiveLeadershipId}`);
+    this.server.to('admin-room').emit('executive-leadership-deleted', {
+      type: 'executive-leadership-deleted',
+      data: { id: executiveLeadershipId },
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Broadcast executive leadership active event to all connected admin clients
+   * This method is called when an executive leadership's active status changes
+   *
+   * @param executiveLeadershipData - The executive leadership data with updated active status
+   */
+  broadcastExecutiveLeadershipActive(executiveLeadershipData: any) {
+    this.logger.log(
+      `Broadcasting executive leadership active status changed: ${executiveLeadershipData.id}`,
+    );
+    this.server.to('admin-room').emit('executive-leadership-active', {
+      type: 'executive-leadership-active',
+      data: executiveLeadershipData,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
    * Get the number of connected clients
    * Useful for monitoring and debugging
    *

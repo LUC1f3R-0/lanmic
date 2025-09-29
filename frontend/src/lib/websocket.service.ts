@@ -213,6 +213,26 @@ class WebSocketService {
     this.socket.on('blog-published', (data) => {
       this.triggerEventHandlers('blog-published', data);
     });
+
+    // Handle executive leadership created events
+    this.socket.on('executive-leadership-created', (data) => {
+      this.triggerEventHandlers('executive-leadership-created', data);
+    });
+
+    // Handle executive leadership updated events
+    this.socket.on('executive-leadership-updated', (data) => {
+      this.triggerEventHandlers('executive-leadership-updated', data);
+    });
+
+    // Handle executive leadership deleted events
+    this.socket.on('executive-leadership-deleted', (data) => {
+      this.triggerEventHandlers('executive-leadership-deleted', data);
+    });
+
+    // Handle executive leadership active status events
+    this.socket.on('executive-leadership-active', (data) => {
+      this.triggerEventHandlers('executive-leadership-active', data);
+    });
   }
 
   /**
