@@ -131,7 +131,7 @@ export default function Home() {
               </button>
               <button 
                 onClick={() => router.push('/about')}
-                className="btn-outline px-8 py-4 rounded-xl font-semibold text-lg border-2 border-blue-600 text-blue-600 hover-morph hover-slide relative overflow-hidden group"
+                className="btn-outline px-8 py-4 rounded-xl font-semibold text-lg border-2 border-blue-600 text-blue-600 relative overflow-hidden group"
               >
                 <span className="relative z-10 group-hover:scale-105 transition-transform duration-300">Learn More</span>
               </button>

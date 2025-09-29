@@ -60,7 +60,7 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <span
-              className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-6 hover-glow-intense glass-effect text-black"
+              className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-6 hover-glow-intense glass-effect"
               data-aos="slide-in-right"
             >
               About LANMIC Polymers
@@ -105,10 +105,10 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span
-              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-bold uppercase tracking-wide mb-6 hover-glow-intense shadow-xl border-2 border-white flex items-center justify-center gap-2"
+              className="inline-flex items-center bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
               data-aos="slide-in-left"
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 2L8.5 6.5L4 6.5L7.5 9.5L6 14L10 11.5L14 14L12.5 9.5L16 6.5L11.5 6.5L10 2Z" clipRule="evenodd" />
               </svg>
               LANMIC GROUP VALUES
