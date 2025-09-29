@@ -93,6 +93,22 @@ export class EmailService {
     await this.initializeTransporter();
   }
 
+  public async sendEmail(mailOptions: any): Promise<void> {
+    if (!this.isTransporterReady || !this.transporter) {
+      this.logger.error('SMTP not configured or transporter not ready!');
+      throw new Error('Email service is not available');
+    }
+
+    try {
+      const result = await this.transporter.sendMail(mailOptions);
+      const messageId = result?.messageId || 'N/A';
+      this.logger.log(`Email sent successfully. Message ID: ${messageId}`);
+    } catch (error) {
+      this.logger.error('Failed to send email:', error);
+      throw error;
+    }
+  }
+
   async sendOtpEmail(email: string, otp: string): Promise<void> {
     try {
       // Check if transporter is ready

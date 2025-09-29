@@ -8,9 +8,10 @@ import { TeamModule } from './team/team.module';
 import { ExecutiveModule } from './executive/executive.module';
 import { UploadModule } from './upload/upload.module';
 import { SimpleWebSocketModule } from './websocket/simple-websocket.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
-  imports: [AuthModule, SimpleBlogModule, TeamModule, ExecutiveModule, UploadModule, SimpleWebSocketModule],
+  imports: [AuthModule, SimpleBlogModule, TeamModule, ExecutiveModule, UploadModule, SimpleWebSocketModule, ContactModule],
   controllers: [AppController],
   providers: [AppService, DatabaseService],
 })
