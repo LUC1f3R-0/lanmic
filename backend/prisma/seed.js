@@ -8,18 +8,43 @@ async function main() {
   console.log('================================');
 
   try {
-    // Step 1: Clear all existing data
+    // Step 1: Clear all existing data (with error handling for missing tables)
     console.log('🗑️  Clearing existing data...');
     
     // Delete in correct order to respect foreign key constraints
-    await prisma.refreshToken.deleteMany({});
-    console.log('   ✅ Cleared refresh tokens');
+    // Use try-catch for each table in case they don't exist yet
+    try {
+      await prisma.refreshToken.deleteMany({});
+      console.log('   ✅ Cleared refresh tokens');
+    } catch (error) {
+      if (error.code === 'P2021') {
+        console.log('   ℹ️  Refresh tokens table does not exist (skipping)');
+      } else {
+        throw error;
+      }
+    }
     
-    await prisma.blogPost.deleteMany({});
-    console.log('   ✅ Cleared blog posts');
+    try {
+      await prisma.blogPost.deleteMany({});
+      console.log('   ✅ Cleared blog posts');
+    } catch (error) {
+      if (error.code === 'P2021') {
+        console.log('   ℹ️  Blog posts table does not exist (skipping)');
+      } else {
+        throw error;
+      }
+    }
     
-    await prisma.user.deleteMany({});
-    console.log('   ✅ Cleared users');
+    try {
+      await prisma.user.deleteMany({});
+      console.log('   ✅ Cleared users');
+    } catch (error) {
+      if (error.code === 'P2021') {
+        console.log('   ℹ️  Users table does not exist (skipping)');
+      } else {
+        throw error;
+      }
+    }
 
     // Step 2: Create fresh data
     console.log('\n📝 Creating fresh data...');
@@ -36,7 +61,7 @@ async function main() {
         isVerified: false, // User must verify email to access dashboard
         otp: null,
         otpExpiresAt: null,
-        newEmail: null,
+        // Note: newEmail field is not included as it doesn't exist in current migration
       },
     });
 
@@ -47,116 +72,14 @@ async function main() {
       isVerified: adminUser.isVerified,
     });
 
-    // Create sample blog posts
-    const sampleBlogPosts = [
-      {
-        title: 'Welcome to Lanmic Blog',
-        description: 'This is the first blog post on our platform. Learn about our features and how to get started.',
-        content: `# Welcome to Lanmic Blog
-
-This is your first blog post! Here's what you can do:
-
-## Features
-- Create and manage blog posts
-- Upload images for your posts
-- Categorize your content
-- Publish or save as drafts
-
-## Getting Started
-1. Navigate to the dashboard
-2. Click "Create New Post"
-3. Fill in the details
-4. Upload an image (optional)
-5. Publish your post
-
-Happy blogging! 🚀`,
-        category: 'General',
-        readTime: '3 min read',
-        authorName: 'Admin',
-        authorPosition: 'Platform Administrator',
-        authorImage: null,
-        blogImage: null,
-        published: true,
-        userId: adminUser.id,
-      },
-      {
-        title: 'How to Write Great Content',
-        description: 'Tips and tricks for creating engaging blog posts that your readers will love.',
-        content: `# How to Write Great Content
-
-Writing great content is an art that can be learned. Here are some tips:
-
-## 1. Know Your Audience
-- Research your target audience
-- Understand their pain points
-- Write in their language
-
-## 2. Create Compelling Headlines
-- Use numbers and lists
-- Ask questions
-- Create curiosity
-
-## 3. Structure Your Content
-- Use headings and subheadings
-- Break up long paragraphs
-- Include bullet points and lists
-
-## 4. Add Visual Elements
-- Include relevant images
-- Use infographics
-- Add videos when appropriate
-
-## 5. Edit and Proofread
-- Check for grammar errors
-- Ensure clarity
-- Read aloud for flow
-
-Remember: Great content takes time and effort, but the results are worth it!`,
-        category: 'Writing',
-        readTime: '5 min read',
-        authorName: 'Admin',
-        authorPosition: 'Content Creator',
-        authorImage: null,
-        blogImage: null,
-        published: true,
-        userId: adminUser.id,
-      },
-      {
-        title: 'Draft Post - Coming Soon',
-        description: 'This is a draft post that will be published later.',
-        content: `# Draft Post - Coming Soon
-
-This is a draft post that demonstrates how unpublished content looks.
-
-## What's Coming
-- More exciting content
-- New features
-- Updates and improvements
-
-Stay tuned for more!`,
-        category: 'Updates',
-        readTime: '2 min read',
-        authorName: 'Admin',
-        authorPosition: 'Platform Administrator',
-        authorImage: null,
-        blogImage: null,
-        published: false, // This is a draft
-        userId: adminUser.id,
-      },
-    ];
-
-    for (const postData of sampleBlogPosts) {
-      const blogPost = await prisma.blogPost.create({
-        data: postData,
-      });
-      console.log(`   ✅ Blog post created: "${blogPost.title}" (${blogPost.published ? 'Published' : 'Draft'})`);
-    }
+    // Note: Blog posts creation is skipped as the blog_posts table doesn't exist in current migration
+    // This will be available once the full schema migration is created
 
     // Step 3: Summary
     console.log('\n📊 Seed Summary');
     console.log('================');
     console.log(`✅ Users created: 1`);
-    console.log(`✅ Blog posts created: ${sampleBlogPosts.length}`);
+    console.log(`✅ Blog posts created: 0 (table not available in current migration)`);
     console.log(`✅ Refresh tokens: 0 (clean slate)`);
     
     console.log('\n🔑 Login Credentials');
