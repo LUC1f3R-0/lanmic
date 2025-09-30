@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import AOS from "aos";
 import { useTeam } from "@/contexts/TeamContext";
+import { useTestimonial } from "@/contexts/TestimonialContext";
 import { getDisplayImageUrl } from "@/lib/imageUtils";
 
 // Import Swiper styles
@@ -15,8 +16,11 @@ import "swiper/css/navigation";
 
 export default function About() {
   const { getActiveTeamMembers } = useTeam();
+  const { getActiveTestimonials } = useTestimonial();
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [testimonials, setTestimonials] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [testimonialsLoading, setTestimonialsLoading] = useState(true);
 
   useEffect(() => {
     // Initialize AOS
@@ -40,8 +44,44 @@ export default function About() {
       }
     };
 
+    // Load active testimonials for public display
+    const loadTestimonials = async () => {
+      try {
+        setTestimonialsLoading(true);
+        const testimonialsData = await getActiveTestimonials();
+        setTestimonials(testimonialsData);
+      } catch (error) {
+        console.error('Failed to load testimonials:', error);
+        setTestimonials([]);
+      } finally {
+        setTestimonialsLoading(false);
+      }
+    };
+
     loadTeamMembers();
-  }, [getActiveTeamMembers]);
+    loadTestimonials();
+
+    // Set up real-time WebSocket updates for testimonials
+    const { websocketService } = require('@/lib/websocket.service');
+    
+    const handleTestimonialUpdate = () => {
+      loadTestimonials(); // Reload testimonials when updates occur
+    };
+
+    // Set up event listeners for real-time updates
+    websocketService.on('testimonial-created', handleTestimonialUpdate);
+    websocketService.on('testimonial-updated', handleTestimonialUpdate);
+    websocketService.on('testimonial-deleted', handleTestimonialUpdate);
+    websocketService.on('testimonial-active', handleTestimonialUpdate);
+
+    // Cleanup event listeners on unmount
+    return () => {
+      websocketService.off('testimonial-created', handleTestimonialUpdate);
+      websocketService.off('testimonial-updated', handleTestimonialUpdate);
+      websocketService.off('testimonial-deleted', handleTestimonialUpdate);
+      websocketService.off('testimonial-active', handleTestimonialUpdate);
+    };
+  }, [getActiveTeamMembers, getActiveTestimonials]);
 
   return (
     <main className="main">
@@ -647,87 +687,71 @@ export default function About() {
             data-aos-duration="1000"
             data-aos-easing="ease-out-cubic"
           >
-            <Swiper
-              modules={[Autoplay, Pagination]}
-              loop={true}
-              speed={600}
-              autoplay={{
-                delay: 5000,
-                disableOnInteraction: false,
-              }}
-              slidesPerView={1}
-              pagination={{
-                clickable: true,
-                el: ".testimonials-pagination",
-              }}
-              className="testimonials-swiper"
-            >
-              <SwiperSlide>
-                <div className="testimonial text-center">
-                  <div className="mb-8">
-                    <Image
-                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face"
-                      alt="Adam Aderson"
-                      width={120}
-                      height={120}
-                      className="w-24 h-24 rounded-full mx-auto shadow-lg"
-                    />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    Adam Aderson
-                  </h3>
-                  <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                    &ldquo;There live the blind texts. Separated they live in
-                    Bookmarksgrove right at the coast of the Semantics, a large
-                    language ocean.&rdquo;
-                  </blockquote>
-                </div>
-              </SwiperSlide>
-
-              <SwiperSlide>
-                <div className="testimonial text-center">
-                  <div className="mb-8">
-                    <Image
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face"
-                      alt="Lukas Devlin"
-                      width={120}
-                      height={120}
-                      className="w-24 h-24 rounded-full mx-auto shadow-lg"
-                    />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    Lukas Devlin
-                  </h3>
-                  <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                    &ldquo;There live the blind texts. Separated they live in
-                    Bookmarksgrove right at the coast of the Semantics, a large
-                    language ocean.&rdquo;
-                  </blockquote>
-                </div>
-              </SwiperSlide>
-
-              <SwiperSlide>
-                <div className="testimonial text-center">
-                  <div className="mb-8">
-                    <Image
-                      src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face"
-                      alt="Kayla Bryant"
-                      width={120}
-                      height={120}
-                      className="w-24 h-24 rounded-full mx-auto shadow-lg"
-                    />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    Kayla Bryant
-                  </h3>
-                  <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
-                    &ldquo;There live the blind texts. Separated they live in
-                    Bookmarksgrove right at the coast of the Semantics, a large
-                    language ocean.&rdquo;
-                  </blockquote>
-                </div>
-              </SwiperSlide>
-            </Swiper>
+            {testimonialsLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+              </div>
+            ) : testimonials.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No testimonials available at the moment.</p>
+              </div>
+            ) : (
+              <Swiper
+                modules={[Autoplay, Pagination]}
+                loop={testimonials.length > 1}
+                speed={600}
+                autoplay={{
+                  delay: 5000,
+                  disableOnInteraction: false,
+                }}
+                slidesPerView={1}
+                pagination={{
+                  clickable: true,
+                  el: ".testimonials-pagination",
+                }}
+                className="testimonials-swiper"
+              >
+                {testimonials.map((testimonial) => (
+                  <SwiperSlide key={testimonial.id}>
+                    <div className="testimonial text-center">
+                      <div className="mb-8">
+                        {testimonial.image ? (
+                          <Image
+                            src={getDisplayImageUrl(testimonial.image, 'testimonial-images')}
+                            alt={testimonial.name}
+                            width={120}
+                            height={120}
+                            className="w-24 h-24 rounded-full mx-auto shadow-lg object-cover"
+                          />
+                        ) : (
+                          <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full mx-auto shadow-lg flex items-center justify-center">
+                            <svg className="w-12 h-12 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {testimonial.name}
+                      </h3>
+                      {(testimonial.position || testimonial.company) && (
+                        <div className="mb-4">
+                          {testimonial.position && (
+                            <p className="text-sm text-emerald-600 font-medium">{testimonial.position}</p>
+                          )}
+                          {testimonial.company && (
+                            <p className="text-sm text-gray-600">{testimonial.company}</p>
+                          )}
+                        </div>
+                      )}
+                      <blockquote className="text-xl lg:text-2xl text-gray-700 italic mb-6 leading-relaxed">
+                        &ldquo;{testimonial.content}&rdquo;
+                      </blockquote>
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
             <div className="testimonials-pagination mt-8"></div>
           </div>
         </div>

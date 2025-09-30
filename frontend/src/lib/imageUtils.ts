@@ -26,7 +26,7 @@ export const getFullImageUrl = (url: string): string => {
  * @param type - The type of image (blog, author, team-images, executive, etc.) for appropriate fallback
  * @returns The full URL for display, or a fallback image if filename is empty
  */
-export const getDisplayImageUrl = (filename: string | undefined, type: 'blog' | 'author' | 'team-images' | 'executive' = 'blog'): string => {
+export const getDisplayImageUrl = (filename: string | undefined, type: 'blog' | 'author' | 'team-images' | 'executive' | 'testimonial-images' = 'blog'): string => {
   if (!filename) {
     // Return fallback image if no filename provided
     if (type === 'author') {
@@ -37,6 +37,9 @@ export const getDisplayImageUrl = (filename: string | undefined, type: 'blog' | 
     }
     if (type === 'executive') {
       return 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face&auto=format&q=80';
+    }
+    if (type === 'testimonial-images') {
+      return 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face&auto=format&q=80';
     }
     return 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=250&fit=crop&auto=format&q=80';
   }
@@ -57,6 +60,9 @@ export const getDisplayImageUrl = (filename: string | undefined, type: 'blog' | 
   }
   if (type === 'executive') {
     return `${apiBaseUrl}/uploads/executive-images/${filename}`;
+  }
+  if (type === 'testimonial-images') {
+    return `${apiBaseUrl}/uploads/testimonial-images/${filename}`;
   }
   // Default to blog images
   return `${apiBaseUrl}/uploads/blog-images/${filename}`;

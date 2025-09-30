@@ -60,7 +60,8 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       await this.setupConsumer();
       this.logger.log('Kafka service initialized successfully');
     } catch (error) {
-      this.logger.error('Failed to initialize Kafka service:', error);
+      this.logger.warn('Kafka service initialization failed - running without Kafka:', error.message);
+      this.isConnected = false;
       // Don't throw error to prevent app startup failure
       // Kafka is optional for development
     }
@@ -85,12 +86,23 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    */
   private async connect() {
     try {
-      await this.producer.connect();
-      await this.consumer.connect();
+      // Add timeout to prevent hanging
+      const connectPromise = Promise.all([
+        this.producer.connect(),
+        this.consumer.connect()
+      ]);
+      
+      await Promise.race([
+        connectPromise,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Connection timeout')), 10000)
+        )
+      ]);
+      
       this.isConnected = true;
       this.logger.log('Connected to Kafka cluster');
     } catch (error) {
-      this.logger.error('Failed to connect to Kafka:', error);
+      this.logger.warn('Failed to connect to Kafka:', error.message);
       this.isConnected = false;
       throw error;
     }
@@ -456,6 +468,96 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       this.logger.log(`Published event: executive-leadership.${eventType} for executive leadership ${executiveLeadershipId}`);
     } catch (error) {
       this.logger.error(`Failed to publish event executive-leadership.${eventType}:`, error);
+      // Don't throw error to prevent blocking the main operation
+    }
+  }
+
+  /**
+   * Publish testimonial created event
+   * Called when a new testimonial is created
+   *
+   * @param testimonialId - ID of the created testimonial
+   * @param testimonialData - Data of the created testimonial
+   */
+  async publishTestimonialCreated(testimonialId: number, testimonialData: any) {
+    await this.publishTestimonialEvent('created', testimonialId, testimonialData);
+  }
+
+  /**
+   * Publish testimonial updated event
+   * Called when a testimonial is updated
+   *
+   * @param testimonialId - ID of the updated testimonial
+   * @param testimonialData - Updated data of the testimonial
+   */
+  async publishTestimonialUpdated(testimonialId: number, testimonialData: any) {
+    await this.publishTestimonialEvent('updated', testimonialId, testimonialData);
+  }
+
+  /**
+   * Publish testimonial deleted event
+   * Called when a testimonial is deleted
+   *
+   * @param testimonialId - ID of the deleted testimonial
+   */
+  async publishTestimonialDeleted(testimonialId: number) {
+    await this.publishTestimonialEvent('deleted', testimonialId);
+  }
+
+  /**
+   * Publish testimonial active event
+   * Called when a testimonial's active status changes
+   *
+   * @param testimonialId - ID of the testimonial
+   * @param isActive - New active status
+   */
+  async publishTestimonialActive(testimonialId: number, isActive: boolean) {
+    await this.publishTestimonialEvent('active', testimonialId, { isActive });
+  }
+
+  /**
+   * Publish a testimonial event to Kafka
+   * This method sends events to the testimonial-events topic
+   *
+   * @param eventType - Type of event (created, updated, deleted, active)
+   * @param testimonialId - ID of the testimonial
+   * @param data - Additional data related to the event
+   */
+  async publishTestimonialEvent(eventType: string, testimonialId: number, data?: unknown) {
+    if (!this.isConnected) {
+      this.logger.warn('Kafka not connected, skipping testimonial event publication');
+      return;
+    }
+
+    try {
+      const eventData: {
+        type: string;
+        testimonialId: number;
+        data?: unknown;
+        timestamp: string;
+        source: string;
+      } = {
+        type: `testimonial.${eventType}`,
+        testimonialId,
+        data,
+        timestamp: new Date().toISOString(),
+        source: 'testimonial-service',
+      };
+
+      await this.producer.send({
+        topic: 'testimonial-events',
+        messages: [
+          {
+            key: testimonialId.toString(),
+            value: JSON.stringify(eventData),
+            timestamp: Date.now().toString(),
+          },
+        ],
+      });
+
+      this.logger.log(`Published event: testimonial.${eventType} for testimonial ${testimonialId}`);
+    } catch (error) {
+      this.logger.error(`Failed to publish event testimonial.${eventType}:`, error);
       // Don't throw error to prevent blocking the main operation
     }
   }
