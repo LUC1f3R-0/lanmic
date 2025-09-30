@@ -100,7 +100,7 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <span
-              className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-6 hover-glow-intense glass-effect text-black"
+              className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-black px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-6 hover-glow-intense glass-effect"
               data-aos="slide-in-right"
             >
               About LANMIC Polymers
@@ -228,9 +228,20 @@ export default function About() {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">Striving for Excellency</h3>
               </div>
-              <p className="text-gray-600 leading-relaxed">
-                We ensure for continuous growth through R&D innovation to create quality customer centric products and solutions using state of the art technology
-              </p>
+              <ul className="space-y-3 text-gray-600">
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">•</span>
+                  We ensure continuous growth through R&D innovation
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">•</span>
+                  We create quality customer centric products and solutions
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">•</span>
+                  We use state of the art technology
+                </li>
+              </ul>
             </div>
 
             <div
@@ -252,9 +263,20 @@ export default function About() {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">People Excellence</h3>
               </div>
-              <p className="text-gray-600 leading-relaxed">
-                We recognize top performers, commit to develop overall well-being and happiness of our people
-              </p>
+              <ul className="space-y-3 text-gray-600">
+                <li className="flex items-start">
+                  <span className="text-purple-600 mr-2">•</span>
+                  We recognize top performers
+                </li>
+                <li className="flex items-start">
+                  <span className="text-purple-600 mr-2">•</span>
+                  We commit to develop overall well-being of our people
+                </li>
+                <li className="flex items-start">
+                  <span className="text-purple-600 mr-2">•</span>
+                  We ensure happiness of our people
+                </li>
+              </ul>
             </div>
 
             <div
@@ -280,9 +302,20 @@ export default function About() {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">Social Accountability</h3>
               </div>
-              <p className="text-gray-600 leading-relaxed">
-                In everything we do we strive for positive impact on people and planet
-              </p>
+              <ul className="space-y-3 text-gray-600">
+                <li className="flex items-start">
+                  <span className="text-teal-600 mr-2">•</span>
+                  In everything we do we strive for positive impact
+                </li>
+                <li className="flex items-start">
+                  <span className="text-teal-600 mr-2">•</span>
+                  We focus on positive impact on people
+                </li>
+                <li className="flex items-start">
+                  <span className="text-teal-600 mr-2">•</span>
+                  We focus on positive impact on planet
+                </li>
+              </ul>
             </div>
           </div>
         </div>
