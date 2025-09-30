@@ -79,6 +79,10 @@ export default function DashboardPage() {
     router.push('/dashboard/executive');
   };
 
+  const handleNavigateToTestimonials = () => {
+    router.push('/dashboard/testimonials');
+  };
+
 
   // Show loading spinner while checking authentication
   if (isLoading) {
@@ -317,6 +321,28 @@ export default function DashboardPage() {
               </p>
               <div className="flex items-center text-indigo-600 text-sm font-medium group-hover:text-indigo-700">
                 <span>Manage Executives</span>
+                <svg className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Testimonials Management Card */}
+            <div 
+              onClick={handleNavigateToTestimonials}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
+            >
+              <div className="flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-lg mb-4 group-hover:bg-emerald-200 transition-colors duration-200">
+                <svg className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Testimonials</h3>
+              <p className="text-gray-600 text-sm mb-4">
+                Manage customer testimonials and reviews. Add, edit, and control visibility of customer feedback with optional images.
+              </p>
+              <div className="flex items-center text-emerald-600 text-sm font-medium group-hover:text-emerald-700">
+                <span>Manage Testimonials</span>
                 <svg className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>

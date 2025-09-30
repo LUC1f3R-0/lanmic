@@ -22,6 +22,7 @@ model User {
   blogPosts            BlogPost[]
   teamMembers          TeamMember[]
   executiveLeadership  ExecutiveLeadership[]
+  testimonials         Testimonial[]
 
   @@map("users")
 }
@@ -103,4 +104,24 @@ model ExecutiveLeadership {
   @@index([isActive], map: "executive_leadership_isActive_idx")
   @@index([displayOrder], map: "executive_leadership_displayOrder_idx")
   @@map("executive_leadership")
+}
+
+model Testimonial {
+  id            Int      @id @default(autoincrement())
+  name          String
+  position      String?
+  company       String?
+  content       String   @db.Text
+  image         String?  // Store only the image filename, not full URL (optional)
+  isActive      Boolean  @default(true)
+  displayOrder  Int      @default(1) // For ordering testimonials (minimum 1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "testimonials_userId_fkey")
+  @@index([isActive], map: "testimonials_isActive_idx")
+  @@index([displayOrder], map: "testimonials_displayOrder_idx")
+  @@map("testimonials")
 }

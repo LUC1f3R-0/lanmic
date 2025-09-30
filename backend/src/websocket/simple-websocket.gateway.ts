@@ -271,6 +271,54 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
   }
 
   /**
+   * Broadcast testimonial created event to all connected admin clients
+   */
+  broadcastTestimonialCreated(testimonialData: any) {
+    this.logger.log(`Broadcasting testimonial created: ${testimonialData.id}`);
+    this.server.to('admin-room').emit('testimonial-created', {
+      type: 'testimonial-created',
+      data: testimonialData,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Broadcast testimonial updated event to all connected admin clients
+   */
+  broadcastTestimonialUpdated(testimonialData: any) {
+    this.logger.log(`Broadcasting testimonial updated: ${testimonialData.id}`);
+    this.server.to('admin-room').emit('testimonial-updated', {
+      type: 'testimonial-updated',
+      data: testimonialData,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Broadcast testimonial deleted event to all connected admin clients
+   */
+  broadcastTestimonialDeleted(testimonialId: number) {
+    this.logger.log(`Broadcasting testimonial deleted: ${testimonialId}`);
+    this.server.to('admin-room').emit('testimonial-deleted', {
+      type: 'testimonial-deleted',
+      data: { id: testimonialId },
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Broadcast testimonial active event to all connected admin clients
+   */
+  broadcastTestimonialActive(testimonialData: any) {
+    this.logger.log(`Broadcasting testimonial active status changed: ${testimonialData.id}`);
+    this.server.to('admin-room').emit('testimonial-active', {
+      type: 'testimonial-active',
+      data: testimonialData,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
    * Extract user ID from JWT token
    * In a real implementation, you would decode and verify the JWT token
    * For now, this is a placeholder that returns a mock user ID

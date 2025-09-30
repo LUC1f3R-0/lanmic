@@ -2,15 +2,20 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname(); // current route
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -33,7 +38,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-neutral-200">
       <div className="container mx-auto flex items-center justify-between px-4 py-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-3">
+        <Link href="/" className="flex items-center">
           <Image
             src="/lanmic_logo.png"
             alt="LANMIC Polymers Logo"
@@ -42,9 +47,6 @@ const Header = () => {
             className="w-30 h-30 object-contain"
             priority
           />
-          <div className="text-xl font-bold text-blue-600 hidden sm:block">
-            LANMIC POLYMERS
-          </div>
         </Link>
 
         {/* Desktop Menu */}
@@ -64,7 +66,7 @@ const Header = () => {
           ))}
           
           {/* User Menu */}
-          {isAuthenticated ? (
+          {isMounted && isAuthenticated ? (
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
@@ -122,7 +124,7 @@ const Header = () => {
             
             {/* Mobile User Menu */}
             <li className="border-t border-neutral-200 pt-4">
-              {isAuthenticated ? (
+              {isMounted && isAuthenticated ? (
                 <div className="space-y-2">
                   <Link
                     href="/dashboard"
