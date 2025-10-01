@@ -106,13 +106,13 @@ export default function AdminLogin() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+          <div className="w-52 h-52 mx-auto mb-4 flex items-center justify-center">
             <Image
               src="/lanmic_logo.png"
               alt="LANMIC Polymers Logo"
-              width={64}
-              height={64}
-              className="w-16 h-16 object-contain"
+              width={176}
+              height={176}
+              className="w-44 h-44 object-contain"
               style={{ width: 'auto', height: 'auto' }}
             />
           </div>
