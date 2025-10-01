@@ -439,16 +439,10 @@ export default function About() {
                   Why Us
                 </span>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                  Far far away Behind the Word Mountains
+                  Excellence in Polymer Solutions
                 </h2>
                 <p className="text-lg text-gray-600 leading-relaxed mb-4">
-                  Far far away, behind the word mountains, far from the
-                  countries Vokalia and Consonantia.
-                </p>
-                <p className="text-gray-600 leading-relaxed mb-8">
-                  There live the blind texts. Separated they live in
-                  Bookmarksgrove right at the coast of the Semantics, a large
-                  language ocean.
+                  At LANMIC POLYMERS, we prioritize innovation and uncompromised quality to provide reliable polymer solutions. Our commitment to excellence and customer satisfaction makes us a trusted partner for industries nationwide.
                 </p>
 
                 <div className="grid grid-cols-3 gap-6">
