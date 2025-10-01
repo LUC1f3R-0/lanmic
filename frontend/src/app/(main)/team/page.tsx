@@ -88,12 +88,6 @@ export default function Team() {
         </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
-            <span
-              className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-4 hover-glow-intense glass-effect"
-              data-aos="slide-in-left"
-            >
-              Our Team
-            </span>
             <h1
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
               data-aos="fade-up"
@@ -130,12 +124,6 @@ export default function Team() {
         </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span
-              className="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-4 hover-glow-intense glass-effect"
-              data-aos="slide-in-right"
-            >
-              Leadership
-            </span>
             <h2
               className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
               data-aos="fade-up"

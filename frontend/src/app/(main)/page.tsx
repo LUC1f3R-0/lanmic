@@ -248,14 +248,7 @@ export default function Home() {
             </div>
             <div className="w-full lg:w-1/2 order-2 lg:order-2">
               <div className="space-y-6">
-                <span
-                  className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide hover-glow-intense glass-effect"
-                  data-aos="slide-in-left"
-                  data-aos-duration="800"
-                  data-aos-easing="ease-out-cubic"
-                >
-                  About Us
-                </span>
+                
                 <h2
                   className="text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary leading-tight"
                   data-aos="fade-up"
@@ -313,12 +306,7 @@ export default function Home() {
         </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span
-              className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-4 hover-glow-intense glass-effect"
-              data-aos="slide-in-right"
-            >
-              Our Services
-            </span>
+            
             <h2
               className="text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-6"
               data-aos="fade-up"

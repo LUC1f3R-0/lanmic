@@ -34,9 +34,6 @@ export default function Services() {
             data-aos-easing="ease-out-cubic"
           >
             <div className="lg:w-2/5">
-              <span className="inline-block bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wide mb-4 hover-glow-intense glass-effect">
-                Our Services
-              </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                 Our Services
               </h2>
