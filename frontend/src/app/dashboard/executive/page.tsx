@@ -196,9 +196,9 @@ export default function ExecutiveManagementPage() {
               <Image
                 src="/lanmic_logo.png"
                 alt="LANMIC Polymers Logo"
-                width={60}
-                height={60}
-                className="w-15 h-15 object-contain mr-3"
+                width={40}
+                height={40}
+                className="w-10 h-10 object-contain mr-3"
                 style={{ width: 'auto', height: 'auto' }}
               />
               <div>

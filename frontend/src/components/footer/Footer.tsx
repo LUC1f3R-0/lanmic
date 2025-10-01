@@ -12,7 +12,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-3 mb-4">
               <Image
-                src="/logo.png"
+                src="/lanmic_logo.png"
                 alt="LANMIC Polymers Logo"
                 width={48}
                 height={48}
@@ -97,9 +97,9 @@ const Footer = () => {
               <Image
                 src="/lanmic_logo.png"
                 alt="LANMIC Polymers Logo"
-                width={36}
-                height={36}
-                className="w-9 h-9 object-contain"
+                width={24}
+                height={24}
+                className="w-6 h-6 object-contain"
               />
               <span className="text-text-secondary">© {new Date().getFullYear()} LANMIC POLYMERS. All rights reserved.</span>
             </div>

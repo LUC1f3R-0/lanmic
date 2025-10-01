@@ -110,9 +110,9 @@ export default function AdminLogin() {
             <Image
               src="/lanmic_logo.png"
               alt="LANMIC Polymers Logo"
-              width={96}
-              height={96}
-              className="w-24 h-24 object-contain"
+              width={64}
+              height={64}
+              className="w-16 h-16 object-contain"
               style={{ width: 'auto', height: 'auto' }}
             />
           </div>

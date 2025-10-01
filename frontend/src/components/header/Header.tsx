@@ -36,15 +36,15 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-neutral-200">
-      <div className="container mx-auto flex items-center justify-between px-4 py-4">
+      <div className="container mx-auto flex items-center justify-between px-4 py-1">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <Image
             src="/lanmic_logo.png"
             alt="LANMIC Polymers Logo"
-            width={120}
-            height={120}
-            className="w-30 h-30 object-contain"
+            width={90}
+            height={90}
+            className="w-24 h-24 object-contain"
             priority
           />
         </Link>
@@ -105,7 +105,7 @@ const Header = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <nav className="md:hidden bg-white border-t border-neutral-200 shadow-sm">
-          <ul className="flex flex-col space-y-4 px-4 py-6 font-medium text-gray-600">
+          <ul className="flex flex-col space-y-2 px-4 py-3 font-medium text-gray-600">
             {navItems.map((item) => (
               <li key={item.href}>
                 <Link

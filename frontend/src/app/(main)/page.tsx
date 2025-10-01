@@ -79,9 +79,9 @@ export default function Home() {
                 <Image
                   src="/LMC_LFO_LOGO.png"
                   alt="LANMIC Polymers Logo"
-                  width={200}
-                  height={200}
-                  className="relative w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 object-contain hover-tilt transition-all duration-700 group-hover:scale-110"
+                  width={120}
+                  height={120}
+                  className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-contain hover-tilt transition-all duration-700 group-hover:scale-110"
                   style={{ width: 'auto', height: 'auto' }}
                   priority
                 />
