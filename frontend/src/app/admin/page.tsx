@@ -106,9 +106,9 @@ export default function AdminLogin() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <div className="w-52 h-52 mx-auto mb-4 flex items-center justify-center">
+          <div className="w-52 h-52 mx-auto mb-8 flex items-center justify-center">
             <Image
-              src="/lanmic_logo.png"
+              src="/LMC_LFO_LOGO.png"
               alt="LANMIC Polymers Logo"
               width={176}
               height={176}
