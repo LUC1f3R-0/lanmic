@@ -52,10 +52,7 @@ export const TestimonialProvider: React.FC<TestimonialProviderProps> = ({ childr
   const setupWebSocketEventHandlers = () => {
     // Handle testimonial created events - add new testimonial to the list
     websocketService.on('testimonial-created', (eventData: any) => {
-      const newTestimonial = {
-        ...eventData.data,
-        createdAt: new Date(eventData.data.createdAt)
-      };
+      const newTestimonial = eventData.data;
       
       setTestimonials(prev => {
         // Check if testimonial already exists to prevent duplicates
@@ -69,10 +66,7 @@ export const TestimonialProvider: React.FC<TestimonialProviderProps> = ({ childr
 
     // Handle testimonial updated events - update existing testimonial in the list
     websocketService.on('testimonial-updated', (eventData: any) => {
-      const updatedTestimonial = {
-        ...eventData.data,
-        createdAt: new Date(eventData.data.createdAt)
-      };
+      const updatedTestimonial = eventData.data;
       
       setTestimonials(prev => prev.map(testimonial => 
         testimonial.id === updatedTestimonial.id ? updatedTestimonial : testimonial
@@ -88,10 +82,7 @@ export const TestimonialProvider: React.FC<TestimonialProviderProps> = ({ childr
 
     // Handle testimonial active events - update active status
     websocketService.on('testimonial-active', (eventData: any) => {
-      const updatedTestimonial = {
-        ...eventData.data,
-        createdAt: new Date(eventData.data.createdAt)
-      };
+      const updatedTestimonial = eventData.data;
       
       setTestimonials(prev => prev.map(testimonial => 
         testimonial.id === updatedTestimonial.id ? updatedTestimonial : testimonial
@@ -105,12 +96,7 @@ export const TestimonialProvider: React.FC<TestimonialProviderProps> = ({ childr
       setError(null);
       // Load all testimonials for admin management (both active and inactive)
       const testimonialsData = await testimonialApi.getAllTestimonials();
-      // Parse dates from strings to Date objects
-      const parsedTestimonials = testimonialsData.map(testimonial => ({
-        ...testimonial,
-        createdAt: new Date(testimonial.createdAt)
-      }));
-      setTestimonials(parsedTestimonials);
+      setTestimonials(testimonialsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load testimonials');
     } finally {
@@ -121,10 +107,7 @@ export const TestimonialProvider: React.FC<TestimonialProviderProps> = ({ childr
   const getActiveTestimonials = async () => {
     try {
       const activeTestimonials = await testimonialApi.getActiveTestimonials();
-      return activeTestimonials.map(testimonial => ({
-        ...testimonial,
-        createdAt: new Date(testimonial.createdAt)
-      }));
+      return activeTestimonials;
     } catch (err) {
       console.error('Failed to load active testimonials:', err);
       return [];
@@ -134,18 +117,14 @@ export const TestimonialProvider: React.FC<TestimonialProviderProps> = ({ childr
   const addTestimonial = async (testimonialData: CreateTestimonialData) => {
     try {
       const newTestimonial = await testimonialApi.createTestimonial(testimonialData);
-      const parsedTestimonial = {
-        ...newTestimonial,
-        createdAt: new Date(newTestimonial.createdAt)
-      };
       
       // Only add to local state if WebSocket is not connected
       // This prevents duplicates when WebSocket event is received
       if (!isWebSocketConnected) {
-        setTestimonials(prev => [parsedTestimonial, ...prev]);
+        setTestimonials(prev => [newTestimonial, ...prev]);
       }
       
-      return parsedTestimonial;
+      return newTestimonial;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create testimonial');
       throw err;
@@ -155,20 +134,16 @@ export const TestimonialProvider: React.FC<TestimonialProviderProps> = ({ childr
   const updateTestimonial = async (id: number, testimonialData: UpdateTestimonialData) => {
     try {
       const updatedTestimonial = await testimonialApi.updateTestimonial(id, testimonialData);
-      const parsedTestimonial = {
-        ...updatedTestimonial,
-        createdAt: new Date(updatedTestimonial.createdAt)
-      };
       
       // Only update local state if WebSocket is not connected
       // This prevents duplicates when WebSocket event is received
       if (!isWebSocketConnected) {
         setTestimonials(prev => prev.map(testimonial => 
-          testimonial.id === id ? parsedTestimonial : testimonial
+          testimonial.id === id ? updatedTestimonial : testimonial
         ));
       }
       
-      return parsedTestimonial;
+      return updatedTestimonial;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update testimonial');
       throw err;
@@ -193,20 +168,16 @@ export const TestimonialProvider: React.FC<TestimonialProviderProps> = ({ childr
   const toggleActive = async (id: number) => {
     try {
       const updatedTestimonial = await testimonialApi.toggleActive(id);
-      const parsedTestimonial = {
-        ...updatedTestimonial,
-        createdAt: new Date(updatedTestimonial.createdAt)
-      };
       
       // Only update local state if WebSocket is not connected
       // This prevents duplicates when WebSocket event is received
       if (!isWebSocketConnected) {
         setTestimonials(prev => prev.map(testimonial => 
-          testimonial.id === id ? parsedTestimonial : testimonial
+          testimonial.id === id ? updatedTestimonial : testimonial
         ));
       }
       
-      return parsedTestimonial;
+      return updatedTestimonial;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to toggle testimonial active status');
       throw err;
