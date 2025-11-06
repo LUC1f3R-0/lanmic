@@ -313,7 +313,7 @@ export default function Team() {
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="text-4xl font-bold text-emerald-600 mb-2">15+</div>
+              <div className="text-4xl font-bold text-emerald-600 mb-2">5+</div>
               <div className="text-gray-600 font-medium">Years Experience</div>
             </div>
             <div
@@ -337,7 +337,7 @@ export default function Team() {
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="text-4xl font-bold text-orange-600 mb-2">25+</div>
+              <div className="text-4xl font-bold text-orange-600 mb-2">5+</div>
               <div className="text-gray-600 font-medium">Countries Served</div>
             </div>
           </div>

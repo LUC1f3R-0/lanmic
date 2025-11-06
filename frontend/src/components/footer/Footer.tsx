@@ -40,11 +40,15 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li>
                 <span className="block text-xs text-text-muted">Founded</span>
-                <span className="text-text-secondary">1999</span>
+                <span className="text-text-secondary">2020</span>
               </li>
               <li>
                 <span className="block text-xs text-text-muted">Headquarters</span>
-                <span className="text-text-secondary">Sri Lanka</span>
+                <span className="text-text-secondary">Colombo</span>
+              </li>
+              <li>
+                <span className="block text-xs text-text-muted">Email</span>
+                <span className="text-text-secondary">info@lanmic.com</span>
               </li>
               <li>
                 <span className="block text-xs text-text-muted">Industry</span>
@@ -73,8 +77,8 @@ const Footer = () => {
               </div>
               <div>
                 <span className="block text-xs text-text-muted mb-1">Email</span>
-                <a href="mailto:Niroshan.s@lanmic.com" className="text-text-secondary hover:text-primary-500 transition-colors">
-                  Niroshan.s@lanmic.com
+                <a href="mailto:info@lanmic.com" className="text-text-secondary hover:text-primary-500 transition-colors">
+                  info@lanmic.com
                 </a>
               </div>
               <div>

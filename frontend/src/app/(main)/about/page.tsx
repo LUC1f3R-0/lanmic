@@ -112,7 +112,7 @@ export default function About() {
               data-aos-delay="200"
             >
               <p>
-                <strong>LANMIC Polymers (Pvt) Ltd</strong> is a part of the esteemed <strong>LANMIC Group</strong>, Sri Lanka's premier chemicals and minerals conglomerate. Established in 2019, LANMIC Polymers focuses on producing high-quality filler masterbatches and polymer solutions that uphold the Group's legacy of excellence in mineral processing and innovation.
+                <strong>LANMIC Polymers (Pvt) Ltd</strong> is a part of the esteemed <strong>LANMIC Group</strong>, Sri Lanka's premier chemicals and minerals conglomerate. Founded in 2020, LANMIC Polymers focuses on producing high-quality filler masterbatches and polymer solutions that uphold the Group's legacy of excellence in mineral processing and innovation.
               </p>
               <p>
                 With its state-of-the-art facility located in the <strong>Fullerton Industrial Zone, Kalutara</strong>, the company is equipped with modern laboratories and cutting-edge production technology. Being <strong>ISO 9001:2015 certified</strong>, LANMIC Polymers ensures that its products meet stringent quality standards and international norms.

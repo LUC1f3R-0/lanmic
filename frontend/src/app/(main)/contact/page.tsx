@@ -381,7 +381,7 @@ export default function Contact() {
                         Email
                       </h4>
                       <p className="text-gray-600 text-sm">
-                        info@lanmicpolymers.com
+                        info@lanmic.com
                         <br />
                         support@lanmicpolymers.com
                       </p>

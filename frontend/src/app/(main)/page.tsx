@@ -269,10 +269,21 @@ export default function Home() {
                   that drive innovation across industries. Our commitment to quality, sustainability, 
                   and technological advancement has made us a trusted partner for businesses worldwide.
                 </p>
+                <div 
+                  className="text-sm text-text-muted mb-6"
+                  data-aos="fade-up"
+                  data-aos-delay="300"
+                  data-aos-duration="1000"
+                  data-aos-easing="ease-out-cubic"
+                >
+                  <span className="inline-block mr-4">Founded - 2020</span>
+                  <span className="inline-block mr-4">Email - info@lanmic.com</span>
+                  <span className="inline-block">Headquarters – Colombo</span>
+                </div>
                 <div className="grid grid-cols-2 gap-6 pt-6">
                   <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl hover-tilt border border-blue-200 glass-effect group">
                     <div className="text-3xl font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-300">
-                      25+
+                      5+
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
                       Years Experience
@@ -280,7 +291,7 @@ export default function Home() {
                   </div>
                   <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-100 rounded-2xl hover-tilt border border-purple-200 glass-effect group">
                     <div className="text-3xl font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-300" style={{animationDelay: '0.5s'}}>
-                      500+
+                      300+
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
                       Projects Completed
@@ -346,11 +357,12 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-primary-500 transition-colors duration-300">
-                Advanced Technology
+                Calcium Carbonate Filler Masterbatch
               </h3>
               <p className="text-text-secondary leading-relaxed">
-                Cutting-edge polymer technology solutions for modern
-                manufacturing needs
+                High-quality calcium carbonate filler masterbatches that enhance 
+                mechanical properties and reduce production costs while maintaining 
+                excellent surface finish and dimensional stability.
               </p>
             </div>
 
@@ -375,11 +387,12 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-secondary-500 transition-colors duration-300">
-                Custom Design
+                White Masterbatch
               </h3>
               <p className="text-text-secondary leading-relaxed">
-                Tailored polymer solutions designed specifically for your
-                requirements
+                Premium white masterbatches with excellent opacity, brightness, 
+                and color consistency. Perfect for applications requiring superior 
+                whiteness and UV resistance in various polymer matrices.
               </p>
             </div>
 
@@ -400,11 +413,13 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-accent-sage transition-colors duration-300">
-                Quality Assurance
+                Additive Masterbatches
               </h3>
               <p className="text-text-secondary leading-relaxed">
-                Rigorous quality control processes ensuring the highest
-                standards
+                Specialized additive masterbatches including UV stabilizers, 
+                antioxidants, flame retardants, and processing aids. Customized 
+                solutions to enhance polymer performance and meet specific 
+                application requirements.
               </p>
             </div>
           </div>
@@ -437,7 +452,7 @@ export default function Home() {
                 />
                 <div className="absolute -bottom-6 -right-6 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl p-6 shadow-xl">
                   <div className="text-3xl font-bold text-white">
-                    25+
+                    5+
                   </div>
                   <div className="text-sm text-cyan-100">
                     Years of Excellence
@@ -472,32 +487,17 @@ export default function Home() {
                     data-aos-easing="ease-out-cubic"
                   >
                     <div className="text-3xl font-bold text-cyan-600 mb-2">
-                      1,000+
+                      300+
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
-                      Products Delivered
-                    </div>
-                  </div>
-
-                  <div
-                    className="text-center p-6 bg-gradient-to-br from-emerald-50 to-teal-100 rounded-2xl hover:shadow-lg transition-all duration-300 border border-emerald-200"
-                    data-aos="slide-up"
-                    data-aos-delay="200"
-                    data-aos-duration="800"
-                    data-aos-easing="ease-out-cubic"
-                  >
-                    <div className="text-3xl font-bold text-emerald-600 mb-2">
-                      50+
-                    </div>
-                    <div className="text-sm text-gray-600 font-medium">
-                      Countries Served
+                      Customers Served
                     </div>
                   </div>
 
                   <div
                     className="text-center p-6 bg-gradient-to-br from-violet-50 to-purple-100 rounded-2xl hover:shadow-lg transition-all duration-300 border border-violet-200"
                     data-aos="slide-up"
-                    data-aos-delay="300"
+                    data-aos-delay="200"
                     data-aos-duration="800"
                     data-aos-easing="ease-out-cubic"
                   >
@@ -506,6 +506,21 @@ export default function Home() {
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
                       Customer Satisfaction
+                    </div>
+                  </div>
+
+                  <div
+                    className="text-center p-6 bg-gradient-to-br from-emerald-50 to-teal-100 rounded-2xl hover:shadow-lg transition-all duration-300 border border-emerald-200"
+                    data-aos="slide-up"
+                    data-aos-delay="300"
+                    data-aos-duration="800"
+                    data-aos-easing="ease-out-cubic"
+                  >
+                    <div className="text-3xl font-bold text-emerald-600 mb-2">
+                      ISO
+                    </div>
+                    <div className="text-sm text-gray-600 font-medium">
+                      Certified
                     </div>
                   </div>
                 </div>
