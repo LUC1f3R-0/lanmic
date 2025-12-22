@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Use webpack for production builds (Turbopack is default in Next.js 16)
+  turbopack: {},
   // Webpack configuration for production builds (Turbopack handles Node.js polyfills automatically)
   webpack: (config, { isServer, dev }) => {
     // Only apply webpack fallbacks for production builds or when not using turbopack
