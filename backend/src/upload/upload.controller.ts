@@ -12,10 +12,11 @@ import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CsrfGuard } from '../guards/csrf.guard';
 import { existsSync, mkdirSync } from 'fs';
 
 @Controller('upload')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, CsrfGuard)
 export class UploadController {
   private readonly logger = new Logger(UploadController.name);
   @Post('image')

@@ -15,6 +15,7 @@ import {
 import { SimpleBlogService } from './simple-blog.service';
 import { CreateBlogPostDto, UpdateBlogPostDto } from './dto/blog.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CsrfGuard } from '../guards/csrf.guard';
 
 @Controller('blog')
 export class BlogController {
@@ -42,7 +43,7 @@ export class BlogController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async createBlogPost(
     @Body() createBlogPostDto: CreateBlogPostDto,
     @Request() req,
@@ -55,7 +56,7 @@ export class BlogController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async updateBlogPost(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBlogPostDto: UpdateBlogPostDto,
@@ -77,7 +78,7 @@ export class BlogController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async deleteBlogPost(@Param('id', ParseIntPipe) id: number, @Request() req) {
     const deleted = await this.blogService.remove(id, req.user.id);
     if (!deleted) {
@@ -87,7 +88,7 @@ export class BlogController {
   }
 
   @Put(':id/publish')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async togglePublish(@Param('id', ParseIntPipe) id: number, @Request() req) {
     const post = await this.blogService.togglePublish(id, req.user.id);
     if (!post) {

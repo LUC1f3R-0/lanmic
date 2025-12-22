@@ -1,4 +1,5 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, Logger } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ContactService, ContactFormData } from './contact.service';
 import { ContactFormDto } from './dto/contact.dto';
 
@@ -10,6 +11,7 @@ export class ContactController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
+  @Throttle({ short: { limit: 5, ttl: 60000 } }) // 5 requests per minute to prevent spam
   async submitContactForm(@Body() contactFormDto: ContactFormDto): Promise<{ message: string; success: boolean }> {
     try {
       this.logger.log(`Contact form submission received from ${contactFormDto.email}`);

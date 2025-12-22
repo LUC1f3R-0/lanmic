@@ -15,6 +15,7 @@ import {
 import { TeamService } from './team.service';
 import { CreateTeamMemberDto, UpdateTeamMemberDto } from './dto/team-member.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CsrfGuard } from '../guards/csrf.guard';
 
 @Controller('team')
 export class TeamController {
@@ -42,7 +43,7 @@ export class TeamController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async createTeamMember(
     @Body() createTeamMemberDto: CreateTeamMemberDto,
     @Request() req,
@@ -55,7 +56,7 @@ export class TeamController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async updateTeamMember(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTeamMemberDto: UpdateTeamMemberDto,
@@ -77,7 +78,7 @@ export class TeamController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async deleteTeamMember(@Param('id', ParseIntPipe) id: number, @Request() req) {
     const deleted = await this.teamService.remove(id, req.user.id);
     if (!deleted) {
@@ -87,7 +88,7 @@ export class TeamController {
   }
 
   @Put(':id/active')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async toggleActive(@Param('id', ParseIntPipe) id: number, @Request() req) {
     const member = await this.teamService.toggleActive(id, req.user.id);
     if (!member) {

@@ -9,11 +9,14 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ForbiddenException,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CsrfGuard } from '../guards/csrf.guard';
 import {
   LoginDto,
   RefreshTokenDto,
@@ -34,6 +37,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ short: { limit: 5, ttl: 60000 } }) // 5 attempts per minute
   @ApiOperation({
     summary: 'User login',
     description:
@@ -52,6 +56,10 @@ export class AuthController {
   @ApiResponse({
     status: 400,
     description: 'Invalid input',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
   })
   async login(
     @Body() loginDto: LoginDto,
@@ -155,6 +163,7 @@ export class AuthController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ short: { limit: 3, ttl: 60000 } }) // 3 requests per minute to prevent email spam
   @ApiOperation({
     summary: 'Request password reset',
     description: 'Sends an OTP to the user email for password reset',
@@ -168,12 +177,17 @@ export class AuthController {
     status: 400,
     description: 'Invalid input or account deactivated',
   })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
+  })
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     return this.authService.forgotPassword(forgotPasswordDto);
   }
 
   @Post('verify-otp')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ short: { limit: 10, ttl: 60000 } }) // 10 attempts per minute
   @ApiOperation({
     summary: 'Verify OTP',
     description: 'Verifies the OTP sent to user email',
@@ -190,6 +204,10 @@ export class AuthController {
   @ApiResponse({
     status: 404,
     description: 'User not found',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
   })
   async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
     return this.authService.verifyOtp(verifyOtpDto);
@@ -219,7 +237,7 @@ export class AuthController {
   }
 
   @Post('change-password')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Change password',
@@ -249,6 +267,7 @@ export class AuthController {
 
   @Post('register/email')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ short: { limit: 3, ttl: 60000 } }) // 3 requests per minute
   @ApiOperation({
     summary: 'Send registration OTP',
     description: 'Sends an OTP to the user email for registration verification',
@@ -261,6 +280,10 @@ export class AuthController {
   @ApiResponse({
     status: 400,
     description: 'Invalid input or email already exists',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
   })
   async sendRegistrationOtp(@Body() forgotPasswordDto: ForgotPasswordDto) {
     return this.authService.sendRegistrationOtp(forgotPasswordDto);
@@ -321,7 +344,7 @@ export class AuthController {
   }
 
   @Post('send-verification-email')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Send email verification',
@@ -344,7 +367,7 @@ export class AuthController {
   }
 
   @Post('verify-email')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Verify email with OTP',
@@ -430,16 +453,21 @@ export class AuthController {
 
   @Get('debug/user/:email')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard) // Require authentication
   @ApiOperation({
     summary: 'Debug user lookup',
-    description: 'Debug endpoint to check if user exists in database',
+    description: 'Debug endpoint to check if user exists in database (Development only)',
   })
   async debugUserLookup(@Param('email') email: string) {
+    // Disable in production for security
+    if (process.env.NODE_ENV === 'production') {
+      throw new ForbiddenException('Debug endpoints are disabled in production');
+    }
     return this.authService.debugUserLookup(email);
   }
 
   @Post('change-email/verify-current')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Send OTP to current email for verification',
@@ -459,7 +487,7 @@ export class AuthController {
   }
 
   @Post('change-email/verify-current-otp')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Verify OTP from current email',
@@ -486,7 +514,7 @@ export class AuthController {
   }
 
   @Post('change-email/verify-new')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Send OTP to new email for verification',
@@ -513,7 +541,7 @@ export class AuthController {
   }
 
   @Post('change-email/verify-new-otp')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Verify OTP from new email',
@@ -540,7 +568,7 @@ export class AuthController {
   }
 
   @Post('change-email/confirm')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Confirm email change with password',

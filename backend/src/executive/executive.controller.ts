@@ -15,6 +15,7 @@ import {
 import { ExecutiveService } from './executive.service';
 import { CreateExecutiveLeadershipDto, UpdateExecutiveLeadershipDto } from './dto/executive-leadership.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CsrfGuard } from '../guards/csrf.guard';
 
 @Controller('executive')
 export class ExecutiveController {
@@ -42,7 +43,7 @@ export class ExecutiveController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async createExecutiveLeadership(
     @Body() createExecutiveLeadershipDto: CreateExecutiveLeadershipDto,
     @Request() req,
@@ -55,7 +56,7 @@ export class ExecutiveController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async updateExecutiveLeadership(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateExecutiveLeadershipDto: UpdateExecutiveLeadershipDto,
@@ -77,7 +78,7 @@ export class ExecutiveController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async deleteExecutiveLeadership(@Param('id', ParseIntPipe) id: number, @Request() req) {
     const deleted = await this.executiveService.remove(id, req.user.id);
     if (!deleted) {
@@ -87,7 +88,7 @@ export class ExecutiveController {
   }
 
   @Put(':id/active')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CsrfGuard)
   async toggleActive(@Param('id', ParseIntPipe) id: number, @Request() req) {
     const executive = await this.executiveService.toggleActive(id, req.user.id);
     if (!executive) {

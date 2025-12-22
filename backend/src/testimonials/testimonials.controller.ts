@@ -15,13 +15,14 @@ import { TestimonialsService } from './testimonials.service';
 import { CreateTestimonialDto, UpdateTestimonialDto } from './dto/testimonial.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { EmailVerifiedGuard } from '../guards/email-verified.guard';
+import { CsrfGuard } from '../guards/csrf.guard';
 
 @Controller('testimonials')
 export class TestimonialsController {
   constructor(private readonly testimonialsService: TestimonialsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard, CsrfGuard)
   create(@Body() createTestimonialDto: CreateTestimonialDto, @Request() req: any) {
     return this.testimonialsService.create(createTestimonialDto, req.user.id);
   }
@@ -44,7 +45,7 @@ export class TestimonialsController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard, CsrfGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTestimonialDto: UpdateTestimonialDto,
@@ -54,13 +55,13 @@ export class TestimonialsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard, CsrfGuard)
   remove(@Param('id', ParseIntPipe) id: number, @Request() req: any) {
     return this.testimonialsService.remove(id, req.user.id);
   }
 
   @Put(':id/active')
-  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard, CsrfGuard)
   toggleActive(@Param('id', ParseIntPipe) id: number, @Request() req: any) {
     return this.testimonialsService.toggleActive(id, req.user.id);
   }

@@ -7,7 +7,27 @@ export function middleware(request: NextRequest) {
   // Get the access token from cookies (backend sets 'access_token' cookie)
   const accessToken = request.cookies.get('access_token')?.value;
   
-  // Processing request for pathname
+  // Create response
+  const response = NextResponse.next();
+  
+  // Add security headers to all responses
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  
+  // Content Security Policy
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval needed for Next.js
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: https:",
+    "font-src 'self' data:",
+    "connect-src 'self' " + (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'),
+    "frame-ancestors 'none'",
+  ].join('; ');
+  response.headers.set('Content-Security-Policy', csp);
   
   // Only handle dashboard and login routes
   if (pathname.startsWith('/dashboard')) {
@@ -18,7 +38,7 @@ export function middleware(request: NextRequest) {
     }
     // If user has access token, allow access to dashboard
     // Access token found, allowing dashboard access
-    return NextResponse.next();
+    return response;
   }
   
   if (pathname === '/admin') {
@@ -29,16 +49,22 @@ export function middleware(request: NextRequest) {
     }
     // If no access token, allow access to admin page
     // No access token, allowing admin access
-    return NextResponse.next();
+    return response;
   }
   
-  // For all other routes, just continue
-  return NextResponse.next();
+  // For all other routes, return response with security headers
+  return response;
 }
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/admin'
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };

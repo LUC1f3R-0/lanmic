@@ -13,6 +13,8 @@ import * as dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import helmet from 'helmet';
+import { CsrfInterceptor } from './interceptors/csrf.interceptor';
 
 dotenv.config({ path: __dirname + '/../.env' });
 
@@ -40,14 +42,39 @@ async function bootstrap() {
   // Enable cookie parser
   app.use(cookieParser());
 
-  // Serve static files from uploads directory (includes all subdirectories)
-  app.useStaticAssets(join(process.cwd(), 'uploads'), {
-    prefix: '/uploads/',
-  });
+  // Helmet for security headers (must be before other middleware)
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles for AOS and Tailwind
+          imgSrc: ["'self'", 'data:', 'https:'],
+          connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:3000'],
+          fontSrc: ["'self'", 'data:'],
+          objectSrc: ["'none'"],
+          mediaSrc: ["'self'"],
+          frameSrc: ["'none'"],
+          upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
+        },
+      },
+      crossOriginEmbedderPolicy: false, // Allow external resources if needed
+      crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow CORS resources
+    }),
+  );
 
-  // Security headers
+  // Additional security headers
   app.use((req, res, next) => {
-    // Security headers
+    // Strict Transport Security (HSTS) - only in production
+    if (process.env.NODE_ENV === 'production') {
+      res.setHeader(
+        'Strict-Transport-Security',
+        'max-age=31536000; includeSubDomains; preload',
+      );
+    }
+    
+    // Additional security headers
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('X-XSS-Protection', '1; mode=block');
@@ -56,15 +83,24 @@ async function bootstrap() {
       'Permissions-Policy',
       'geolocation=(), microphone=(), camera=()',
     );
-
-    // Content Security Policy
-    res.setHeader(
-      'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
-    );
+    
+    // Prevent caching of sensitive data
+    if (req.path.startsWith('/auth') || req.path.startsWith('/dashboard')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
 
     next();
   });
+
+  // Serve static files from uploads directory (includes all subdirectories)
+  app.useStaticAssets(join(process.cwd(), 'uploads'), {
+    prefix: '/uploads/',
+  });
+
+  // Global CSRF interceptor to set CSRF token cookie
+  app.useGlobalInterceptors(new CsrfInterceptor());
 
   // Enable global validation
   app.useGlobalPipes(
@@ -93,12 +129,31 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Enable CORS with secure settings
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, Postman, etc.) in development
+      if (!origin && process.env.NODE_ENV === 'development') {
+        return callback(null, true);
+      }
+      
+      // Validate origin
+      if (origin === frontendUrl || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true, // Allow cookies
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Cookie',
+      'X-CSRF-Token', // CSRF token header
+    ],
     exposedHeaders: ['Set-Cookie'],
+    maxAge: 86400, // 24 hours
   });
 
   const config = new DocumentBuilder()

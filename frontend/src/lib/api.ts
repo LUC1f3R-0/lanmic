@@ -66,12 +66,35 @@ class ApiService {
     this.setupInterceptors();
   }
 
+  /**
+   * Get CSRF token from cookies
+   */
+  private getCsrfToken(): string | null {
+    if (typeof document === 'undefined') return null;
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === 'csrf-token') {
+        return value;
+      }
+    }
+    return null;
+  }
+
   private setupInterceptors() {
     // Request interceptor - no need to add auth headers since we use HTTP-only cookies
     this.axiosInstance.interceptors.request.use(
       (config) => {
         // Ensure credentials are included for all requests
         config.withCredentials = true;
+        
+        // Add CSRF token to headers for state-changing requests
+        if (config.method && ['post', 'put', 'patch', 'delete'].includes(config.method.toLowerCase())) {
+          const csrfToken = this.getCsrfToken();
+          if (csrfToken) {
+            config.headers['X-CSRF-Token'] = csrfToken;
+          }
+        }
         
         if (isDebugMode()) {
           // API Request logged
