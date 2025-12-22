@@ -231,7 +231,7 @@ export default function Home() {
                   <SwiperSlide>
                     <div className="relative w-full h-full bg-primary-500 flex items-center justify-center">
                       <Image
-                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop&auto=format&q=80"
+                        src="/Innovation/DSC05792.jpg"
                         alt="Manufacturing Process"
                         fill
                         className="object-cover"
@@ -242,7 +242,7 @@ export default function Home() {
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-primary-500/80 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-primary-500/30 flex items-center justify-center">
                         <div className="text-center text-white p-6">
                           <h3 className="text-2xl font-bold mb-2">Manufacturing Excellence</h3>
                           <p className="text-lg">Advanced production processes</p>
@@ -253,7 +253,7 @@ export default function Home() {
                   <SwiperSlide>
                     <div className="relative w-full h-full bg-secondary-500 flex items-center justify-center">
                       <Image
-                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&auto=format&q=80"
+                        src="/Innovation/DSC05826.jpg"
                         alt="Quality Control"
                         fill
                         className="object-cover"
@@ -264,7 +264,7 @@ export default function Home() {
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-secondary-500/80 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-secondary-500/30 flex items-center justify-center">
                         <div className="text-center text-white p-6">
                           <h3 className="text-2xl font-bold mb-2">Quality Assurance</h3>
                           <p className="text-lg">Rigorous testing standards</p>
@@ -275,7 +275,7 @@ export default function Home() {
                   <SwiperSlide>
                     <div className="relative w-full h-full bg-accent-sage flex items-center justify-center">
                       <Image
-                        src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop&auto=format&q=80"
+                        src="/Innovation/DSC05817.jpg"
                         alt="Innovation Lab"
                         fill
                         className="object-cover"
@@ -286,7 +286,7 @@ export default function Home() {
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-accent-sage/80 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-accent-sage/30 flex items-center justify-center">
                         <div className="text-center text-white p-6">
                           <h3 className="text-2xl font-bold mb-2">Innovation Hub</h3>
                           <p className="text-lg">Cutting-edge research & development</p>
