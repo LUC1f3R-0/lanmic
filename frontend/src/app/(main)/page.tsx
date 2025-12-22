@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import AOS from "aos";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBlog } from "@/contexts/BlogContext";
@@ -13,6 +13,7 @@ import { getDisplayImageUrl } from "@/lib/imageUtils";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/effect-fade";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -54,8 +55,59 @@ export default function Home() {
     <main className="main">
       {/* Hero Section */}
       <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        {/* Background Slideshow */}
+        <div className="absolute inset-0 z-0">
+          <Swiper
+            modules={[Autoplay, EffectFade]}
+            loop={true}
+            speed={1000}
+            autoplay={{
+              delay: 4000,
+              disableOnInteraction: false,
+            }}
+            slidesPerView={1}
+            className="w-full h-full"
+            effect="fade"
+            fadeEffect={{ crossFade: true }}
+          >
+            <SwiperSlide>
+              <div className="relative w-full h-full">
+                <Image
+                  src="/header/DSC05659.jpg"
+                  alt="LANMIC Polymers"
+                  fill
+                  className="object-cover opacity-40"
+                  priority
+                />
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="relative w-full h-full">
+                <Image
+                  src="/header/DSC05742.jpg"
+                  alt="LANMIC Polymers"
+                  fill
+                  className="object-cover opacity-40"
+                />
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="relative w-full h-full">
+                <Image
+                  src="/header/DSC05778.jpg"
+                  alt="LANMIC Polymers"
+                  fill
+                  className="object-cover opacity-40"
+                />
+              </div>
+            </SwiperSlide>
+          </Swiper>
+          {/* Dark overlay for better text contrast */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/40 z-10"></div>
+        </div>
+        
         {/* Enhanced Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden z-[1]">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-20 morphing"></div>
           <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-indigo-400 to-pink-500 rounded-full opacity-20 morphing" style={{animationDelay: '2s'}}></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-10 wave"></div>
@@ -81,7 +133,7 @@ export default function Home() {
                   alt="LANMIC Polymers Logo"
                   width={120}
                   height={120}
-                  className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-contain hover-tilt transition-all duration-700 group-hover:scale-110"
+                  className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-contain hover-tilt transition-all duration-700 group-hover:scale-110 drop-shadow-2xl"
                   style={{ width: 'auto', height: 'auto' }}
                   priority
                 />
@@ -89,23 +141,23 @@ export default function Home() {
             </div>
             
             <h1
-              className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight"
+              className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight drop-shadow-lg"
               data-aos="text-reveal"
               data-aos-delay="200"
               data-aos-duration="1200"
               data-aos-easing="ease-out-cubic"
             >
-              <span className="text-gray-800 slide-in-left">Welcome to </span>
-              <span className="gradient-text text-transparent bg-clip-text">
+              <span className="text-white slide-in-left drop-shadow-md">Welcome to </span>
+              <span className="gradient-text text-transparent bg-clip-text drop-shadow-lg">
                 LANMIC
               </span>{" "}
-              <span className="gradient-text text-transparent bg-clip-text" style={{animationDelay: '0.5s'}}>
+              <span className="gradient-text text-transparent bg-clip-text drop-shadow-lg" style={{animationDelay: '0.5s'}}>
                 Polymers
               </span>
             </h1>
             
             <p
-              className="text-lg sm:text-xl lg:text-2xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto"
+              className="text-lg sm:text-xl lg:text-2xl text-white mb-8 leading-relaxed max-w-3xl mx-auto drop-shadow-md font-medium"
               data-aos="fade-up"
               data-aos-delay="400"
               data-aos-duration="1000"

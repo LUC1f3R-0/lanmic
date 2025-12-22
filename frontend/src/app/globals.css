@@ -340,6 +340,9 @@ html {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: gradientShift 3s ease infinite;
+  -webkit-text-stroke: 1px white;
+  text-stroke: 1px white;
+  paint-order: stroke fill;
 }
 
 .glass-effect {
