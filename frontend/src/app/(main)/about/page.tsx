@@ -125,6 +125,37 @@ export default function About() {
         </div>
       </section>
 
+      {/* Vision & Mission Section */}
+      <section
+        id="vision-mission"
+        className="py-20 lg:py-32 bg-gradient-to-br from-white via-slate-50 to-blue-50"
+      >
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div data-aos="fade-right">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                Vision
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                We revolutionize the polymer industry by providing innovative and
+                sustainable products to the manufacturing industry.
+              </p>
+            </div>
+            <div data-aos="fade-left">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                Mission
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Our mission is to provide high-quality and innovative products
+                and services that exceed our customers&apos; expectations. We
+                are committed to working with the latest technology and
+                improving the communities in which we live and work.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* LANMIC Group Values Section */}
       <section
         id="values"
