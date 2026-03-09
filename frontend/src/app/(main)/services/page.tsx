@@ -1,11 +1,28 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import AOS from "aos";
+import { contactApiService, ContactFormData } from "@/lib/contactApi";
 
-export default function Services() {
+export default function ProductsAndApplications() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    company: "",
+    product: "Filler Masterbatch",
+    brochure: true,
+    tds: true,
+    message: "",
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
   useEffect(() => {
-    // Initialize AOS
     AOS.init({
       duration: 1000,
       once: true,
@@ -13,387 +30,606 @@ export default function Services() {
     });
   }, []);
 
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: "" });
+
+    try {
+      const requestedDocs: string[] = [];
+      if (formData.brochure) requestedDocs.push("Product Brochure");
+      if (formData.tds) requestedDocs.push("Technical Data Sheet");
+
+      const contactData: ContactFormData = {
+        name: formData.name,
+        email: formData.email,
+        company: formData.company || undefined,
+        message:
+          `Product & Application Page Request\n` +
+          `Product: ${formData.product}\n` +
+          `Requested documents: ${requestedDocs.join(", ") || "None selected"}\n\n` +
+          `${formData.message || "No additional message provided."}`,
+      };
+
+      const response = await contactApiService.submitContactForm(contactData);
+
+      if (response.success) {
+        setSubmitStatus({ type: "success", message: response.message });
+        setFormData({
+          name: "",
+          email: "",
+          company: "",
+          product: "Filler Masterbatch",
+          brochure: true,
+          tds: true,
+          message: "",
+        });
+      } else {
+        setSubmitStatus({ type: "error", message: response.message });
+      }
+    } catch (error: any) {
+      setSubmitStatus({
+        type: "error",
+        message:
+          error.message ||
+          "An error occurred while submitting your request. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <main className="main">
-      {/* Services 2 Section */}
-      <section
-        id="services-2"
-        className="services-2-section py-20 lg:py-32 bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 relative overflow-hidden"
-      >
-        {/* Enhanced Animated Background */}
+      {/* Hero / Intro Section */}
+      <section className="py-20 lg:py-28 bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-cyan-400 to-blue-500 rounded-full morphing"></div>
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-indigo-400 to-purple-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
-        </div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-cyan-400 to-blue-500 rounded-full morphing" />
           <div
-            className="flex flex-col lg:flex-row items-start gap-12 lg:gap-20"
+            className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-indigo-400 to-purple-500 rounded-full morphing"
+            style={{ animationDelay: "2s" }}
+          />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave" />
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div
+            className="max-w-4xl mx-auto text-center"
             data-aos="fade-up"
             data-aos-duration="1200"
             data-aos-easing="ease-out-cubic"
           >
-            <div className="lg:w-2/5">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                Our Services
-              </h2>
-              <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                "Comprehensive Polymer Solutions, Expertise in Polymer Innovation, Reliable Industrial Solutions"
-              </p>
-              <p className="text-gray-600 mb-8 leading-relaxed">
-                Our company specializes in providing high-quality polymer solutions for various industries, focusing on innovation, reliability, and sustainability to meet the highest standards and meet diverse client needs.
-              </p>
-              <button className="btn-primary px-8 py-4 rounded-full font-semibold text-lg hover-glow-intense hover-slide">
-                Get Started
-              </button>
-            </div>
-
-            <div className="lg:w-3/5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                <div
-                  className="services-item bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-lg hover-tilt border border-blue-200 glass-effect group"
-                  data-aos="zoom-in-rotate"
-                  data-aos-delay="0"
-                  data-aos-duration="1000"
-                  data-aos-easing="ease-out-cubic"
-                >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
-                    <svg
-                      className="w-8 h-8 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Filler Masterbatch
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      Filler Masterbatch is a key product in the plastics industry, designed to optimize production costs and improve the mechanical properties of the final product.
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  className="services-item bg-gradient-to-br from-white to-green-50 rounded-2xl p-6 shadow-lg hover-tilt border border-green-200 glass-effect group"
-                  data-aos="zoom-in-rotate"
-                  data-aos-delay="100"
-                  data-aos-duration="1000"
-                  data-aos-easing="ease-out-cubic"
-                >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-green-600 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
-                    <svg
-                      className="w-8 h-8 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      White Masterbatch
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      White masterbatch is a white, opaque, and highly refractive pigment commonly used in paints, plastics, and other applications due to its excellent covering power and brightness.
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  className="services-item bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 shadow-lg hover-tilt border border-purple-200 glass-effect group"
-                  data-aos="zoom-in-rotate"
-                  data-aos-delay="200"
-                  data-aos-duration="1000"
-                  data-aos-easing="ease-out-cubic"
-                >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
-                    <svg
-                      className="w-8 h-8 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Masterbatch Additives
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      Masterbatch additives are concentrated mixtures used in the plastics industry to enhance the properties of plastic materials, including color, performance, and functionality.
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  className="services-item bg-gradient-to-br from-white to-orange-50 rounded-2xl p-6 shadow-lg hover-tilt border border-orange-200 glass-effect group"
-                  data-aos="zoom-in-rotate"
-                  data-aos-delay="300"
-                  data-aos-duration="1000"
-                  data-aos-easing="ease-out-cubic"
-                >
-                  <div className="services-icon w-16 h-16 bg-gradient-to-r from-orange-600 to-red-500 rounded-2xl flex items-center justify-center mb-6 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
-                    <svg
-                      className="w-8 h-8 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Calcium Carbonate
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      Calcium carbonate is widely used in polymers as a filler to improve stiffness, strength, and dimensional stability.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
+              Product & Application
+            </span>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+              Our Products
+            </h1>
+            <p className="text-xl sm:text-2xl font-semibold text-blue-700 mb-4 leading-relaxed">
+              “High Loding Masterbatch Solutions for Reliable Plastic Manufacturing’’
+            </p>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              Our company manufacture premium Calcium Carbonate Filler Masterbatch, White
+              Masterbatch and Additive Masterbatch designed to reduce production costs,
+              improve product strength, and ensure smooth processing performance. Our
+              high-quality masterbatch solutions support film extrusion and injection
+              molding applications, helping manufacturers achieve consistent quality,
+              better efficiency, and long-term profitability.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section
-        id="services"
-        className="services-section py-20 lg:py-32 bg-white"
-      >
+      {/* Product Types Section */}
+      <section className="py-20 lg:py-28 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
-              What We Offer
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Our Core Services
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Leading polymer innovation through advanced research, quality assurance, and sustainable practices
-            </p>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div
-              className="services-item bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-              data-aos="flip-left"
-              data-aos-duration="1000"
-              data-aos-easing="ease-out-cubic"
+              className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-blue-200 glass-effect"
+              data-aos="zoom-in-rotate"
+              data-aos-delay="0"
             >
-              <div className="services-icon w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6">
-                <svg
-                  className="w-8 h-8 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  R&D and Innovation
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Advanced product development, new formulas, state-of-the-art lab facilities, and continuous innovation pipeline to drive polymer technology forward.
-                </p>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Filler Masterbatch
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                Filler Masterbatch is a cost-effective compounding solution that improves
+                mechanical strength, stiffness, and overall polymer performance. We supply
+                high-quality Calcium Carbonate and Talc Masterbatch designed for smooth
+                processing, high loading efficiency, and consistent results in film
+                extrusion and injection molding applications.
+              </p>
             </div>
 
             <div
-              className="services-item bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-              data-aos="flip-left"
+              className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-indigo-200 glass-effect"
+              data-aos="zoom-in-rotate"
               data-aos-delay="100"
+            >
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                White Masterbatch
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                White Masterbatch is a highly opaque, bright, and reflective pigment that
+                delivers excellent coverage and consistent color for plastics, paints, and
+                coatings.
+              </p>
+            </div>
+
+            <div
+              className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-emerald-200 glass-effect"
+              data-aos="zoom-in-rotate"
+              data-aos-delay="200"
+            >
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Masterbatch Additives
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                Masterbatch Additives are concentrated mixtures designed to enhance
+                plastic performance, color stability, UV resistance, and functionality
+                for superior end products.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Applications Section */}
+      <section className="py-20 lg:py-28 bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              Applications
+            </h2>
+            <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+              Our masterbatch solutions are engineered for a wide range of processing
+              technologies and end-use products.
+            </p>
+          </div>
+
+          {/* Blown Films */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-16">
+            <div
+              data-aos="fade-right"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="services-icon w-16 h-16 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl flex items-center justify-center mb-6">
-                <svg
-                  className="w-8 h-8 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Quality Assurance
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Comprehensive testing equipment, ISO and ASTM certifications, rigorous internal audit processes, and complete QA protocols ensuring highest standards.
-                </p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Blown films</h3>
+              <p className="text-gray-700 mb-4">
+                Our masterbatch solutions are specially formulated for blown film
+                production, ensuring excellent dispersion, smooth processing, and cost
+                efficiency.
+              </p>
+              <h4 className="font-semibold text-gray-900 mb-2">Common applications</h4>
+              <ul className="list-disc list-inside text-gray-700 space-y-1">
+                <li>Refuse Bag</li>
+                <li>Transparent Film</li>
+                <li>Agriculture Film</li>
+                <li>Shopping Bag</li>
+                <li>Garbage Bag</li>
+              </ul>
+            </div>
+            <div
+              className="relative w-full h-64 sm:h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl"
+              data-aos="fade-left"
+              data-aos-duration="1000"
+            >
+              <Image
+                src="/Blow film.png"
+                alt="Blown film application"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+          </div>
+
+          {/* Injection Molding */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-16">
+            <div
+              className="order-2 lg:order-1 relative w-full h-64 sm:h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl"
+              data-aos="fade-right"
+              data-aos-duration="1000"
+            >
+              <Image
+                src="/Injection molding.png"
+                alt="Injection molding application"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+            <div
+              className="order-1 lg:order-2"
+              data-aos="fade-left"
+              data-aos-duration="1000"
+            >
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Injection molding
+              </h3>
+              <p className="text-gray-700 mb-4">
+                Designed to enhance strength, rigidity, and surface finish in injection
+                molded products.
+              </p>
+              <h4 className="font-semibold text-gray-900 mb-2">Common applications</h4>
+              <ul className="list-disc list-inside text-gray-700 space-y-1">
+                <li>Garden Furniture</li>
+                <li>Office Material</li>
+                <li>Household Electrical Appliances, etc.</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Extrusion */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-16">
+            <div
+              data-aos="fade-right"
+              data-aos-duration="1000"
+              data-aos-easing="ease-out-cubic"
+            >
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Extrusion</h3>
+              <p className="text-gray-700 mb-4">
+                Engineered for consistent melt flow and dimensional stability in extrusion
+                processes.
+              </p>
+              <h4 className="font-semibold text-gray-900 mb-2">Common applications</h4>
+              <ul className="list-disc list-inside text-gray-700 space-y-1">
+                <li>Pipes, profile extrusion</li>
+                <li>Raffia</li>
+                <li>Non woven fabric</li>
+              </ul>
+            </div>
+            <div
+              className="relative w-full h-64 sm:h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl"
+              data-aos="fade-left"
+              data-aos-duration="1000"
+            >
+              <Image
+                src="/Extrusion.png"
+                alt="Extrusion application"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+          </div>
+
+          {/* Thermoforming */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div
+              className="order-2 lg:order-1 relative w-full h-64 sm:h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl"
+              data-aos="fade-right"
+              data-aos-duration="1000"
+            >
+              <Image
+                src="/Thermoforming.png"
+                alt="Thermoforming application"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+            <div
+              className="order-1 lg:order-2"
+              data-aos="fade-left"
+              data-aos-duration="1000"
+            >
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Thermoforming</h3>
+              <p className="text-gray-700 mb-4">
+                Provides improved stiffness and processing performance for thermoformed
+                plastic products.
+              </p>
+              <h4 className="font-semibold text-gray-900 mb-2">Common applications</h4>
+              <ul className="list-disc list-inside text-gray-700 space-y-1">
+                <li>Food packaging</li>
+                <li>Manufacturing industry</li>
+                <li>Household appliances</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Lab & Equipment Gallery */}
+      <section className="py-20 lg:py-28 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              Laboratory & Processing Equipment
+            </h2>
+            <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+              State-of-the-art equipment used for product development, testing, and
+              quality assurance.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div
+              className="relative w-full h-56 rounded-2xl overflow-hidden shadow-lg"
+              data-aos="zoom-in"
+              data-aos-delay="0"
+            >
+              <Image
+                src="/Lab film blowing machine.png"
+                alt="Lab film blowing machine"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-black/50 text-white text-sm font-medium px-4 py-2">
+                Lab Film blowing machine
               </div>
             </div>
 
             <div
-              className="services-item bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-              data-aos="flip-left"
-              data-aos-delay="200"
-              data-aos-duration="1000"
-              data-aos-easing="ease-out-cubic"
+              className="relative w-full h-56 rounded-2xl overflow-hidden shadow-lg"
+              data-aos="zoom-in"
+              data-aos-delay="100"
             >
-              <div className="services-icon w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center mb-6">
-                <svg
-                  className="w-8 h-8 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+              <Image
+                src="/Film Blow machine.png"
+                alt="Film blow machine"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-black/50 text-white text-sm font-medium px-4 py-2">
+                Film Blow machine
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Sustainability
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Eco-friendly initiatives, advanced recycling programs, energy-efficient processes, and comprehensive green product lines for environmental responsibility.
-                </p>
+            </div>
+
+            <div
+              className="relative w-full h-56 rounded-2xl overflow-hidden shadow-lg"
+              data-aos="zoom-in"
+              data-aos-delay="200"
+            >
+              <Image
+                src="/Twin screw excluder machine.png"
+                alt="Twin screw extruder machine"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-black/50 text-white text-sm font-medium px-4 py-2">
+                Twin screw Extruder machine
+              </div>
+            </div>
+
+            <div
+              className="relative w-full h-56 rounded-2xl overflow-hidden shadow-lg"
+              data-aos="zoom-in"
+              data-aos-delay="300"
+            >
+              <Image
+                src="/Kneader machine.png"
+                alt="Kneader machine"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-black/50 text-white text-sm font-medium px-4 py-2">
+                Kneader machine
+              </div>
+            </div>
+
+            <div
+              className="relative w-full h-56 rounded-2xl overflow-hidden shadow-lg"
+              data-aos="zoom-in"
+              data-aos-delay="400"
+            >
+              <Image
+                src="/Lab injection molding machine.png"
+                alt="Lab injection molding machine"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-black/50 text-white text-sm font-medium px-4 py-2">
+                Lab injection molding machine
+              </div>
+            </div>
+
+            <div
+              className="relative w-full h-56 rounded-2xl overflow-hidden shadow-lg"
+              data-aos="zoom-in"
+              data-aos-delay="500"
+            >
+              <Image
+                src="/Electronic weight Scale.png"
+                alt="Electronic weight scale and Halogn moisture meter"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-black/50 text-white text-sm font-medium px-4 py-2">
+                Electronic weight Scale and Halogn moisture meter
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Additional Services Section */}
-      <section className="additional-services-section py-20 lg:py-32 bg-white relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
-              Specialized Solutions
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Advanced Polymer Solutions
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Cutting-edge polymer technology and innovative manufacturing
-              processes
-            </p>
-          </div>
+      {/* Request Brochure / TDS Section */}
+      <section className="py-20 lg:py-28 bg-gradient-to-br from-blue-600 via-indigo-600 to-cyan-600 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute -top-10 -right-10 w-72 h-72 bg-white/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div
-              className="group bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
-              data-aos="slide-up"
-              data-aos-delay="100"
-              data-aos-duration="800"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                    clipRule="evenodd"
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 sm:p-10 shadow-2xl">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+                Request Product Brochure & Technical Data Sheet
+              </h2>
+              <p className="text-white/80 text-lg">
+                Share your details and select the documents you need. Our team will get
+                back to you with the requested information.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-white mb-2"
+                  >
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-transparent"
+                    placeholder="Enter your full name"
                   />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Custom Formulation
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Tailored polymer solutions for specific applications
-              </p>
-            </div>
-
-            <div
-              className="group bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
-              data-aos="slide-up"
-              data-aos-delay="200"
-              data-aos-duration="800"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
+                </div>
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-white mb-2"
+                  >
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-transparent"
+                    placeholder="Enter your email"
                   />
-                </svg>
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Quality Assurance
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Rigorous testing and quality control processes
-              </p>
-            </div>
 
-            <div
-              className="group bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
-              data-aos="slide-up"
-              data-aos-delay="300"
-              data-aos-duration="800"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Technical Support
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Expert consultation and ongoing technical assistance
-              </p>
-            </div>
-
-            <div
-              className="group bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
-              data-aos="slide-up"
-              data-aos-delay="400"
-              data-aos-duration="800"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                    clipRule="evenodd"
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    htmlFor="company"
+                    className="block text-sm font-medium text-white mb-2"
+                  >
+                    Company
+                  </label>
+                  <input
+                    type="text"
+                    id="company"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-transparent"
+                    placeholder="Enter your company name"
                   />
-                </svg>
+                </div>
+                <div>
+                  <label
+                    htmlFor="product"
+                    className="block text-sm font-medium text-white mb-2"
+                  >
+                    Product of Interest
+                  </label>
+                  <select
+                    id="product"
+                    name="product"
+                    value={formData.product}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-transparent"
+                  >
+                    <option value="Filler Masterbatch">Filler Masterbatch</option>
+                    <option value="White Masterbatch">White Masterbatch</option>
+                    <option value="Masterbatch Additives">Masterbatch Additives</option>
+                  </select>
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Research & Development
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Innovation in polymer technology and materials
-              </p>
-            </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <p className="block text-sm font-medium text-white mb-2">
+                    Documents Required
+                  </p>
+                  <div className="space-y-2">
+                    <label className="inline-flex items-center text-white/90">
+                      <input
+                        type="checkbox"
+                        name="brochure"
+                        checked={formData.brochure}
+                        onChange={handleInputChange}
+                        className="rounded border-white/40 bg-transparent text-cyan-300 focus:ring-cyan-300"
+                      />
+                      <span className="ml-2">Product Brochure</span>
+                    </label>
+                    <label className="inline-flex items-center text-white/90">
+                      <input
+                        type="checkbox"
+                        name="tds"
+                        checked={formData.tds}
+                        onChange={handleInputChange}
+                        className="rounded border-white/40 bg-transparent text-cyan-300 focus:ring-cyan-300"
+                      />
+                      <span className="ml-2">Technical Data Sheet</span>
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-white mb-2"
+                  >
+                    Additional Details
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-transparent resize-none"
+                    placeholder="Share application details, quantity, or other requirements..."
+                  />
+                </div>
+              </div>
+
+              {submitStatus.type && (
+                <div
+                  className={`p-4 rounded-lg text-sm ${
+                    submitStatus.type === "success"
+                      ? "bg-emerald-500/10 border border-emerald-300/60 text-emerald-50"
+                      : "bg-red-500/10 border border-red-300/60 text-red-50"
+                  }`}
+                >
+                  {submitStatus.message}
+                </div>
+              )}
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`w-full py-4 px-8 rounded-xl font-semibold text-lg transition-all duration-300 ${
+                    isSubmitting
+                      ? "bg-white/30 text-white cursor-not-allowed"
+                      : "bg-white text-blue-700 hover:bg-cyan-50 hover:shadow-lg"
+                  }`}
+                >
+                  {isSubmitting ? "Sending Request..." : "Submit Request"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </section>
