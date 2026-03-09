@@ -105,16 +105,7 @@ export default function Home() {
           {/* Dark overlay for better text contrast */}
           <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/40 z-10"></div>
         </div>
-        
-        {/* Enhanced Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden z-[1]">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-20 morphing"></div>
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-indigo-400 to-pink-500 rounded-full opacity-20 morphing" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-10 wave"></div>
-          <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full opacity-15 float"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-to-r from-rose-400 to-pink-500 rounded-full opacity-15 pulse"></div>
-        </div>
-        
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             {/* Enhanced Floating Logo */}
@@ -197,12 +188,6 @@ export default function Home() {
         id="about"
         className="about-section py-20 lg:py-32 bg-gradient-to-br from-white via-blue-50 to-indigo-50 relative overflow-hidden"
       >
-        {/* Enhanced Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full -translate-y-48 translate-x-48 morphing"></div>
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-cyan-400 to-blue-500 rounded-full translate-y-40 -translate-x-40 morphing" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
-        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             <div
@@ -361,12 +346,6 @@ export default function Home() {
         id="services"
         className="services-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 relative overflow-hidden"
       >
-        {/* Enhanced Background Elements */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-1/4 left-0 w-72 h-72 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full morphing"></div>
-          <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-gradient-to-l from-cyan-400 to-blue-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
-        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             
