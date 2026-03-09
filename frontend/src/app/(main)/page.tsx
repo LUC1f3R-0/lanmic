@@ -55,14 +55,14 @@ export default function Home() {
     <main className="main">
       {/* Hero Section */}
       <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        {/* Background Slideshow */}
+        {/* Hero background: alternate video and image every minute */}
         <div className="absolute inset-0 z-0">
           <Swiper
             modules={[Autoplay, EffectFade]}
             loop={true}
             speed={1000}
             autoplay={{
-              delay: 4000,
+              delay: 60000, // 1 minute per slide
               disableOnInteraction: false,
             }}
             slidesPerView={1}
@@ -73,10 +73,10 @@ export default function Home() {
             <SwiperSlide>
               <div className="relative w-full h-full">
                 <Image
-                  src="/header/DSC05659.jpg"
-                  alt="LANMIC Polymers"
+                  src="/hero-screencast.gif"
+                  alt="LANMIC overview screencast"
                   fill
-                  className="object-cover opacity-40"
+                  className="object-cover"
                   priority
                 />
               </div>
@@ -84,20 +84,11 @@ export default function Home() {
             <SwiperSlide>
               <div className="relative w-full h-full">
                 <Image
-                  src="/header/DSC05742.jpg"
-                  alt="LANMIC Polymers"
+                  src="/calcium-filler-masterbatch.jpg"
+                  alt="Calcium filler masterbatch granules"
                   fill
-                  className="object-cover opacity-40"
-                />
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="relative w-full h-full">
-                <Image
-                  src="/header/DSC05778.jpg"
-                  alt="LANMIC Polymers"
-                  fill
-                  className="object-cover opacity-40"
+                  className="object-cover"
+                  priority
                 />
               </div>
             </SwiperSlide>
