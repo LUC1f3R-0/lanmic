@@ -10,6 +10,7 @@ class BlogApiService {
     const requestConfig: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
+        'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
         ...options.headers,
       },
       credentials: 'include', // Important: Include cookies in requests
@@ -48,6 +49,7 @@ class BlogApiService {
     const response = await axiosInstance.post(`/upload/image?type=${uploadType}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
+        'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
       },
     });
 
@@ -59,8 +61,13 @@ class BlogApiService {
   }
 
   async getPublishedBlogPosts(): Promise<BlogPost[]> {
-    // This endpoint should be public, so we don't need authentication
-    const response = await fetch(`${config.api.baseURL}/blog/published`);
+    // This endpoint is public but still requires API key header
+    const response = await fetch(`${config.api.baseURL}/blog/published`, {
+      headers: {
+        'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
+      },
+      credentials: 'include',
+    });
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));

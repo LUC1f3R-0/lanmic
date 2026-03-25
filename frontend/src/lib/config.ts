@@ -6,31 +6,31 @@ export const config = {
     timeout: 10000,
   },
   
-  // Application Configuration
+  // Application Configuration (now fixed, not from env)
   app: {
-    name: process.env.NEXT_PUBLIC_APP_NAME || 'LANMIC Polymers',
-    version: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
+    name: 'LANMIC Polymers',
+    version: '1.0.0',
     description: 'LANMIC Polymers - Your trusted partner in polymer solutions',
   },
   
-  // Feature Flags
+  // Feature Flags (fixed for production-like defaults)
   features: {
-    analytics: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true',
-    debug: process.env.NEXT_PUBLIC_ENABLE_DEBUG === 'true',
-    devMode: process.env.NEXT_PUBLIC_DEV_MODE === 'true',
+    analytics: true,
+    debug: false,
+    devMode: false,
   },
   
-  // Security Configuration
+  // Security Configuration (fixed keys)
   security: {
-    tokenStorageKey: process.env.NEXT_PUBLIC_TOKEN_STORAGE_KEY || 'lanmic_access_token',
-    refreshTokenKey: process.env.NEXT_PUBLIC_REFRESH_TOKEN_KEY || 'lanmic_refresh_token',
+    tokenStorageKey: 'lanmic_access_token',
+    refreshTokenKey: 'lanmic_refresh_token',
     sessionTimeout: 15 * 60 * 1000, // 15 minutes
   },
   
-  // Development Configuration
+  // Development / logging configuration (fixed)
   development: {
-    logLevel: process.env.NEXT_PUBLIC_LOG_LEVEL || 'info',
-    enableConsoleLogs: process.env.NEXT_PUBLIC_DEV_MODE === 'true',
+    logLevel: 'info',
+    enableConsoleLogs: false,
   },
 } as const;
 

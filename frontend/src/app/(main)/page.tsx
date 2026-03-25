@@ -72,13 +72,16 @@ export default function Home() {
           >
             <SwiperSlide>
               <div className="relative w-full h-full">
-                <Image
-                  src="/hero-screencast.gif"
-                  alt="LANMIC overview screencast"
-                  fill
-                  className="object-cover"
-                  priority
-                />
+                <video
+                  className="w-full h-full object-cover blur-sm opacity-100 scale-120 mt-10"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                >
+                  <source src="/video/08_Lanmic_Polymers_Video.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -123,7 +126,7 @@ export default function Home() {
             </div>
             
             <h1
-              className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight drop-shadow-lg"
+              className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight drop-shadow-lg mb-40"
               data-aos="text-reveal"
               data-aos-delay="200"
               data-aos-duration="1200"

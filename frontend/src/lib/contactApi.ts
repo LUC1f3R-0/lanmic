@@ -21,6 +21,7 @@ class ContactApiService {
     const requestConfig: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
+        'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
         ...options.headers,
       },
       credentials: 'include',
