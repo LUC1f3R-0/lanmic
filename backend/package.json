@@ -28,6 +28,7 @@
     "db:generate": "npx prisma generate",
     "db:seed": "npm run seed",
     "db:seed:advanced": "node scripts/seed-advanced.js",
+    "prisma:admin": "node scripts/seed-advanced.js",
     "db:clear": "node scripts/seed-advanced.js --clear-only",
     "db:reset": "npx prisma migrate reset --force",
     "db:studio": "npx prisma studio",

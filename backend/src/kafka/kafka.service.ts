@@ -56,6 +56,13 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    */
   async onModuleInit() {
     try {
+      // Check if Kafka is enabled
+      if (process.env.KAFKA_ENABLED === 'false') {
+        this.logger.log('Kafka is disabled via environment variable');
+        this.isConnected = false;
+        return;
+      }
+
       await this.connect();
       await this.setupConsumer();
       this.logger.log('Kafka service initialized successfully');

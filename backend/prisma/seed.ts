@@ -1,17 +1,23 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Starting seed...');
 
+  const adminEmail = process.env.ADMIN_EMAIL || 'anonymous.inbox99@gmail.com';
+  const adminPlainPassword = process.env.ADMIN_PASSWORD || 'admin@pass';
+
   // Hash the admin password with the same salt rounds as the auth service
-  const hashedPassword = await bcrypt.hash('admin@pass', 12);
+  const hashedPassword = await bcrypt.hash(adminPlainPassword, 12);
 
   // Create admin user
   const adminUser = await prisma.user.upsert({
-    where: { email: 'anonymous.inbox99@gmail.com' },
+    where: { email: adminEmail },
     update: {
       // Update password in case it changed
       password: hashedPassword,
@@ -19,7 +25,7 @@ async function main() {
       username: 'admin',
     },
     create: {
-      email: 'anonymous.inbox99@gmail.com',
+      email: adminEmail,
       password: hashedPassword,
       username: 'admin',
       isVerified: false,

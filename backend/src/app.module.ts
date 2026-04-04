@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseService } from './database.service';
@@ -12,6 +12,7 @@ import { SimpleWebSocketModule } from './websocket/simple-websocket.module';
 import { ContactModule } from './contact/contact.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { ApiKeyMiddleware } from './middleware/api-key.middleware';
 
 @Module({
   imports: [
@@ -53,4 +54,9 @@ import { APP_GUARD } from '@nestjs/core';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // Apply API key middleware to all routes under the main API path
+    consumer.apply(ApiKeyMiddleware).forRoutes('*');
+  }
+}

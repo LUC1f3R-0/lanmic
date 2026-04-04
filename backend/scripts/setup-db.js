@@ -9,13 +9,13 @@ function parseDatabaseUrl() {
   if (!databaseUrl) {
     throw new Error('DATABASE_URL not found in environment variables');
   }
-  
+
   // Parse mysql://username:password@host:port/database
   const match = databaseUrl.match(/mysql:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/);
   if (!match) {
     throw new Error('Invalid DATABASE_URL format. Expected: mysql://username:password@host:port/database');
   }
-  
+
   return {
     username: match[1],
     password: match[2],
@@ -39,7 +39,7 @@ const DB_CONFIG = {
 
 async function createDatabase() {
   console.log('🗄️  Creating MySQL database...');
-  
+
   try {
     // Connect to MySQL server (without specifying database)
     const connection = await mysql.createConnection({
@@ -54,11 +54,11 @@ async function createDatabase() {
     console.log(`   ✅ Database '${DB_CONFIG.database}' created/verified`);
 
     // Create user if it doesn't exist
-    await connection.execute(`CREATE USER IF NOT EXISTS '${DB_USER_CONFIG.username}'@'localhost' IDENTIFIED BY '${DB_USER_CONFIG.password}'`);
+    await connection.execute(`CREATE USER IF NOT EXISTS '${DB_USER_CONFIG.username}'@'%' IDENTIFIED BY '${DB_USER_CONFIG.password}'`);
     console.log(`   ✅ User '${DB_USER_CONFIG.username}' created/verified`);
 
     // Grant all privileges on the database to the user
-    await connection.execute(`GRANT ALL PRIVILEGES ON \`${DB_CONFIG.database}\`.* TO '${DB_USER_CONFIG.username}'@'localhost'`);
+    await connection.execute(`GRANT ALL PRIVILEGES ON \`${DB_CONFIG.database}\`.* TO '${DB_USER_CONFIG.username}'@'%'`);
     console.log(`   ✅ Privileges granted to '${DB_USER_CONFIG.username}'`);
 
     // Flush privileges to ensure changes take effect
@@ -67,7 +67,7 @@ async function createDatabase() {
 
     await connection.end();
     console.log('   ✅ Database setup completed successfully');
-    
+
   } catch (error) {
     console.error('❌ Database creation failed:', error.message);
     throw error;
@@ -76,16 +76,16 @@ async function createDatabase() {
 
 async function runMigrations() {
   console.log('\n🔄 Running database migrations...');
-  
+
   try {
     // Change to backend directory
     const backendDir = path.join(__dirname, '..');
     process.chdir(backendDir);
-    
+
     // Check if Prisma client already exists and is working
     const fs = require('fs');
     const prismaClientPath = path.join(backendDir, 'node_modules', '@prisma', 'client', 'index.js');
-    
+
     let prismaClientExists = false;
     try {
       if (fs.existsSync(prismaClientPath)) {
@@ -97,11 +97,11 @@ async function runMigrations() {
     } catch (e) {
       console.log('   📦 Prisma client needs to be generated...');
     }
-    
+
     // Generate Prisma client only if needed
     if (!prismaClientExists) {
       console.log('   📦 Generating Prisma client...');
-      
+
       // Try multiple approaches to avoid permission issues
       const approaches = [
         // Approach 1: Direct generation
@@ -109,7 +109,7 @@ async function runMigrations() {
           console.log('   🔄 Trying direct generation...');
           execSync('npx prisma generate', { stdio: 'inherit' });
         },
-        
+
         // Approach 2: Clear cache first (Windows)
         () => {
           if (process.platform === 'win32') {
@@ -124,13 +124,13 @@ async function runMigrations() {
             throw new Error('Not Windows platform');
           }
         },
-        
+
         // Approach 3: Use npm script instead of npx
         () => {
           console.log('   🔄 Trying with npm script...');
           execSync('npm run db:generate', { stdio: 'inherit' });
         },
-        
+
         // Approach 4: Force reinstall and generate
         () => {
           console.log('   🔄 Trying with force reinstall...');
@@ -148,7 +148,7 @@ async function runMigrations() {
           execSync('npx prisma generate', { stdio: 'inherit' });
         }
       ];
-      
+
       let success = false;
       for (let i = 0; i < approaches.length; i++) {
         try {
@@ -176,13 +176,13 @@ async function runMigrations() {
         }
       }
     }
-    
+
     // Sync database schema with Prisma schema
     console.log('   🚀 Syncing database schema...');
     execSync('npx prisma db push', { stdio: 'inherit' });
-    
+
     console.log('   ✅ Database schema synced successfully');
-    
+
   } catch (error) {
     console.error('❌ Migration failed:', error.message);
     throw error;
@@ -191,17 +191,17 @@ async function runMigrations() {
 
 async function seedDatabase() {
   console.log('\n🌱 Seeding database with user data...');
-  
+
   try {
     // Change to backend directory
     const backendDir = path.join(__dirname, '..');
     process.chdir(backendDir);
-    
+
     // Run the seed script
     execSync('npm run seed', { stdio: 'inherit' });
-    
+
     console.log('   ✅ Database seeded successfully');
-    
+
   } catch (error) {
     console.error('❌ Seeding failed:', error.message);
     throw error;
@@ -216,14 +216,16 @@ async function displaySummary() {
   console.log(`✅ User password set: ${DB_USER_CONFIG.password}`);
   console.log('✅ All tables created via migrations');
   console.log('✅ User table seeded with admin user');
-  
+
   console.log('\n🔑 Admin Login Credentials');
   console.log('==========================');
-  console.log('Email: anonymous.inbox99@gmail.com');
-  console.log('Password: admin@pass');
+  const adminEmail = process.env.ADMIN_EMAIL || 'anonymous.inbox99@gmail.com';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin@pass';
+  console.log(`Email: ${adminEmail}`);
+  console.log(`Password: ${adminPassword}`);
   console.log('Username: admin');
   console.log('Status: Not verified (email verification required)');
-  
+
   console.log('\n🌐 Database Connection');
   console.log('======================');
   console.log(`URL: ${process.env.DATABASE_URL}`);
@@ -237,27 +239,27 @@ async function displaySummary() {
 async function main() {
   console.log('🚀 Starting complete database setup...');
   console.log('=====================================');
-  
+
   try {
     // Step 1: Create database and user
     await createDatabase();
-    
+
     // Step 2: Run migrations to create tables
     await runMigrations();
-    
+
     // Step 3: Seed the database
     await seedDatabase();
-    
+
     // Step 4: Display summary
     await displaySummary();
-    
+
     console.log('\n🎉 Complete database setup finished successfully!');
     console.log('================================================');
     console.log('\n💡 Next steps:');
     console.log('1. Start your backend server: npm run start:dev');
     console.log('2. Access your application and login with the admin credentials');
     console.log('3. Verify the admin email to activate the account');
-    
+
   } catch (error) {
     console.error('\n❌ Setup failed:', error.message);
     console.error('\n🔧 Troubleshooting tips:');

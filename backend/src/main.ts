@@ -146,12 +146,7 @@ async function bootstrap() {
     },
     credentials: true, // Allow cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'Cookie',
-      'X-CSRF-Token', // CSRF token header
-    ],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-CSRF-Token', 'x-api-key'],
     exposedHeaders: ['Set-Cookie'],
     maxAge: 86400, // 24 hours
   });

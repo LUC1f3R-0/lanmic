@@ -124,8 +124,10 @@ async function displaySummary() {
   
   console.log('\n🔑 Admin Login Credentials');
   console.log('==========================');
-  console.log('Email: anonymous.inbox99@gmail.com');
-  console.log('Password: admin@pass');
+  const adminEmail = process.env.ADMIN_EMAIL || 'anonymous.inbox99@gmail.com';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin@pass';
+  console.log(`Email: ${adminEmail}`);
+  console.log(`Password: ${adminPassword}`);
   console.log('Username: admin');
   console.log('Status: Not verified (email verification required)');
   

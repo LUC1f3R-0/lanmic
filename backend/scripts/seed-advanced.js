@@ -1,15 +1,20 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 const prisma = new PrismaClient();
+
+// Read admin credentials from environment (with safe defaults)
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'anonymous.inbox99@gmail.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin@pass';
 
 // Configuration
 const SEED_CONFIG = {
   // User configurations
   users: [
     {
-      email: 'anonymous.inbox99@gmail.com',
-      password: 'admin@pass',
+      email: ADMIN_EMAIL,
+      password: ADMIN_PASSWORD,
       username: 'admin',
       isVerified: false,
       role: 'admin'

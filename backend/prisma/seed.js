@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 const prisma = new PrismaClient();
 
@@ -49,13 +50,17 @@ async function main() {
     // Step 2: Create fresh data
     console.log('\n📝 Creating fresh data...');
 
+    // Read admin credentials from environment with defaults
+    const adminEmail = process.env.ADMIN_EMAIL || 'anonymous.inbox99@gmail.com';
+    const adminPlainPassword = process.env.ADMIN_PASSWORD || 'admin@pass';
+
     // Hash password with the same salt rounds as the auth service
-    const adminPassword = await bcrypt.hash('admin@pass', 12);
+    const adminPassword = await bcrypt.hash(adminPlainPassword, 12);
 
     // Create admin user
     const adminUser = await prisma.user.create({
       data: {
-        email: 'anonymous.inbox99@gmail.com',
+        email: adminEmail,
         password: adminPassword,
         username: 'admin',
         isVerified: false, // User must verify email to access dashboard
@@ -85,8 +90,8 @@ async function main() {
     console.log('\n🔑 Login Credentials');
     console.log('===================');
     console.log('Admin User:');
-    console.log('  Email: anonymous.inbox99@gmail.com');
-    console.log('  Password: admin@pass');
+    console.log(`  Email: ${adminEmail}`);
+    console.log(`  Password: ${adminPlainPassword}`);
     console.log('  Status: Not verified (must verify email)');
 
     console.log('\n🎉 Database seed completed successfully!');

@@ -133,10 +133,13 @@ export default function Home() {
               data-aos-easing="ease-out-cubic"
             >
               <span className="text-white slide-in-left drop-shadow-md">Welcome to </span>
-              <span className="gradient-text text-transparent bg-clip-text drop-shadow-lg">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#627d28] to-[#ae9f35] drop-shadow-lg">
                 LANMIC
               </span>{" "}
-              <span className="gradient-text text-transparent bg-clip-text drop-shadow-lg" style={{animationDelay: '0.5s'}}>
+              <span
+                className="text-transparent bg-clip-text bg-gradient-to-r from-[#627d28] to-[#ae9f35] drop-shadow-lg"
+                style={{ animationDelay: '0.5s' }}
+              >
                 Polymers
               </span>
             </h1>
@@ -254,7 +257,7 @@ export default function Home() {
                   <SwiperSlide>
                     <div className="relative w-full h-full bg-accent-sage flex items-center justify-center">
                       <Image
-                        src="/Innovation/DSC05817.jpg"
+                        src="/Twin screw excluder machine.png"
                         alt="Innovation Lab"
                         fill
                         className="object-cover"
@@ -310,24 +313,6 @@ export default function Home() {
                   <span className="inline-block mr-4">Founded - 2020</span>
                   <span className="inline-block mr-4">Email - info@lanmic.com</span>
                   <span className="inline-block">Headquarters – Colombo</span>
-                </div>
-                <div className="grid grid-cols-2 gap-6 pt-6">
-                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl hover-tilt border border-blue-200 glass-effect group">
-                    <div className="text-3xl font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-300">
-                      5+
-                    </div>
-                    <div className="text-sm text-gray-600 font-medium">
-                      Years Experience
-                    </div>
-                  </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-100 rounded-2xl hover-tilt border border-purple-200 glass-effect group">
-                    <div className="text-3xl font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-300" style={{animationDelay: '0.5s'}}>
-                      300+
-                    </div>
-                    <div className="text-sm text-gray-600 font-medium">
-                      Projects Completed
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -512,7 +497,7 @@ export default function Home() {
                     data-aos-easing="ease-out-cubic"
                   >
                     <div className="text-3xl font-bold text-cyan-600 mb-2">
-                      300+
+                      1000+
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
                       Customers Served
@@ -527,10 +512,10 @@ export default function Home() {
                     data-aos-easing="ease-out-cubic"
                   >
                     <div className="text-3xl font-bold text-violet-600 mb-2">
-                      99%
+                      30+
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
-                      Customer Satisfaction
+                      Products
                     </div>
                   </div>
 
