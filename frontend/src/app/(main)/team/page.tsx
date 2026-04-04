@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import AOS from "aos";
 import { useExecutive } from "@/contexts/ExecutiveContext";
 import { getDisplayImageUrl } from "@/lib/imageUtils";
@@ -89,20 +90,22 @@ export default function Team() {
               data-aos-duration="1200"
               data-aos-easing="ease-out-cubic"
             >
-              Meet Our{" "}
-              <span className="gradient-text text-transparent bg-clip-text">
-                Expert Team
-              </span>
+              Careers
             </h1>
             <p
-              className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto"
+              className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto text-left sm:text-center"
               data-aos="fade-up"
               data-aos-delay="200"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              Our dedicated team of professionals is committed to delivering
-              excellence in polymer technology and innovative solutions.
+              At LANMIC Polymers, we&apos;re not just searching for skilled professionals — we&apos;re
+              building a team of passionate, creative, and forward-thinking individuals. When you
+              become part of our team, you step into a professional yet friendly environment where
+              growth, innovation, and challenges go hand in hand. Here, every person is encouraged
+              to bring forward fresh ideas, express their individuality, and play an essential role in
+              our shared achievements. Together, let&apos;s create meaningful value and shape a
+              stronger future.
             </p>
           </div>
         </div>
@@ -242,96 +245,6 @@ export default function Team() {
         </div>
       </section>
 
-      {/* Our Team Section */}
-      <section className="our-team-section py-20 lg:py-32 bg-gray-100 relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span
-              className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4"
-              data-aos="fade-up"
-            >
-              Our Team
-            </span>
-            <h2
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
-              data-aos="fade-up"
-              data-aos-delay="100"
-            >
-              Our Dynamic Team
-            </h2>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <div
-              className="bg-white rounded-2xl p-8 shadow-lg"
-              data-aos="fade-up"
-              data-aos-delay="200"
-              data-aos-duration="1000"
-              data-aos-easing="ease-out-cubic"
-            >
-              <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                We&apos;re proud of our dynamic team who bring ideas and strategies to life every day. Together, they drive research, develop new solutions, and ensure our customers get reliable, high-quality products that meet global standards.
-              </p>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                At LANMIC Polymers, we believe our people are our greatest strength — and their passion, creativity, and commitment shape everything we do.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Team Stats */}
-      <section className="stats-section py-20 lg:py-32 bg-white relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div
-              className="text-center p-8 bg-gradient-to-br from-white to-cyan-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-cyan-100"
-              data-aos="slide-up"
-              data-aos-delay="100"
-              data-aos-duration="800"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="text-4xl font-bold text-cyan-600 mb-2">50+</div>
-              <div className="text-gray-600 font-medium">Team Members</div>
-            </div>
-            <div
-              className="text-center p-8 bg-gradient-to-br from-white to-emerald-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-emerald-100"
-              data-aos="slide-up"
-              data-aos-delay="200"
-              data-aos-duration="800"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="text-4xl font-bold text-emerald-600 mb-2">5+</div>
-              <div className="text-gray-600 font-medium">Years Experience</div>
-            </div>
-            <div
-              className="text-center p-8 bg-gradient-to-br from-white to-violet-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-violet-100"
-              data-aos="slide-up"
-              data-aos-delay="300"
-              data-aos-duration="800"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="text-4xl font-bold text-violet-600 mb-2">
-                200+
-              </div>
-              <div className="text-gray-600 font-medium">
-                Projects Completed
-              </div>
-            </div>
-            <div
-              className="text-center p-8 bg-gradient-to-br from-white to-orange-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-100"
-              data-aos="slide-up"
-              data-aos-delay="400"
-              data-aos-duration="800"
-              data-aos-easing="ease-out-cubic"
-            >
-              <div className="text-4xl font-bold text-orange-600 mb-2">5+</div>
-              <div className="text-gray-600 font-medium">Countries Served</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Join Our Team */}
       <section className="join-team-section py-20 lg:py-32 bg-blue-600 relative overflow-hidden">
         <div className="absolute inset-0 bg-blue-600/20"></div>
@@ -356,9 +269,12 @@ export default function Team() {
               data-aos="fade-up"
               data-aos-delay="200"
             >
-              <button className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-blue-600 transition-all duration-300">
+              <Link
+                href="/contact"
+                className="inline-block border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-blue-600 transition-all duration-300"
+              >
                 Contact HR
-              </button>
+              </Link>
             </div>
           </div>
         </div>

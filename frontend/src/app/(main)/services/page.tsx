@@ -158,18 +158,28 @@ export default function ProductsAndApplications() {
             </div>
 
             <div
-              className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-emerald-200"
+              className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-emerald-200 min-h-[220px]"
               data-aos="zoom-in-rotate"
               data-aos-delay="200"
             >
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Masterbatch Additives
-              </h3>
-              <p className="text-gray-700 leading-relaxed">
-                Masterbatch Additives are concentrated mixtures designed to enhance
-                plastic performance, color stability, UV resistance, and functionality
-                for superior end products.
-              </p>
+              <Image
+                src="/additive-mb-bg.png"
+                alt="Additives masterbatch"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/95 via-emerald-900/75 to-emerald-800/40" />
+              <div className="relative z-10 p-8 h-full flex flex-col justify-end">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  Additives Masterbatch
+                </h3>
+                <p className="text-white/95 leading-relaxed text-sm">
+                  Additives Masterbatch are concentrated mixtures designed to enhance
+                  plastic performance, color stability, UV resistance, and functionality
+                  for superior end products.
+                </p>
+              </div>
             </div>
           </div>
         </div>

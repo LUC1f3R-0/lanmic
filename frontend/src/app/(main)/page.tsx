@@ -95,6 +95,17 @@ export default function Home() {
                 />
               </div>
             </SwiperSlide>
+            <SwiperSlide>
+              <div className="relative w-full h-full">
+                <Image
+                  src="/polymax-bag.jpg"
+                  alt="POLYMAX masterbatch product bag"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            </SwiperSlide>
           </Swiper>
           {/* Dark overlay for better text contrast */}
           <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/40 z-10"></div>
@@ -124,21 +135,16 @@ export default function Home() {
             </div>
             
             <h1
-              className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight drop-shadow-lg mb-40"
+              className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-10 leading-tight drop-shadow-lg"
               data-aos="text-reveal"
               data-aos-delay="200"
               data-aos-duration="1200"
               data-aos-easing="ease-out-cubic"
             >
-              <span className="text-white slide-in-left drop-shadow-md">Welcome to </span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#627d28] to-[#ae9f35] drop-shadow-lg">
-                LANMIC
-              </span>{" "}
               <span
-                className="text-transparent bg-clip-text bg-gradient-to-r from-[#627d28] to-[#ae9f35] drop-shadow-lg"
-                style={{ animationDelay: '0.5s' }}
+                className="text-transparent bg-clip-text bg-gradient-to-r from-[#627d28] to-[#ae9f35] [-webkit-text-stroke:1.5px_white] sm:[-webkit-text-stroke:2px_white] [paint-order:stroke_fill]"
               >
-                Polymers
+                Welcome to LANMIC Polymers
               </span>
             </h1>
             
@@ -266,10 +272,10 @@ export default function Home() {
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-accent-sage/30 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/35 flex items-center justify-center">
                         <div className="text-center text-white p-6">
-                          <h3 className="text-2xl font-bold mb-2">Innovation Hub</h3>
-                          <p className="text-lg">Cutting-edge research & development</p>
+                          <h3 className="text-2xl font-bold mb-2">Leading Innovation</h3>
+                          <p className="text-lg">Twin screw extrusion and advanced polymer processing</p>
                         </div>
                       </div>
                     </div>
@@ -421,7 +427,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-accent-sage transition-colors duration-300">
-                Additive Masterbatches
+                Additives Masterbatch
               </h3>
               <p className="text-text-secondary leading-relaxed">
                 Specialized additive masterbatches including UV stabilizers, 
@@ -443,29 +449,19 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             <div className="lg:w-1/2">
-              <div className="relative">
+              <div
+                className="relative w-full aspect-[6/5] max-w-xl mx-auto rounded-2xl overflow-hidden shadow-2xl"
+                data-aos="slide-right"
+                data-aos-duration="1000"
+                data-aos-easing="ease-out-cubic"
+              >
                 <Image
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=500&fit=crop&auto=format&q=80"
-                  alt="Our Team"
-                  width={600}
-                  height={500}
-                  className="rounded-2xl shadow-2xl"
-                  data-aos="slide-right"
-                  data-aos-duration="1000"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                  data-aos-easing="ease-out-cubic"
+                  src="/Twin screw excluder machine.png"
+                  alt="Twin screw extruder"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
-                <div className="absolute -bottom-6 -right-6 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl p-6 shadow-xl">
-                  <div className="text-3xl font-bold text-white">
-                    5+
-                  </div>
-                  <div className="text-sm text-cyan-100">
-                    Years of Excellence
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -484,21 +480,6 @@ export default function Home() {
                     traditional craftsmanship with modern technology to create products that 
                     exceed expectations and drive business success.
                   </p>
-                  <div
-                    className="mb-8 max-w-md"
-                    data-aos="fade-up"
-                    data-aos-duration="1000"
-                  >
-                    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-white">
-                      <Image
-                        src="/polymax-bag.jpg"
-                        alt="POLYMAX masterbatch product bag"
-                        fill
-                        className="object-contain p-4"
-                        sizes="(max-width: 768px) 100vw, 28rem"
-                      />
-                    </div>
-                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -513,7 +494,7 @@ export default function Home() {
                       1000+
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
-                      Customers Served
+                      Customers
                     </div>
                   </div>
 
@@ -707,11 +688,12 @@ export default function Home() {
               data-aos-duration="800"
               data-aos-easing="ease-out-cubic"
             >
-              <button className="bg-white text-primary-500 px-8 py-4 rounded-md font-semibold text-lg hover:bg-gray-100 transition-all duration-300">
+              <button
+                type="button"
+                onClick={() => router.push("/contact")}
+                className="bg-white text-primary-500 px-8 py-4 rounded-md font-semibold text-lg hover:bg-gray-100 transition-all duration-300"
+              >
                 Contact Us Today
-              </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-md font-semibold text-lg hover:bg-white hover:text-primary-500 transition-all duration-300">
-                Request Quote
               </button>
             </div>
           </div>
