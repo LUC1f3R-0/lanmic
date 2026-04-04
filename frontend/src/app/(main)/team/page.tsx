@@ -80,12 +80,6 @@ export default function Team() {
     <main className="main">
       {/* Hero Section */}
       <section className="hero-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
-        {/* Enhanced Animated Background */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full morphing"></div>
-          <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-pink-400 to-rose-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
-        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <h1
@@ -116,12 +110,6 @@ export default function Team() {
 
       {/* Leadership Team */}
       <section className="leadership-section py-20 lg:py-32 bg-gradient-to-br from-white via-blue-50 to-indigo-50 relative overflow-hidden">
-        {/* Enhanced Background Elements */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-1/4 right-0 w-72 h-72 bg-gradient-to-l from-blue-400 to-indigo-500 rounded-full morphing"></div>
-          <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
-        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2
@@ -179,7 +167,7 @@ export default function Team() {
                 return (
                   <div
                     key={executive.id}
-                    className={`group bg-gradient-to-br ${colorClass} rounded-2xl p-8 shadow-lg hover-tilt border glass-effect`}
+                    className={`group bg-gradient-to-br ${colorClass} rounded-2xl p-8 shadow-lg hover-tilt border`}
                     data-aos="zoom-in-rotate"
                     data-aos-delay={`${(index + 1) * 100}`}
                     data-aos-duration="1000"

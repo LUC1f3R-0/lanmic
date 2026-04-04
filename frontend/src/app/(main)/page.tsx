@@ -104,15 +104,13 @@ export default function Home() {
           <div className="text-center max-w-4xl mx-auto">
             {/* Enhanced Floating Logo */}
             <div 
-              className="mb-8 flex justify-center float"
+              className="mb-8 flex justify-center"
               data-aos="zoom-in-rotate"
               data-aos-duration="1200"
               data-aos-easing="ease-out-cubic"
               data-large-logo
             >
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full blur-xl opacity-30 neon-glow"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full blur-2xl opacity-20 animate-pulse"></div>
                 <Image
                   src="/LMC_LFO_LOGO.png"
                   alt="LANMIC Polymers Logo"
@@ -347,13 +345,13 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div
-              className="group bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 hover-tilt border border-blue-200 shadow-lg glass-effect"
+              className="group bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 hover-tilt border border-blue-200 shadow-lg"
               data-aos="zoom-in-rotate"
               data-aos-delay="100"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate neon-glow">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -377,13 +375,13 @@ export default function Home() {
             </div>
 
             <div
-              className="group bg-gradient-to-br from-white to-purple-50 rounded-2xl p-8 hover-tilt border border-purple-200 shadow-lg glass-effect"
+              className="group bg-gradient-to-br from-white to-purple-50 rounded-2xl p-8 hover-tilt border border-purple-200 shadow-lg"
               data-aos="zoom-in-rotate"
               data-aos-delay="200"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate neon-glow">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -407,13 +405,13 @@ export default function Home() {
             </div>
 
             <div
-              className="group bg-gradient-to-br from-white to-green-50 rounded-2xl p-8 hover-tilt border border-green-200 shadow-lg glass-effect"
+              className="group bg-gradient-to-br from-white to-green-50 rounded-2xl p-8 hover-tilt border border-green-200 shadow-lg"
               data-aos="zoom-in-rotate"
               data-aos-delay="300"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate neon-glow">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="currentColor"
@@ -486,6 +484,21 @@ export default function Home() {
                     traditional craftsmanship with modern technology to create products that 
                     exceed expectations and drive business success.
                   </p>
+                  <div
+                    className="mb-8 max-w-md"
+                    data-aos="fade-up"
+                    data-aos-duration="1000"
+                  >
+                    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-white">
+                      <Image
+                        src="/polymax-bag.jpg"
+                        alt="POLYMAX masterbatch product bag"
+                        fill
+                        className="object-contain p-4"
+                        sizes="(max-width: 768px) 100vw, 28rem"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

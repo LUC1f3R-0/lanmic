@@ -93,15 +93,6 @@ export default function ProductsAndApplications() {
     <main className="main">
       {/* Hero / Intro Section */}
       <section className="py-20 lg:py-28 bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-cyan-400 to-blue-500 rounded-full morphing" />
-          <div
-            className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-indigo-400 to-purple-500 rounded-full morphing"
-            style={{ animationDelay: "2s" }}
-          />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave" />
-        </div>
-
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div
             className="max-w-4xl mx-auto text-center"
@@ -135,7 +126,7 @@ export default function ProductsAndApplications() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div
-              className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-blue-200 glass-effect"
+              className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-blue-200"
               data-aos="zoom-in-rotate"
               data-aos-delay="0"
             >
@@ -152,7 +143,7 @@ export default function ProductsAndApplications() {
             </div>
 
             <div
-              className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-indigo-200 glass-effect"
+              className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-indigo-200"
               data-aos="zoom-in-rotate"
               data-aos-delay="100"
             >
@@ -167,7 +158,7 @@ export default function ProductsAndApplications() {
             </div>
 
             <div
-              className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-emerald-200 glass-effect"
+              className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-emerald-200"
               data-aos="zoom-in-rotate"
               data-aos-delay="200"
             >
@@ -353,6 +344,23 @@ export default function ProductsAndApplications() {
             </p>
           </div>
 
+          <div
+            className="relative w-full max-w-4xl mx-auto mb-12 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-gray-100 bg-gray-50"
+            data-aos="fade-up"
+            data-aos-duration="1000"
+          >
+            <Image
+              src="/mfi-machine.png"
+              alt="Melt flow index (MFI) testing machine"
+              fill
+              className="object-contain p-4"
+              sizes="(max-width: 896px) 100vw, 896px"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-black/50 text-white text-sm font-medium px-4 py-2 text-center">
+              MFI machine
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <div
               className="relative w-full h-56 rounded-2xl overflow-hidden shadow-lg"
@@ -461,13 +469,8 @@ export default function ProductsAndApplications() {
 
       {/* Request Brochure / TDS Section */}
       <section className="py-20 lg:py-28 bg-gradient-to-br from-blue-600 via-indigo-600 to-cyan-600 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute -top-10 -right-10 w-72 h-72 bg-white/20 rounded-full blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
-        </div>
-
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 sm:p-10 shadow-2xl">
+          <div className="max-w-4xl mx-auto bg-white/10 border border-white/20 rounded-3xl p-8 sm:p-10 shadow-2xl">
             <div className="text-center mb-8">
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
                 Request Product Brochure & Technical Data Sheet

@@ -91,12 +91,6 @@ export default function About() {
         id="company-intro"
         className="company-intro-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 relative overflow-hidden"
       >
-        {/* Enhanced Animated Background */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-1/4 left-0 w-72 h-72 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full morphing"></div>
-          <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-gradient-to-l from-cyan-400 to-blue-500 rounded-full morphing" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
-        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h1
@@ -153,6 +147,22 @@ export default function About() {
               </p>
             </div>
           </div>
+
+          <div
+            className="mt-12 flex justify-center"
+            data-aos="fade-up"
+            data-aos-delay="150"
+          >
+            <div className="relative h-32 w-full max-w-md sm:h-40">
+              <Image
+                src="/company-logo.jfif"
+                alt="LANMIC Polymers company logo"
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, 28rem"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -161,12 +171,6 @@ export default function About() {
         id="values"
         className="values-section py-20 lg:py-32 bg-white relative overflow-hidden"
       >
-        {/* Enhanced Animated Background */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full morphing"></div>
-          <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-indigo-400 to-cyan-500 rounded-full morphing" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
-        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span
@@ -196,14 +200,14 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div
-              className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-blue-600 glass-effect group"
+              className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-blue-600 group"
               data-aos="zoom-in-rotate"
               data-aos-delay="100"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center mr-4 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center mr-4 hover-rotate group-hover:scale-110 transition-all duration-300">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="currentColor"
@@ -235,14 +239,14 @@ export default function About() {
             </div>
 
             <div
-              className="bg-gradient-to-br from-white to-green-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-green-600 glass-effect group"
+              className="bg-gradient-to-br from-white to-green-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-green-600 group"
               data-aos="zoom-in-rotate"
               data-aos-delay="200"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-500 rounded-xl flex items-center justify-center mr-4 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-500 rounded-xl flex items-center justify-center mr-4 hover-rotate group-hover:scale-110 transition-all duration-300">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="currentColor"
@@ -270,14 +274,14 @@ export default function About() {
             </div>
 
             <div
-              className="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-purple-600 glass-effect group"
+              className="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-purple-600 group"
               data-aos="zoom-in-rotate"
               data-aos-delay="300"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl flex items-center justify-center mr-4 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl flex items-center justify-center mr-4 hover-rotate group-hover:scale-110 transition-all duration-300">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="currentColor"
@@ -305,14 +309,14 @@ export default function About() {
             </div>
 
             <div
-              className="bg-gradient-to-br from-white to-teal-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-teal-600 glass-effect group"
+              className="bg-gradient-to-br from-white to-teal-50 rounded-2xl p-8 shadow-lg hover-tilt border-l-4 border-teal-600 group"
               data-aos="zoom-in-rotate"
               data-aos-delay="400"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-cyan-500 rounded-xl flex items-center justify-center mr-4 hover-rotate neon-glow group-hover:scale-110 transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-cyan-500 rounded-xl flex items-center justify-center mr-4 hover-rotate group-hover:scale-110 transition-all duration-300">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="currentColor"

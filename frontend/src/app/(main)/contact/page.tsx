@@ -82,12 +82,6 @@ export default function Contact() {
     <main className="main">
       {/* Hero Section */}
       <section className="hero-section py-20 lg:py-32 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
-        {/* Enhanced Animated Background */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full morphing"></div>
-          <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-purple-400 to-pink-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
-        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <h1
@@ -291,7 +285,7 @@ export default function Contact() {
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 hover-tilt border border-blue-200 glass-effect">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 hover-tilt border border-blue-200">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
                   Contact Information
                 </h3>
@@ -390,7 +384,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 hover-tilt border border-purple-200 glass-effect">
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 hover-tilt border border-purple-200">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
                   Business Hours
                 </h3>
@@ -420,12 +414,6 @@ export default function Contact() {
 
       {/* Map Section */}
       <section className="map-section py-20 lg:py-32 bg-gradient-to-br from-white via-gray-50 to-blue-50 relative overflow-hidden">
-        {/* Enhanced Background Elements */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-1/3 left-0 w-72 h-72 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full morphing"></div>
-          <div className="absolute bottom-1/3 right-0 w-80 h-80 bg-gradient-to-l from-purple-400 to-pink-500 rounded-full morphing" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full wave"></div>
-        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2
