@@ -107,6 +107,21 @@ export default function Team() {
               our shared achievements. Together, let&apos;s create meaningful value and shape a
               stronger future.
             </p>
+            <div
+              className="mt-12 max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-xl ring-1 ring-gray-200/80"
+              data-aos="fade-up"
+              data-aos-delay="300"
+              data-aos-duration="1000"
+            >
+              <Image
+                src="/staff-photograph.jpg"
+                alt="LANMIC Polymers team"
+                width={1280}
+                height={960}
+                className="w-full h-auto object-cover"
+                sizes="(max-width: 1024px) 100vw, 896px"
+              />
+            </div>
           </div>
         </div>
       </section>

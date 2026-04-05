@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
+import TeamPage from "../team/page";
 
-export default function CareerRedirectPage() {
-  redirect("/team");
-}
+export default TeamPage;

@@ -81,7 +81,7 @@ export default function Home() {
           <div className="relative h-full w-full min-h-screen">
             <video
               ref={heroVideoRef}
-              className="absolute inset-0 h-full w-full object-cover object-center blur-sm opacity-100 scale-[1.06]"
+              className="absolute inset-0 h-full w-full object-cover object-center"
               autoPlay
               loop
               muted
@@ -96,7 +96,7 @@ export default function Home() {
             </video>
           </div>
           {/* Dark overlay for better text contrast */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/40 z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-black/65 via-black/55 to-black/65 z-10"></div>
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
