@@ -126,20 +126,30 @@ export default function ProductsAndApplications() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div
-              className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-blue-200"
+              className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-blue-200 min-h-[220px]"
               data-aos="zoom-in-rotate"
               data-aos-delay="0"
             >
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Filler Masterbatch
-              </h3>
-              <p className="text-gray-700 leading-relaxed">
-                Filler Masterbatch is a cost-effective compounding solution that improves
-                mechanical strength, stiffness, and overall polymer performance. We supply
-                high-quality Calcium Carbonate and Talc Masterbatch designed for smooth
-                processing, high loading efficiency, and consistent results in film
-                extrusion and injection molding applications.
-              </p>
+              <Image
+                src="/calciam-Filler%20MB.png"
+                alt="Calcium carbonate filler masterbatch"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-950/95 via-blue-900/75 to-blue-800/40" />
+              <div className="relative z-10 p-8 h-full min-h-[220px] flex flex-col justify-end">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  Filler Masterbatch
+                </h3>
+                <p className="text-white/95 leading-relaxed text-sm">
+                  Filler Masterbatch is a cost-effective compounding solution that improves
+                  mechanical strength, stiffness, and overall polymer performance. We supply
+                  high-quality Calcium Carbonate and Talc Masterbatch designed for smooth
+                  processing, high loading efficiency, and consistent results in film
+                  extrusion and injection molding applications.
+                </p>
+              </div>
             </div>
 
             <div

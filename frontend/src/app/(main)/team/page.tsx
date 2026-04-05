@@ -79,12 +79,26 @@ export default function Team() {
 
   return (
     <main className="main">
-      {/* Hero Section */}
-      <section className="hero-section py-20 lg:py-32 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero Section — staff photo as full-bleed background, copy on top */}
+      <section className="hero-section relative min-h-[70vh] lg:min-h-[560px] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/staff-photograph.jpg"
+            alt="LANMIC Polymers team"
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+            priority
+          />
+          <div
+            className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/55 to-black/70"
+            aria-hidden
+          />
+        </div>
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="text-center max-w-4xl mx-auto">
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-md"
               data-aos="fade-up"
               data-aos-delay="100"
               data-aos-duration="1200"
@@ -93,7 +107,7 @@ export default function Team() {
               Careers
             </h1>
             <p
-              className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto text-left sm:text-center"
+              className="text-lg sm:text-xl text-white/95 leading-relaxed max-w-3xl mx-auto text-left sm:text-center drop-shadow"
               data-aos="fade-up"
               data-aos-delay="200"
               data-aos-duration="1000"
@@ -107,21 +121,6 @@ export default function Team() {
               our shared achievements. Together, let&apos;s create meaningful value and shape a
               stronger future.
             </p>
-            <div
-              className="mt-12 max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-xl ring-1 ring-gray-200/80"
-              data-aos="fade-up"
-              data-aos-delay="300"
-              data-aos-duration="1000"
-            >
-              <Image
-                src="/staff-photograph.jpg"
-                alt="LANMIC Polymers team"
-                width={1280}
-                height={960}
-                className="w-full h-auto object-cover"
-                sizes="(max-width: 1024px) 100vw, 896px"
-              />
-            </div>
           </div>
         </div>
       </section>
