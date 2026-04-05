@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules";
 import AOS from "aos";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBlog } from "@/contexts/BlogContext";
@@ -13,7 +13,10 @@ import { getDisplayImageUrl } from "@/lib/imageUtils";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/effect-fade";
+
+const HERO_VIDEO_SRC =
+  process.env.NEXT_PUBLIC_HERO_VIDEO_URL?.trim() ||
+  "/video/08_Lanmic_Polymers_Video.mp4";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -21,6 +24,20 @@ export default function Home() {
   const router = useRouter();
   const [publishedPosts, setPublishedPosts] = useState<any[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
+
+  const playHeroVideo = useCallback(() => {
+    const el = heroVideoRef.current;
+    if (!el) return;
+    el.muted = true;
+    el.defaultMuted = true;
+    const p = el.play();
+    if (p !== undefined) {
+      p.catch(() => {
+        /* autoplay blocked — browser policy */
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const loadPublishedPosts = async () => {
@@ -47,6 +64,10 @@ export default function Home() {
     });
   }, []);
 
+  useEffect(() => {
+    requestAnimationFrame(() => playHeroVideo());
+  }, [playHeroVideo]);
+
   // Note: Removed automatic redirect to dashboard
   // Users can now visit the homepage even when authenticated
   // They can access dashboard through the header navigation or direct URL
@@ -55,58 +76,25 @@ export default function Home() {
     <main className="main">
       {/* Hero Section */}
       <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        {/* Hero background: alternate video and image every minute */}
+        {/* Hero background: single full-screen video */}
         <div className="absolute inset-0 z-0">
-          <Swiper
-            modules={[Autoplay, EffectFade]}
-            loop={true}
-            speed={1000}
-            autoplay={{
-              delay: 60000, // 1 minute per slide
-              disableOnInteraction: false,
-            }}
-            slidesPerView={1}
-            className="w-full h-full"
-            effect="fade"
-            fadeEffect={{ crossFade: true }}
-          >
-            <SwiperSlide>
-              <div className="relative w-full h-full">
-                <video
-                  className="w-full h-full object-cover blur-sm opacity-100 scale-120 mt-10"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                >
-                  <source src="/video/08_Lanmic_Polymers_Video.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="relative w-full h-full">
-                <Image
-                  src="/calcium-filler-masterbatch.jpg"
-                  alt="Calcium filler masterbatch granules"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="relative w-full h-full">
-                <Image
-                  src="/polymax-bag.jpg"
-                  alt="POLYMAX masterbatch product bag"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            </SwiperSlide>
-          </Swiper>
+          <div className="relative h-full w-full min-h-screen">
+            <video
+              ref={heroVideoRef}
+              className="absolute inset-0 h-full w-full object-cover object-center blur-sm opacity-100 scale-[1.06]"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              controls={false}
+              onLoadedData={playHeroVideo}
+              onCanPlay={playHeroVideo}
+            >
+              <source src={HERO_VIDEO_SRC} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
           {/* Dark overlay for better text contrast */}
           <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/40 z-10"></div>
         </div>
