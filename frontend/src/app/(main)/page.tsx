@@ -268,6 +268,27 @@ export default function Home() {
                       </div>
                     </div>
                   </SwiperSlide>
+                  <SwiperSlide>
+                    <div className="relative w-full h-full bg-slate-700 flex items-center justify-center">
+                      <Image
+                        src="/polymax-bag.jpg"
+                        alt="Polymax masterbatch product packaging"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                        <div className="text-center text-white p-6">
+                          <h3 className="text-2xl font-bold mb-2">POLYMAX</h3>
+                          <p className="text-lg">Trusted masterbatch solutions, ready for your production line</p>
+                        </div>
+                      </div>
+                    </div>
+                  </SwiperSlide>
                 </Swiper>
                 <div className="about-pagination mt-4"></div>
               </div>

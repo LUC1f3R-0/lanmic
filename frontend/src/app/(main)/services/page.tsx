@@ -143,18 +143,28 @@ export default function ProductsAndApplications() {
             </div>
 
             <div
-              className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-indigo-200"
+              className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover-tilt border border-indigo-200 min-h-[220px]"
               data-aos="zoom-in-rotate"
               data-aos-delay="100"
             >
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                White Masterbatch
-              </h3>
-              <p className="text-gray-700 leading-relaxed">
-                White Masterbatch is a highly opaque, bright, and reflective pigment that
-                delivers excellent coverage and consistent color for plastics, paints, and
-                coatings.
-              </p>
+              <Image
+                src="/White%20MB.png"
+                alt="White masterbatch"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-indigo-950/95 via-indigo-900/75 to-indigo-800/40" />
+              <div className="relative z-10 p-8 h-full min-h-[220px] flex flex-col justify-end">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  White Masterbatch
+                </h3>
+                <p className="text-white/95 leading-relaxed text-sm">
+                  White Masterbatch is a highly opaque, bright, and reflective pigment that
+                  delivers excellent coverage and consistent color for plastics, paints, and
+                  coatings.
+                </p>
+              </div>
             </div>
 
             <div

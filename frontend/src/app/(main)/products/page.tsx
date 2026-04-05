@@ -156,8 +156,8 @@ export default function ProductsPage() {
                 data-aos-duration="1000"
               >
                 <Image
-                  src="/Lab film blowing machine.png"
-                  alt="Lab film blowing — white masterbatch applications"
+                  src="/White%20MB.png"
+                  alt="White masterbatch"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -203,8 +203,8 @@ export default function ProductsPage() {
                 data-aos-duration="1000"
               >
                 <Image
-                  src="/Twin screw excluder machine.png"
-                  alt="Twin-screw extrusion — additive masterbatch compounding"
+                  src="/additive-mb-bg.png"
+                  alt="Additive masterbatch"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
