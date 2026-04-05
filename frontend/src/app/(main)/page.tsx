@@ -24,19 +24,81 @@ export default function Home() {
   const router = useRouter();
   const [publishedPosts, setPublishedPosts] = useState<any[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
-  const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement | null>(null);
+  const heroVideoCleanupRef = useRef<(() => void) | null>(null);
 
   const playHeroVideo = useCallback(() => {
     const el = heroVideoRef.current;
     if (!el) return;
     el.muted = true;
     el.defaultMuted = true;
+    el.setAttribute("muted", "");
+    el.playsInline = true;
     const p = el.play();
     if (p !== undefined) {
       p.catch(() => {
-        /* autoplay blocked — browser policy */
+        /* autoplay blocked until user gesture — unlocked via pointerdown once */
       });
     }
+  }, []);
+
+  const setHeroVideoRef = useCallback((el: HTMLVideoElement | null) => {
+    if (heroVideoCleanupRef.current) {
+      heroVideoCleanupRef.current();
+      heroVideoCleanupRef.current = null;
+    }
+    heroVideoRef.current = el;
+    if (!el) return;
+
+    const safePlay = () => {
+      el.muted = true;
+      el.defaultMuted = true;
+      el.setAttribute("muted", "");
+      el.playsInline = true;
+      const p = el.play();
+      if (p !== undefined) {
+        p.catch(() => {});
+      }
+    };
+
+    const onEnded = () => {
+      el.currentTime = 0;
+      safePlay();
+    };
+
+    const onVisibility = () => {
+      if (!document.hidden && el.paused) {
+        safePlay();
+      }
+    };
+
+    const onPointerUnlock = () => {
+      safePlay();
+    };
+
+    const onStalled = () => {
+      if (el.paused) safePlay();
+    };
+
+    const onCanPlayThrough = () => {
+      if (el.paused) safePlay();
+    };
+
+    el.addEventListener("ended", onEnded);
+    document.addEventListener("visibilitychange", onVisibility);
+    document.addEventListener("pointerdown", onPointerUnlock, { once: true });
+    el.addEventListener("stalled", onStalled);
+    el.addEventListener("canplaythrough", onCanPlayThrough);
+
+    safePlay();
+
+    heroVideoCleanupRef.current = () => {
+      el.removeEventListener("ended", onEnded);
+      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("pointerdown", onPointerUnlock);
+      el.removeEventListener("stalled", onStalled);
+      el.removeEventListener("canplaythrough", onCanPlayThrough);
+    };
   }, []);
 
   useEffect(() => {
@@ -64,10 +126,6 @@ export default function Home() {
     });
   }, []);
 
-  useEffect(() => {
-    requestAnimationFrame(() => playHeroVideo());
-  }, [playHeroVideo]);
-
   // Note: Removed automatic redirect to dashboard
   // Users can now visit the homepage even when authenticated
   // They can access dashboard through the header navigation or direct URL
@@ -80,7 +138,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <div className="relative h-full w-full min-h-screen">
             <video
-              ref={heroVideoRef}
+              ref={setHeroVideoRef}
               className="absolute inset-0 h-full w-full object-cover object-center"
               autoPlay
               loop
@@ -88,6 +146,8 @@ export default function Home() {
               playsInline
               preload="auto"
               controls={false}
+              disablePictureInPicture
+              disableRemotePlayback
               onLoadedData={playHeroVideo}
               onCanPlay={playHeroVideo}
             >
