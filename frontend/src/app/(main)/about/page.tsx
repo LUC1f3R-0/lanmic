@@ -197,11 +197,12 @@ export default function About() {
               <div className="flex items-center mb-6">
                 <div className="w-12 h-12 relative rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center mr-4 flex-shrink-0 group-hover:scale-110 transition-all duration-300">
                   <Image
-                    src="/lanmic_logo.png"
-                    alt=""
-                    width={40}
-                    height={40}
+                    src="/Integrity.png"
+                    alt="Integrity"
+                    fill
+                    sizes="48px"
                     className="object-contain p-1"
+                    unoptimized
                   />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">Integrity</h3>
@@ -232,8 +233,8 @@ export default function About() {
               <div className="flex items-center mb-6">
                 <div className="w-12 h-12 relative rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center mr-4 flex-shrink-0 group-hover:scale-110 transition-all duration-300">
                   <Image
-                    src="/lanmic_logo.png"
-                    alt=""
+                    src="/striving_for_Excellence.png"
+                    alt="Striving for Excellency"
                     width={40}
                     height={40}
                     className="object-contain p-1"
@@ -267,8 +268,8 @@ export default function About() {
               <div className="flex items-center mb-6">
                 <div className="w-12 h-12 relative rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center mr-4 flex-shrink-0 group-hover:scale-110 transition-all duration-300">
                   <Image
-                    src="/lanmic_logo.png"
-                    alt=""
+                    src="/People_Excellence.png"
+                    alt="People Excellence"
                     width={40}
                     height={40}
                     className="object-contain p-1"
@@ -302,8 +303,8 @@ export default function About() {
               <div className="flex items-center mb-6">
                 <div className="w-12 h-12 relative rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center mr-4 flex-shrink-0 group-hover:scale-110 transition-all duration-300">
                   <Image
-                    src="/lanmic_logo.png"
-                    alt=""
+                    src="/Social_Accountability.png"
+                    alt="Social Accountability"
                     width={40}
                     height={40}
                     className="object-contain p-1"
