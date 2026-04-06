@@ -63,7 +63,7 @@ export default function ProductsPage() {
               data-aos-duration="1000"
             >
               <Image
-                src="/calcium-filler-masterbatch.jpg"
+                src="/calciam-Filler%20MB.png"
                 alt="Calcium carbonate filler masterbatch"
                 fill
                 className="object-cover"
