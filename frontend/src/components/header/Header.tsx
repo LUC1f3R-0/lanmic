@@ -48,7 +48,7 @@ const Header = () => {
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <Image
-            src="/LMC_LFO_LOGO.png"
+            src="/LANMIC_POLYMERS_1.jpg.jpeg"
             alt="LANMIC Polymers Logo"
             width={120}
             height={120}
