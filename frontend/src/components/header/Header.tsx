@@ -35,31 +35,36 @@ const Header = () => {
     { href: "/contact", label: "Contact" },
   ];
 
+  const linkBase = "text-gray-400 transition-colors hover:text-white";
+  const linkActive = "text-white font-semibold border-b-2 border-white";
+
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-neutral-200">
-      <div className="container mx-auto flex items-center justify-between px-4 py-4">
+    <header className="sticky top-0 z-50 overflow-hidden border-b border-white/15 bg-[#001f3f] text-white shadow-sm">
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#00142e] via-[#001f3f] to-[#0a2847]"
+        aria-hidden
+      />
+      <div className="container relative mx-auto flex items-center justify-between px-4 py-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <Image
-            src="/lanmic_logo.png"
+            src="/LMC_LFO_LOGO.png"
             alt="LANMIC Polymers Logo"
             width={120}
             height={120}
-            className="w-30 h-30 object-contain"
+            className="h-10 w-auto object-contain sm:h-11"
             priority
           />
         </Link>
 
         {/* Desktop Menu */}
-        <nav className="hidden md:flex items-center space-x-8 font-medium">
+        <nav className="hidden items-center space-x-8 font-medium md:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`${
-                pathname === item.href
-                  ? "text-blue-600 font-semibold border-b-2 border-blue-600"
-                  : "text-gray-600 hover:text-blue-600 transition-colors"
+              className={`border-b-2 border-transparent pb-0.5 ${
+                pathname === item.href ? linkActive : linkBase
               }`}
             >
               {item.label}
@@ -71,19 +76,23 @@ const Header = () => {
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                className={`font-medium ${
+                  pathname === "/dashboard"
+                    ? "text-white"
+                    : linkBase
+                }`}
               >
                 Dashboard
               </Link>
               {/* Only show welcome message and logout on dashboard route */}
               {pathname === '/dashboard' && (
                 <>
-                  <span className="text-sm text-text-muted">
+                  <span className="text-sm text-white/55">
                     Welcome, {user?.username || user?.email}
                   </span>
                   <button
                     onClick={handleLogout}
-                    className="bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 transition-colors"
+                    className="rounded-md bg-red-600 px-4 py-2 text-sm text-white transition-colors hover:bg-red-700"
                   >
                     Logout
                   </button>
@@ -95,7 +104,7 @@ const Header = () => {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="text-2xl text-gray-600 md:hidden hover:text-blue-600 transition-colors"
+          className="text-2xl text-gray-400 transition-colors hover:text-white md:hidden"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
@@ -105,18 +114,18 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <nav className="md:hidden bg-white border-t border-neutral-200 shadow-sm">
-          <ul className="flex flex-col space-y-4 px-4 py-6 font-medium text-gray-600">
+        <nav className="relative border-t border-white/15 bg-[#001f3f] md:hidden">
+          <ul className="flex flex-col space-y-4 px-4 py-6 font-medium text-gray-400">
             {navItems.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className={`${
+                  className={
                     pathname === item.href
-                      ? "text-blue-600 font-semibold border-l-4 border-blue-600 pl-2"
-                      : "hover:text-blue-600 transition-colors"
-                  }`}
+                      ? "block border-l-4 border-white pl-2 font-semibold text-white"
+                      : "block transition-colors hover:text-white"
+                  }
                 >
                   {item.label}
                 </Link>
@@ -124,20 +133,24 @@ const Header = () => {
             ))}
             
             {/* Mobile User Menu */}
-            <li className="border-t border-neutral-200 pt-4">
+            <li className="border-t border-white/15 pt-4">
               {isMounted && isAuthenticated ? (
                 <div className="space-y-2">
                   <Link
                     href="/dashboard"
                     onClick={() => setIsOpen(false)}
-                    className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                    className={`block font-medium transition-colors ${
+                      pathname === "/dashboard"
+                        ? "text-white"
+                        : "text-gray-400 hover:text-white"
+                    }`}
                   >
                     Dashboard
                   </Link>
                   {/* Only show welcome message and logout on dashboard route */}
                   {pathname === '/dashboard' && (
                     <>
-                      <div className="text-sm text-text-muted">
+                      <div className="text-sm text-white/55">
                         Welcome, {user?.username || user?.email}
                       </div>
                       <button
@@ -145,7 +158,7 @@ const Header = () => {
                           handleLogout();
                           setIsOpen(false);
                         }}
-                        className="w-full text-left bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 transition-colors"
+                        className="w-full rounded-md bg-red-600 px-4 py-2 text-left text-sm text-white transition-colors hover:bg-red-700"
                       >
                         Logout
                       </button>
