@@ -346,10 +346,19 @@ export default function Contact() {
                       <h4 className="font-semibold text-gray-900 mb-1">
                         Phone
                       </h4>
-                      <p className="text-gray-600 text-sm">
-                        +94 34 222 2222
-                        <br />
-                        +94 34 333 3333
+                      <p className="text-gray-600 text-sm space-y-0.5">
+                        <a
+                          href="tel:+94342289618"
+                          className="block transition-colors hover:text-gray-900"
+                        >
+                          +94 34 2289618
+                        </a>
+                        <a
+                          href="tel:+94362231153"
+                          className="block transition-colors hover:text-gray-900"
+                        >
+                          +94 36 2231153
+                        </a>
                       </p>
                     </div>
                   </div>
