@@ -137,10 +137,10 @@ const Footer = () => {
           <div className="md:pr-4">
             <div className="mb-4 flex items-start gap-3">
               <Image
-                src="/lanmic_logo.png"
+                src="/LMC_LFO_LOGO.png"
                 alt="LANMIC Polymers Logo"
-                width={52}
-                height={52}
+                width={120}
+                height={120}
                 className="h-[52px] w-[52px] object-contain"
               />
               <div>
@@ -218,10 +218,10 @@ const Footer = () => {
           <div className="flex flex-col items-center justify-between gap-3 text-sm md:flex-row">
             <div className="flex items-center gap-2 text-center text-white/70 md:text-left">
               <Image
-                src="/lanmic_logo.png"
+                src="/LMC_LFO_LOGO.png"
                 alt=""
-                width={24}
-                height={24}
+                width={120}
+                height={120}
                 className="h-6 w-6 object-contain opacity-90"
               />
               <span>
