@@ -14,11 +14,9 @@ const quickLinks = [
 ] as const;
 
 const productLinks = [
-  { label: "Color Masterbatches", href: "/products" },
+  { label: "Filler Masterbatches", href: "/products" },
   { label: "Additive Masterbatches", href: "/products" },
   { label: "White Masterbatches", href: "/products" },
-  { label: "Black Masterbatches", href: "/products" },
-  { label: "Filler Masterbatches", href: "/products" },
 ] as const;
 
 function BulletList({
@@ -153,7 +151,7 @@ const Footer = () => {
             <div className="mb-3 h-px w-full max-w-xs bg-white/20" />
             <p className="mb-4 text-sm font-medium text-white/95">Masterbatch &amp; Additive Solutions</p>
             <p className="text-sm leading-relaxed text-white/80">
-              Leading manufacturer of color and additive masterbatches, providing innovative polymer
+              Leading manufacturer of filler and additive masterbatches, providing innovative polymer
               solutions for a wide range of industries.
             </p>
           </div>
