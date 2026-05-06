@@ -13,6 +13,19 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
+const HAPPY_CUSTOMER_LOGOS: { src: string; alt: string }[] = [
+  { src: "/865e79e7bdc67e7b238da1dd92446ccf.webp", alt: "Partner logo" },
+  { src: "/download%20(1).jpeg", alt: "Partner logo" },
+  { src: "/download.jpeg", alt: "Partner logo" },
+  { src: "/Singer5.jpg", alt: "Partner logo" },
+  { src: "/global_consumer.jpeg", alt: "Consumer products and markets we serve" },
+  { src: "/eco_poly_packaging.jpg", alt: "Eco-friendly polymer packaging" },
+  { src: "/global_consumer.jpeg", alt: "Consumer products and markets we serve" },
+];
+
+/** Repeat logos so one half of the track exceeds typical viewport width—no blank strip beside the row. */
+const MARQUEE_SEGMENT = Array.from({ length: 5 }, () => HAPPY_CUSTOMER_LOGOS).flat();
+
 export default function About() {
   const { getActiveTestimonials } = useTestimonial();
   const [testimonials, setTestimonials] = useState<any[]>([]);
@@ -342,37 +355,23 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div
-              className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-x-8 sm:gap-y-0 max-w-3xl mx-auto mb-10 px-1 sm:px-0"
-              data-aos="fade-up"
-              data-aos-duration="800"
-              data-aos-easing="ease-out-cubic"
+              className="relative w-screen max-w-[100vw] ml-[calc(50%-50vw)] overflow-hidden mb-10 py-3 [mask-image:linear-gradient(to_right,transparent,black_3%,black_97%,transparent)]"
             >
-              <div className="relative h-44 sm:h-40 rounded-2xl overflow-hidden shadow-lg ring-1 ring-emerald-200/50 bg-emerald-50/70 p-2">
-                <Image
-                  src="/eco_poly_packaging.jpg"
-                  alt="Eco-friendly polymer packaging applications"
-                  fill
-                  className="object-contain object-center"
-                  sizes="(max-width: 640px) 100vw, 240px"
-                />
-              </div>
-              <div className="relative h-44 sm:h-40 rounded-2xl overflow-hidden shadow-lg ring-1 ring-emerald-200/50 bg-emerald-50/70 p-2">
-                <Image
-                  src="/global_consumer.jpeg"
-                  alt="Consumer products and markets we serve"
-                  fill
-                  className="object-contain object-center"
-                  sizes="(max-width: 640px) 100vw, 240px"
-                />
-              </div>
-              <div className="relative h-44 sm:h-40 rounded-2xl overflow-hidden shadow-lg ring-1 ring-emerald-200/50 bg-emerald-50/70 p-2">
-                <Image
-                  src="/NMW%20pakaging.jfif"
-                  alt="NMW packaging solutions"
-                  fill
-                  className="object-contain object-center"
-                  sizes="(max-width: 640px) 100vw, 240px"
-                />
+              <div className="flex w-max animate-marquee-rtl will-change-transform">
+                {[...MARQUEE_SEGMENT, ...MARQUEE_SEGMENT].map((item, index) => (
+                  <div
+                    key={`${item.src}-${index}`}
+                    className="relative h-36 w-40 sm:w-44 shrink-0 mx-3 rounded-2xl overflow-hidden shadow-lg ring-1 ring-emerald-200/50 bg-emerald-50/70 p-2"
+                  >
+                    <Image
+                      src={item.src}
+                      alt={item.alt}
+                      fill
+                      className="object-contain object-center"
+                      sizes="176px"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
             <span className="inline-block bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">

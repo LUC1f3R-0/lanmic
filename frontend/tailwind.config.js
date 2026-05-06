@@ -75,6 +75,7 @@ module.exports = {
       },
       animation: {
         'fade-in-up': 'fadeInUp 0.6s ease-out',
+        'marquee-rtl': 'marqueeRtl 100s linear infinite',
       },
       keyframes: {
         fadeInUp: {
@@ -86,6 +87,10 @@ module.exports = {
             opacity: '1',
             transform: 'translateY(0)',
           },
+        },
+        marqueeRtl: {
+          '0%': { transform: 'translate3d(0, 0, 0)' },
+          '100%': { transform: 'translate3d(-50%, 0, 0)' },
         },
       },
     },

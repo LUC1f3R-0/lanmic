@@ -238,7 +238,7 @@ This is an automated notification from the LANMIC Polymers contact form.
               <ul>
                 <li><strong>Phone:</strong> +91-XXX-XXXX-XXXX</li>
                 <li><strong>Email:</strong> info@lanmicpolymers.com</li>
-                <li><strong>Business Hours:</strong> Monday - Friday, 9:00 AM - 6:00 PM</li>
+                <li><strong>Business Hours:</strong> Monday - Friday, 8:00 AM - 5:00 PM; Saturday, 8:00 AM - 2:00 PM</li>
               </ul>
             </div>
             
@@ -279,7 +279,7 @@ Need Immediate Assistance?
 For urgent inquiries, you can reach us at:
 - Phone: +91-XXX-XXXX-XXXX
 - Email: info@lanmicpolymers.com
-- Business Hours: Monday - Friday, 9:00 AM - 6:00 PM
+- Business Hours: Monday - Friday, 8:00 AM - 5:00 PM; Saturday, 8:00 AM - 2:00 PM
 
 We appreciate your interest in LANMIC Polymers and look forward to serving you!
 

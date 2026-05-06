@@ -331,7 +331,7 @@ export default function Home() {
                   <SwiperSlide>
                     <div className="relative w-full h-full bg-slate-700 flex items-center justify-center">
                       <Image
-                        src="/polymax-bag.jpg"
+                        src="/Filler_Bags.jpeg"
                         alt="Polymax masterbatch product packaging"
                         fill
                         className="object-cover"
@@ -493,7 +493,7 @@ export default function Home() {
             <div
               className="group relative overflow-hidden rounded-2xl p-8 hover-tilt border border-green-200 shadow-lg bg-cover bg-center min-h-[320px]"
               style={{
-                backgroundImage: "url(/additives_masterbatch_image.png)",
+                backgroundImage: "url(/Additives_masterbatch_image.png)",
               }}
               data-aos="zoom-in-rotate"
               data-aos-delay="300"

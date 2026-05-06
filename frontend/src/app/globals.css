@@ -24,6 +24,12 @@ body {
   line-height: 1.6;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-rtl {
+    animation: none !important;
+  }
+}
+
 /* Custom Swiper Styles */
 .testimonials-swiper {
   width: 100%;
