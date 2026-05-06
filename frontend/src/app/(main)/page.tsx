@@ -263,12 +263,12 @@ export default function Home() {
                   className="rounded-lg overflow-hidden shadow-lg w-full h-[200px] sm:h-[250px] md:h-[300px] lg:h-[400px]"
                 >
                   <SwiperSlide>
-                    <div className="relative w-full h-full bg-primary-500 flex items-center justify-center">
+                    <div className="relative w-full h-full bg-black flex items-center justify-center">
                       <Image
                         src="/Innovation/DSC05792.jpg"
                         alt="Manufacturing Process"
                         fill
-                        className="object-cover"
+                        className="object-cover blur-0"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority
                         onError={(e) => {
@@ -276,7 +276,7 @@ export default function Home() {
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-primary-500/30 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
                         <div className="text-center text-white p-6">
                           <h3 className="text-2xl font-bold mb-2">Manufacturing Excellence</h3>
                           <p className="text-lg">Advanced production processes</p>
@@ -285,12 +285,12 @@ export default function Home() {
                     </div>
                   </SwiperSlide>
                   <SwiperSlide>
-                    <div className="relative w-full h-full bg-secondary-500 flex items-center justify-center">
+                    <div className="relative w-full h-full bg-black flex items-center justify-center">
                       <Image
                         src="/Innovation/DSC05826.jpg"
                         alt="Quality Control"
                         fill
-                        className="object-cover"
+                        className="object-cover blur-0"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority
                         onError={(e) => {
@@ -298,7 +298,7 @@ export default function Home() {
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-secondary-500/30 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
                         <div className="text-center text-white p-6">
                           <h3 className="text-2xl font-bold mb-2">Quality Assurance</h3>
                           <p className="text-lg">Rigorous testing standards</p>
@@ -307,12 +307,12 @@ export default function Home() {
                     </div>
                   </SwiperSlide>
                   <SwiperSlide>
-                    <div className="relative w-full h-full bg-accent-sage flex items-center justify-center">
+                    <div className="relative w-full h-full bg-black flex items-center justify-center">
                       <Image
                         src="/Twin screw excluder machine.png"
                         alt="Innovation Lab"
                         fill
-                        className="object-cover"
+                        className="object-cover blur-0"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority
                         onError={(e) => {
@@ -320,7 +320,7 @@ export default function Home() {
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-black/35 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
                         <div className="text-center text-white p-6">
                           <h3 className="text-2xl font-bold mb-2">Leading Innovation</h3>
                           <p className="text-lg">Twin screw extrusion and advanced polymer processing</p>
@@ -329,19 +329,19 @@ export default function Home() {
                     </div>
                   </SwiperSlide>
                   <SwiperSlide>
-                    <div className="relative w-full h-full bg-slate-700 flex items-center justify-center">
+                    <div className="relative w-full h-full bg-black flex items-center justify-center">
                       <Image
                         src="/Filler_Bags.jpeg"
                         alt="Polymax masterbatch product packaging"
                         fill
-                        className="object-cover"
+                        className="object-cover blur-0"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
                         <div className="text-center text-white p-6">
                           <h3 className="text-2xl font-bold mb-2">POLYMAX</h3>
                           <p className="text-lg">Trusted masterbatch solutions, ready for your production line</p>

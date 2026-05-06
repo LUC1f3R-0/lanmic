@@ -203,7 +203,7 @@ export default function ProductsPage() {
                 data-aos-duration="1000"
               >
                 <Image
-                  src="/additive-mb-bg.png"
+                  src="/Additives_masterbatch_image.png"
                   alt="Additive masterbatch"
                   fill
                   className="object-cover"

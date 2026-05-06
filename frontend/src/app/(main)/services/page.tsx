@@ -183,7 +183,7 @@ export default function ProductsAndApplications() {
               data-aos-delay="200"
             >
               <Image
-                src="/additive-mb-bg.png"
+                src="/Additives_masterbatch_image.png"
                 alt="Additives masterbatch"
                 fill
                 className="object-cover"
