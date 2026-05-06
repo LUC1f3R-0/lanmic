@@ -16,6 +16,7 @@ import { SimpleBlogService } from './simple-blog.service';
 import { CreateBlogPostDto, UpdateBlogPostDto } from './dto/blog.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CsrfGuard } from '../guards/csrf.guard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('blog')
 export class BlogController {
@@ -28,6 +29,7 @@ export class BlogController {
   }
 
   @Get('published')
+  @SkipThrottle()
   async getPublishedBlogPosts() {
     return await this.blogService.findPublished();
   }

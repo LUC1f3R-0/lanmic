@@ -420,90 +420,118 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div
-              className="group bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 hover-tilt border border-blue-200 shadow-lg"
+              className="group relative overflow-hidden rounded-2xl p-8 hover-tilt border border-blue-200 shadow-lg bg-cover bg-center min-h-[320px]"
+              style={{
+                backgroundImage:
+                  "url(/calciam_carbonate_filler_masterbatch_image.png)",
+              }}
               data-aos="zoom-in-rotate"
               data-aos-delay="100"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate">
-                <svg
-                  className="w-8 h-8 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+              <div
+                className="absolute inset-0 bg-gradient-to-br from-white/90 via-blue-50/85 to-cyan-50/88 group-hover:from-white/82 group-hover:via-blue-50/78 transition-all duration-300"
+                aria-hidden
+              />
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate">
+                  <svg
+                    className="w-8 h-8 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-primary-500 transition-colors duration-300 drop-shadow-sm">
+                  Calcium Carbonate Filler Masterbatch
+                </h3>
+                <p className="text-text-secondary leading-relaxed drop-shadow-sm">
+                  High-quality calcium carbonate filler masterbatches that enhance
+                  mechanical properties and reduce production costs while maintaining
+                  excellent surface finish and dimensional stability.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-primary-500 transition-colors duration-300">
-                Calcium Carbonate Filler Masterbatch
-              </h3>
-              <p className="text-text-secondary leading-relaxed">
-                High-quality calcium carbonate filler masterbatches that enhance 
-                mechanical properties and reduce production costs while maintaining 
-                excellent surface finish and dimensional stability.
-              </p>
             </div>
 
             <div
-              className="group bg-gradient-to-br from-white to-purple-50 rounded-2xl p-8 hover-tilt border border-purple-200 shadow-lg"
+              className="group relative overflow-hidden rounded-2xl p-8 hover-tilt border border-purple-200 shadow-lg bg-cover bg-center min-h-[320px]"
+              style={{
+                backgroundImage: "url(/white_masterbatch_image.png)",
+              }}
               data-aos="zoom-in-rotate"
               data-aos-delay="200"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate">
-                <svg
-                  className="w-8 h-8 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+              <div
+                className="absolute inset-0 bg-gradient-to-br from-white/90 via-purple-50/85 to-pink-50/85 group-hover:from-white/82 group-hover:via-purple-50/78 transition-all duration-300"
+                aria-hidden
+              />
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate">
+                  <svg
+                    className="w-8 h-8 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-secondary-500 transition-colors duration-300 drop-shadow-sm">
+                  White Masterbatch
+                </h3>
+                <p className="text-text-secondary leading-relaxed drop-shadow-sm">
+                  Premium white masterbatches with excellent opacity, brightness,
+                  and color consistency. Perfect for applications requiring superior
+                  whiteness and UV resistance in various polymer matrices.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-secondary-500 transition-colors duration-300">
-                White Masterbatch
-              </h3>
-              <p className="text-text-secondary leading-relaxed">
-                Premium white masterbatches with excellent opacity, brightness, 
-                and color consistency. Perfect for applications requiring superior 
-                whiteness and UV resistance in various polymer matrices.
-              </p>
             </div>
 
             <div
-              className="group bg-gradient-to-br from-white to-green-50 rounded-2xl p-8 hover-tilt border border-green-200 shadow-lg"
+              className="group relative overflow-hidden rounded-2xl p-8 hover-tilt border border-green-200 shadow-lg bg-cover bg-center min-h-[320px]"
+              style={{
+                backgroundImage: "url(/additives_masterbatch_image.png)",
+              }}
               data-aos="zoom-in-rotate"
               data-aos-delay="300"
               data-aos-duration="1000"
               data-aos-easing="ease-out-cubic"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate">
-                <svg
-                  className="w-8 h-8 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-                </svg>
+              <div
+                className="absolute inset-0 bg-gradient-to-br from-white/90 via-emerald-50/85 to-green-50/88 group-hover:from-white/82 group-hover:via-emerald-50/78 transition-all duration-300"
+                aria-hidden
+              />
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 hover-rotate">
+                  <svg
+                    className="w-8 h-8 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-accent-sage transition-colors duration-300 drop-shadow-sm">
+                  Additives Masterbatch
+                </h3>
+                <p className="text-text-secondary leading-relaxed drop-shadow-sm">
+                  Specialized additive masterbatches including UV stabilizers,
+                  antioxidants, flame retardants, and processing aids. Customized
+                  solutions to enhance polymer performance and meet specific
+                  application requirements.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-accent-sage transition-colors duration-300">
-                Additives Masterbatch
-              </h3>
-              <p className="text-text-secondary leading-relaxed">
-                Specialized additive masterbatches including UV stabilizers, 
-                antioxidants, flame retardants, and processing aids. Customized 
-                solutions to enhance polymer performance and meet specific 
-                application requirements.
-              </p>
             </div>
           </div>
         </div>
