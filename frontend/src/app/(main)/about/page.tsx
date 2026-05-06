@@ -341,6 +341,40 @@ export default function About() {
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-x-8 sm:gap-y-0 max-w-3xl mx-auto mb-10 px-1 sm:px-0"
+              data-aos="fade-up"
+              data-aos-duration="800"
+              data-aos-easing="ease-out-cubic"
+            >
+              <div className="relative h-44 sm:h-40 rounded-2xl overflow-hidden shadow-lg ring-1 ring-emerald-200/50 bg-emerald-50/70 p-2">
+                <Image
+                  src="/eco_poly_packaging.jpg"
+                  alt="Eco-friendly polymer packaging applications"
+                  fill
+                  className="object-contain object-center"
+                  sizes="(max-width: 640px) 100vw, 240px"
+                />
+              </div>
+              <div className="relative h-44 sm:h-40 rounded-2xl overflow-hidden shadow-lg ring-1 ring-emerald-200/50 bg-emerald-50/70 p-2">
+                <Image
+                  src="/global_consumer.jpeg"
+                  alt="Consumer products and markets we serve"
+                  fill
+                  className="object-contain object-center"
+                  sizes="(max-width: 640px) 100vw, 240px"
+                />
+              </div>
+              <div className="relative h-44 sm:h-40 rounded-2xl overflow-hidden shadow-lg ring-1 ring-emerald-200/50 bg-emerald-50/70 p-2">
+                <Image
+                  src="/NMW%20pakaging.jfif"
+                  alt="NMW packaging solutions"
+                  fill
+                  className="object-contain object-center"
+                  sizes="(max-width: 640px) 100vw, 240px"
+                />
+              </div>
+            </div>
             <span className="inline-block bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide mb-4">
               Happy Customers
             </span>
