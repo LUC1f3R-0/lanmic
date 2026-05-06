@@ -191,12 +191,6 @@ const Footer = () => {
                   >
                     +94 34 2289618
                   </a>
-                  <a
-                    href="tel:+94362231153"
-                    className="block transition-colors hover:text-white"
-                  >
-                    +94 36 2231153
-                  </a>
                 </div>
               </div>
               <div className="flex gap-3 pt-4">
