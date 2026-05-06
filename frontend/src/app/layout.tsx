@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 import "aos/dist/aos.css";
 import { geistSans, geistMono } from "@/lib/fonts";
 import { AuthProvider } from "@/contexts/AuthContext";
