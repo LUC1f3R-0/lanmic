@@ -456,12 +456,15 @@ export class AuthController {
   @UseGuards(JwtAuthGuard) // Require authentication
   @ApiOperation({
     summary: 'Debug user lookup',
-    description: 'Debug endpoint to check if user exists in database (Development only)',
+    description:
+      'Debug endpoint to check if user exists in database (Development only)',
   })
   async debugUserLookup(@Param('email') email: string) {
     // Disable in production for security
     if (process.env.NODE_ENV === 'production') {
-      throw new ForbiddenException('Debug endpoints are disabled in production');
+      throw new ForbiddenException(
+        'Debug endpoints are disabled in production',
+      );
     }
     return this.authService.debugUserLookup(email);
   }

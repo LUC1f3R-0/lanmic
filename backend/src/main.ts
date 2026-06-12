@@ -51,12 +51,16 @@ async function bootstrap() {
           scriptSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles for AOS and Tailwind
           imgSrc: ["'self'", 'data:', 'https:'],
-          connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:3000'],
+          connectSrc: [
+            "'self'",
+            process.env.FRONTEND_URL || 'http://localhost:3000',
+          ],
           fontSrc: ["'self'", 'data:'],
           objectSrc: ["'none'"],
           mediaSrc: ["'self'"],
           frameSrc: ["'none'"],
-          upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
+          upgradeInsecureRequests:
+            process.env.NODE_ENV === 'production' ? [] : null,
         },
       },
       crossOriginEmbedderPolicy: false, // Allow external resources if needed
@@ -73,7 +77,7 @@ async function bootstrap() {
         'max-age=31536000; includeSubDomains; preload',
       );
     }
-    
+
     // Additional security headers
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
@@ -83,10 +87,13 @@ async function bootstrap() {
       'Permissions-Policy',
       'geolocation=(), microphone=(), camera=()',
     );
-    
+
     // Prevent caching of sensitive data
     if (req.path.startsWith('/auth') || req.path.startsWith('/dashboard')) {
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+      res.setHeader(
+        'Cache-Control',
+        'no-store, no-cache, must-revalidate, private',
+      );
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
     }
@@ -136,7 +143,7 @@ async function bootstrap() {
       if (!origin && process.env.NODE_ENV === 'development') {
         return callback(null, true);
       }
-      
+
       // Validate origin
       if (origin === frontendUrl || !origin) {
         callback(null, true);
@@ -146,7 +153,13 @@ async function bootstrap() {
     },
     credentials: true, // Allow cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-CSRF-Token', 'x-api-key'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Cookie',
+      'X-CSRF-Token',
+      'x-api-key',
+    ],
     exposedHeaders: ['Set-Cookie'],
     maxAge: 86400, // 24 hours
   });

@@ -6,10 +6,10 @@ import { SimpleWebSocketModule } from '../websocket/simple-websocket.module';
 
 /**
  * Simple Blog Module
- * 
+ *
  * This module provides blog functionality with real-time updates
  * WITHOUT requiring Kafka or Docker. It uses direct WebSocket broadcasting.
- * 
+ *
  * This approach is:
  * - Simpler to set up
  * - No external dependencies

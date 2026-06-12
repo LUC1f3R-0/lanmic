@@ -6,10 +6,7 @@ import { KafkaModule } from '../kafka/kafka.module';
 import { WebSocketModule } from '../websocket/websocket.module';
 
 @Module({
-  imports: [
-    forwardRef(() => KafkaModule),
-    forwardRef(() => WebSocketModule),
-  ],
+  imports: [forwardRef(() => KafkaModule), forwardRef(() => WebSocketModule)],
   controllers: [BlogController],
   providers: [BlogService, DatabaseService],
   exports: [BlogService],

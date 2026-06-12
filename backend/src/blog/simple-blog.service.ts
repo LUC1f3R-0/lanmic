@@ -1,14 +1,19 @@
-import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { DatabaseService } from '../database.service';
 import { CreateBlogPostDto, UpdateBlogPostDto } from './dto/blog.dto';
 import { SimpleWebSocketGateway } from '../websocket/simple-websocket.gateway';
 
 /**
  * Simple Blog Service with Real-time Updates
- * 
+ *
  * This service provides real-time blog updates WITHOUT requiring Kafka.
  * It directly broadcasts events via WebSocket when blog operations occur.
- * 
+ *
  * Benefits of this approach:
  * - No Docker or Kafka setup required
  * - Simpler to understand and maintain

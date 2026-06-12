@@ -17,9 +17,7 @@ import { KafkaService } from './kafka.service';
 export class KafkaConsumerService implements OnModuleInit {
   private readonly logger = new Logger(KafkaConsumerService.name);
 
-  constructor(
-    private readonly kafkaService: KafkaService,
-  ) {}
+  constructor(private readonly kafkaService: KafkaService) {}
 
   /**
    * Initialize the Kafka consumer when module starts

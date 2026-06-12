@@ -1,6 +1,14 @@
-import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { DatabaseService } from '../database.service';
-import { CreateExecutiveLeadershipDto, UpdateExecutiveLeadershipDto } from './dto/executive-leadership.dto';
+import {
+  CreateExecutiveLeadershipDto,
+  UpdateExecutiveLeadershipDto,
+} from './dto/executive-leadership.dto';
 import { KafkaService } from '../kafka/kafka.service';
 import { SimpleWebSocketGateway } from '../websocket/simple-websocket.gateway';
 
@@ -38,22 +46,32 @@ export class ExecutiveService {
     });
   }
 
-  async create(createExecutiveLeadershipDto: CreateExecutiveLeadershipDto, userId: number) {
+  async create(
+    createExecutiveLeadershipDto: CreateExecutiveLeadershipDto,
+    userId: number,
+  ) {
     // Create the executive leadership in the database
-    const newExecutiveLeadership = await this.prisma.executiveLeadership.create({
-      data: {
-        ...createExecutiveLeadershipDto,
-        userId,
+    const newExecutiveLeadership = await this.prisma.executiveLeadership.create(
+      {
+        data: {
+          ...createExecutiveLeadershipDto,
+          userId,
+        },
       },
-    });
+    );
 
     // Publish executive leadership created event to Kafka for real-time updates
     // This allows other services to react to executive leadership creation
-    await this.kafkaService.publishExecutiveLeadershipCreated(newExecutiveLeadership.id, newExecutiveLeadership);
+    await this.kafkaService.publishExecutiveLeadershipCreated(
+      newExecutiveLeadership.id,
+      newExecutiveLeadership,
+    );
 
     // Broadcast the executive leadership created event to connected WebSocket clients
     // This provides immediate real-time updates to admin users
-    this.webSocketGateway.broadcastExecutiveLeadershipCreated(newExecutiveLeadership);
+    this.webSocketGateway.broadcastExecutiveLeadershipCreated(
+      newExecutiveLeadership,
+    );
 
     return newExecutiveLeadership;
   }
@@ -72,10 +90,11 @@ export class ExecutiveService {
     }
 
     // Update the executive leadership in the database
-    const updatedExecutiveLeadership = await this.prisma.executiveLeadership.update({
-      where: { id },
-      data: updateExecutiveLeadershipDto,
-    });
+    const updatedExecutiveLeadership =
+      await this.prisma.executiveLeadership.update({
+        where: { id },
+        data: updateExecutiveLeadershipDto,
+      });
 
     // Publish executive leadership updated event to Kafka for real-time updates
     // This allows other services to react to executive leadership updates
@@ -86,7 +105,9 @@ export class ExecutiveService {
 
     // Broadcast the executive leadership updated event to connected WebSocket clients
     // This provides immediate real-time updates to admin users
-    this.webSocketGateway.broadcastExecutiveLeadershipUpdated(updatedExecutiveLeadership);
+    this.webSocketGateway.broadcastExecutiveLeadershipUpdated(
+      updatedExecutiveLeadership,
+    );
 
     return updatedExecutiveLeadership;
   }
@@ -126,18 +147,24 @@ export class ExecutiveService {
     }
 
     // Update the active status in the database
-    const updatedExecutiveLeadership = await this.prisma.executiveLeadership.update({
-      where: { id },
-      data: { isActive: !existingExecutive.isActive },
-    });
+    const updatedExecutiveLeadership =
+      await this.prisma.executiveLeadership.update({
+        where: { id },
+        data: { isActive: !existingExecutive.isActive },
+      });
 
     // Publish executive leadership active event to Kafka for real-time updates
     // This allows other services to react to active status changes
-    await this.kafkaService.publishExecutiveLeadershipActive(id, updatedExecutiveLeadership.isActive);
+    await this.kafkaService.publishExecutiveLeadershipActive(
+      id,
+      updatedExecutiveLeadership.isActive,
+    );
 
     // Broadcast the executive leadership active event to connected WebSocket clients
     // This provides immediate real-time updates to admin users
-    this.webSocketGateway.broadcastExecutiveLeadershipActive(updatedExecutiveLeadership);
+    this.webSocketGateway.broadcastExecutiveLeadershipActive(
+      updatedExecutiveLeadership,
+    );
 
     return updatedExecutiveLeadership;
   }

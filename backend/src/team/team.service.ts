@@ -1,6 +1,14 @@
-import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { DatabaseService } from '../database.service';
-import { CreateTeamMemberDto, UpdateTeamMemberDto } from './dto/team-member.dto';
+import {
+  CreateTeamMemberDto,
+  UpdateTeamMemberDto,
+} from './dto/team-member.dto';
 import { KafkaService } from '../kafka/kafka.service';
 import { SimpleWebSocketGateway } from '../websocket/simple-websocket.gateway';
 
@@ -49,7 +57,10 @@ export class TeamService {
 
     // Publish team member created event to Kafka for real-time updates
     // This allows other services to react to team member creation
-    await this.kafkaService.publishTeamMemberCreated(newTeamMember.id, newTeamMember);
+    await this.kafkaService.publishTeamMemberCreated(
+      newTeamMember.id,
+      newTeamMember,
+    );
 
     // Broadcast the team member created event to connected WebSocket clients
     // This provides immediate real-time updates to admin users
@@ -133,7 +144,10 @@ export class TeamService {
 
     // Publish team member active event to Kafka for real-time updates
     // This allows other services to react to active status changes
-    await this.kafkaService.publishTeamMemberActive(id, updatedTeamMember.isActive);
+    await this.kafkaService.publishTeamMemberActive(
+      id,
+      updatedTeamMember.isActive,
+    );
 
     // Broadcast the team member active event to connected WebSocket clients
     // This provides immediate real-time updates to admin users

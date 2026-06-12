@@ -19,20 +19,26 @@ export class ContactService {
     try {
       // Send email to company
       await this.sendCompanyNotification(contactData);
-      
+
       // Send confirmation email to sender
       await this.sendSenderConfirmation(contactData);
-      
-      this.logger.log(`Contact form submitted successfully from ${contactData.email}`);
+
+      this.logger.log(
+        `Contact form submitted successfully from ${contactData.email}`,
+      );
     } catch (error) {
       this.logger.error('Failed to send contact emails:', error);
       throw error;
     }
   }
 
-  private async sendCompanyNotification(contactData: ContactFormData): Promise<void> {
+  private async sendCompanyNotification(
+    contactData: ContactFormData,
+  ): Promise<void> {
     if (!this.emailService.isEmailServiceReady()) {
-      this.logger.warn('Email service not ready, logging contact form to console');
+      this.logger.warn(
+        'Email service not ready, logging contact form to console',
+      );
       this.logContactToConsole(contactData, 'COMPANY NOTIFICATION');
       return;
     }
@@ -52,7 +58,9 @@ export class ContactService {
       };
 
       await this.emailService.sendEmail(mailOptions);
-      this.logger.log(`Company notification sent successfully for contact from ${contactData.email}`);
+      this.logger.log(
+        `Company notification sent successfully for contact from ${contactData.email}`,
+      );
     } catch (error) {
       this.logger.error('Failed to send company notification:', error);
       this.logContactToConsole(contactData, 'COMPANY NOTIFICATION (FAILED)');
@@ -60,9 +68,13 @@ export class ContactService {
     }
   }
 
-  private async sendSenderConfirmation(contactData: ContactFormData): Promise<void> {
+  private async sendSenderConfirmation(
+    contactData: ContactFormData,
+  ): Promise<void> {
     if (!this.emailService.isEmailServiceReady()) {
-      this.logger.warn('Email service not ready, logging confirmation to console');
+      this.logger.warn(
+        'Email service not ready, logging confirmation to console',
+      );
       this.logContactToConsole(contactData, 'SENDER CONFIRMATION');
       return;
     }
@@ -77,7 +89,9 @@ export class ContactService {
       };
 
       await this.emailService.sendEmail(mailOptions);
-      this.logger.log(`Sender confirmation sent successfully to ${contactData.email}`);
+      this.logger.log(
+        `Sender confirmation sent successfully to ${contactData.email}`,
+      );
     } catch (error) {
       this.logger.error('Failed to send sender confirmation:', error);
       this.logContactToConsole(contactData, 'SENDER CONFIRMATION (FAILED)');
@@ -85,7 +99,10 @@ export class ContactService {
     }
   }
 
-  private logContactToConsole(contactData: ContactFormData, type: string): void {
+  private logContactToConsole(
+    contactData: ContactFormData,
+    type: string,
+  ): void {
     console.log(`\n=== ${type} (SMTP NOT CONFIGURED) ===`);
     console.log(`From: ${contactData.name} <${contactData.email}>`);
     console.log(`Phone: ${contactData.phone || 'Not provided'}`);
@@ -131,16 +148,24 @@ export class ContactService {
               <div class="value">
                 <span class="label">Email:</span> <a href="mailto:${contactData.email}">${contactData.email}</a>
               </div>
-              ${contactData.phone ? `
+              ${
+                contactData.phone
+                  ? `
               <div class="value">
                 <span class="label">Phone:</span> <a href="tel:${contactData.phone}">${contactData.phone}</a>
               </div>
-              ` : ''}
-              ${contactData.company ? `
+              `
+                  : ''
+              }
+              ${
+                contactData.company
+                  ? `
               <div class="value">
                 <span class="label">Company:</span> ${contactData.company}
               </div>
-              ` : ''}
+              `
+                  : ''
+              }
               <div class="value">
                 <span class="label">Submitted:</span> ${new Date().toLocaleString()}
               </div>

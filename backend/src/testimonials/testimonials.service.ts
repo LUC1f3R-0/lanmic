@@ -1,6 +1,14 @@
-import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { DatabaseService } from '../database.service';
-import { CreateTestimonialDto, UpdateTestimonialDto } from './dto/testimonial.dto';
+import {
+  CreateTestimonialDto,
+  UpdateTestimonialDto,
+} from './dto/testimonial.dto';
 import { KafkaService } from '../kafka/kafka.service';
 import { SimpleWebSocketGateway } from '../websocket/simple-websocket.gateway';
 
@@ -49,7 +57,10 @@ export class TestimonialsService {
 
     // Publish testimonial created event to Kafka for real-time updates
     // This allows other services to react to testimonial creation
-    await this.kafkaService.publishTestimonialCreated(newTestimonial.id, newTestimonial);
+    await this.kafkaService.publishTestimonialCreated(
+      newTestimonial.id,
+      newTestimonial,
+    );
 
     // Broadcast the testimonial created event to connected WebSocket clients
     // This provides immediate real-time updates to admin users
@@ -133,7 +144,10 @@ export class TestimonialsService {
 
     // Publish testimonial active event to Kafka for real-time updates
     // This allows other services to react to active status changes
-    await this.kafkaService.publishTestimonialActive(id, updatedTestimonial.isActive);
+    await this.kafkaService.publishTestimonialActive(
+      id,
+      updatedTestimonial.isActive,
+    );
 
     // Broadcast the testimonial active event to connected WebSocket clients
     // This provides immediate real-time updates to admin users
@@ -142,6 +156,3 @@ export class TestimonialsService {
     return updatedTestimonial;
   }
 }
-
-
-

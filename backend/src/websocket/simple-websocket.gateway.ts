@@ -12,11 +12,11 @@ import { Logger } from '@nestjs/common';
 
 /**
  * Simple WebSocket Gateway for Real-time Blog Updates
- * 
+ *
  * This is a simplified version that provides real-time updates
  * WITHOUT requiring Kafka or Docker. It directly broadcasts
  * events to connected clients when blog operations occur.
- * 
+ *
  * This approach is:
  * - Simpler to set up (no Docker needed)
  * - Easier to understand
@@ -30,12 +30,17 @@ import { Logger } from '@nestjs/common';
   },
   namespace: '/blog-updates',
 })
-export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class SimpleWebSocketGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
   server: Server;
 
   private readonly logger = new Logger(SimpleWebSocketGateway.name);
-  private connectedClients = new Map<string, { socket: Socket; userId?: number }>();
+  private connectedClients = new Map<
+    string,
+    { socket: Socket; userId?: number }
+  >();
 
   constructor() {}
 
@@ -49,7 +54,7 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
 
       // Extract JWT token from handshake auth or cookies (optional)
       const token = this.extractToken(client);
-      
+
       // For simplified version, we accept connections even without authentication
       // In production, you might want to add proper authentication here
       let userId: number | undefined = undefined;
@@ -57,23 +62,27 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
         userId = this.extractUserIdFromToken(token);
         this.logger.log(`Client ${client.id} connected with authentication`);
       } else {
-        this.logger.log(`Client ${client.id} connected without authentication (simplified mode)`);
+        this.logger.log(
+          `Client ${client.id} connected without authentication (simplified mode)`,
+        );
       }
 
       // Store client information
       this.connectedClients.set(client.id, { socket: client, userId });
-      
+
       // Join the admin room for blog updates
       client.join('admin-room');
-      
-      this.logger.log(`Client ${client.id} joined admin room`);
-      client.emit('connected', { 
-        message: 'Connected to blog updates',
-        authenticated: !!userId 
-      });
 
+      this.logger.log(`Client ${client.id} joined admin room`);
+      client.emit('connected', {
+        message: 'Connected to blog updates',
+        authenticated: !!userId,
+      });
     } catch (error) {
-      this.logger.error(`Error handling connection for client ${client.id}:`, error);
+      this.logger.error(
+        `Error handling connection for client ${client.id}:`,
+        error,
+      );
       client.emit('error', { message: 'Connection failed' });
       client.disconnect();
     }
@@ -136,7 +145,9 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
    * Broadcast blog published event to all connected admin clients
    */
   broadcastBlogPublished(blogData: any) {
-    this.logger.log(`Broadcasting blog published status changed: ${blogData.id}`);
+    this.logger.log(
+      `Broadcasting blog published status changed: ${blogData.id}`,
+    );
     this.server.to('admin-room').emit('blog-published', {
       type: 'blog-published',
       data: blogData,
@@ -184,7 +195,9 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
    * Broadcast team member active event to all connected admin clients
    */
   broadcastTeamMemberActive(teamMemberData: any) {
-    this.logger.log(`Broadcasting team member active status changed: ${teamMemberData.id}`);
+    this.logger.log(
+      `Broadcasting team member active status changed: ${teamMemberData.id}`,
+    );
     this.server.to('admin-room').emit('team-member-active', {
       type: 'team-member-active',
       data: teamMemberData,
@@ -196,7 +209,9 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
    * Broadcast executive leadership created event to all connected admin clients
    */
   broadcastExecutiveLeadershipCreated(executiveLeadershipData: any) {
-    this.logger.log(`Broadcasting executive leadership created: ${executiveLeadershipData.id}`);
+    this.logger.log(
+      `Broadcasting executive leadership created: ${executiveLeadershipData.id}`,
+    );
     this.server.to('admin-room').emit('executive-leadership-created', {
       type: 'executive-leadership-created',
       data: executiveLeadershipData,
@@ -208,7 +223,9 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
    * Broadcast executive leadership updated event to all connected admin clients
    */
   broadcastExecutiveLeadershipUpdated(executiveLeadershipData: any) {
-    this.logger.log(`Broadcasting executive leadership updated: ${executiveLeadershipData.id}`);
+    this.logger.log(
+      `Broadcasting executive leadership updated: ${executiveLeadershipData.id}`,
+    );
     this.server.to('admin-room').emit('executive-leadership-updated', {
       type: 'executive-leadership-updated',
       data: executiveLeadershipData,
@@ -220,7 +237,9 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
    * Broadcast executive leadership deleted event to all connected admin clients
    */
   broadcastExecutiveLeadershipDeleted(executiveLeadershipId: number) {
-    this.logger.log(`Broadcasting executive leadership deleted: ${executiveLeadershipId}`);
+    this.logger.log(
+      `Broadcasting executive leadership deleted: ${executiveLeadershipId}`,
+    );
     this.server.to('admin-room').emit('executive-leadership-deleted', {
       type: 'executive-leadership-deleted',
       data: { id: executiveLeadershipId },
@@ -232,7 +251,9 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
    * Broadcast executive leadership active event to all connected admin clients
    */
   broadcastExecutiveLeadershipActive(executiveLeadershipData: any) {
-    this.logger.log(`Broadcasting executive leadership active status changed: ${executiveLeadershipData.id}`);
+    this.logger.log(
+      `Broadcasting executive leadership active status changed: ${executiveLeadershipData.id}`,
+    );
     this.server.to('admin-room').emit('executive-leadership-active', {
       type: 'executive-leadership-active',
       data: executiveLeadershipData,
@@ -310,7 +331,9 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
    * Broadcast testimonial active event to all connected admin clients
    */
   broadcastTestimonialActive(testimonialData: any) {
-    this.logger.log(`Broadcasting testimonial active status changed: ${testimonialData.id}`);
+    this.logger.log(
+      `Broadcasting testimonial active status changed: ${testimonialData.id}`,
+    );
     this.server.to('admin-room').emit('testimonial-active', {
       type: 'testimonial-active',
       data: testimonialData,
@@ -330,7 +353,7 @@ export class SimpleWebSocketGateway implements OnGatewayConnection, OnGatewayDis
       // 2. Check token expiration
       // 3. Extract user ID from token payload
       // 4. Validate user permissions
-      
+
       // For now, we'll return a mock user ID
       // This should be replaced with proper JWT verification
       return 1; // Mock user ID

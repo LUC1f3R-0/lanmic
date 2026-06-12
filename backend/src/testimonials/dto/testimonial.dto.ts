@@ -1,4 +1,11 @@
-import { IsString, IsOptional, IsBoolean, IsInt, Min, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsInt,
+  Min,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateTestimonialDto {
   @IsString()
@@ -67,6 +74,3 @@ export class UpdateTestimonialDto {
   @Min(1)
   displayOrder?: number;
 }
-
-
-

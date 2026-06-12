@@ -251,7 +251,9 @@ export class WebSocketGateway
    * @param executiveLeadershipData - The created executive leadership data
    */
   broadcastExecutiveLeadershipCreated(executiveLeadershipData: any) {
-    this.logger.log(`Broadcasting executive leadership created: ${executiveLeadershipData.id}`);
+    this.logger.log(
+      `Broadcasting executive leadership created: ${executiveLeadershipData.id}`,
+    );
     this.server.to('admin-room').emit('executive-leadership-created', {
       type: 'executive-leadership-created',
       data: executiveLeadershipData,
@@ -266,7 +268,9 @@ export class WebSocketGateway
    * @param executiveLeadershipData - The updated executive leadership data
    */
   broadcastExecutiveLeadershipUpdated(executiveLeadershipData: any) {
-    this.logger.log(`Broadcasting executive leadership updated: ${executiveLeadershipData.id}`);
+    this.logger.log(
+      `Broadcasting executive leadership updated: ${executiveLeadershipData.id}`,
+    );
     this.server.to('admin-room').emit('executive-leadership-updated', {
       type: 'executive-leadership-updated',
       data: executiveLeadershipData,
@@ -281,7 +285,9 @@ export class WebSocketGateway
    * @param executiveLeadershipId - The ID of the deleted executive leadership
    */
   broadcastExecutiveLeadershipDeleted(executiveLeadershipId: number) {
-    this.logger.log(`Broadcasting executive leadership deleted: ${executiveLeadershipId}`);
+    this.logger.log(
+      `Broadcasting executive leadership deleted: ${executiveLeadershipId}`,
+    );
     this.server.to('admin-room').emit('executive-leadership-deleted', {
       type: 'executive-leadership-deleted',
       data: { id: executiveLeadershipId },

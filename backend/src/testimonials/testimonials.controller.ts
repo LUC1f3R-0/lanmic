@@ -12,7 +12,10 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { TestimonialsService } from './testimonials.service';
-import { CreateTestimonialDto, UpdateTestimonialDto } from './dto/testimonial.dto';
+import {
+  CreateTestimonialDto,
+  UpdateTestimonialDto,
+} from './dto/testimonial.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { EmailVerifiedGuard } from '../guards/email-verified.guard';
 import { CsrfGuard } from '../guards/csrf.guard';
@@ -23,7 +26,10 @@ export class TestimonialsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, EmailVerifiedGuard, CsrfGuard)
-  create(@Body() createTestimonialDto: CreateTestimonialDto, @Request() req: any) {
+  create(
+    @Body() createTestimonialDto: CreateTestimonialDto,
+    @Request() req: any,
+  ) {
     return this.testimonialsService.create(createTestimonialDto, req.user.id);
   }
 
@@ -51,7 +57,11 @@ export class TestimonialsController {
     @Body() updateTestimonialDto: UpdateTestimonialDto,
     @Request() req: any,
   ) {
-    return this.testimonialsService.update(id, updateTestimonialDto, req.user.id);
+    return this.testimonialsService.update(
+      id,
+      updateTestimonialDto,
+      req.user.id,
+    );
   }
 
   @Delete(':id')

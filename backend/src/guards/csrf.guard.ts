@@ -14,7 +14,7 @@ import { Request } from 'express';
 export class CsrfGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<Request>();
-    
+
     // Skip CSRF for GET, HEAD, OPTIONS requests
     if (['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
       return true;
@@ -31,11 +31,11 @@ export class CsrfGuard implements CanActivate {
       '/auth/verify-email',
       '/contact',
     ];
-    
-    const isPublicPath = publicPaths.some(path => 
-      request.path.startsWith(path)
+
+    const isPublicPath = publicPaths.some((path) =>
+      request.path.startsWith(path),
     );
-    
+
     if (isPublicPath) {
       return true;
     }
@@ -56,5 +56,3 @@ export class CsrfGuard implements CanActivate {
     return true;
   }
 }
-
-

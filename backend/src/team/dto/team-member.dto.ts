@@ -1,4 +1,11 @@
-import { IsString, IsOptional, IsBoolean, IsNotEmpty, IsInt, Min } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsNotEmpty,
+  IsInt,
+  Min,
+} from 'class-validator';
 
 export class CreateTeamMemberDto {
   @IsString()

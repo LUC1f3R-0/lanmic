@@ -13,7 +13,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { TeamService } from './team.service';
-import { CreateTeamMemberDto, UpdateTeamMemberDto } from './dto/team-member.dto';
+import {
+  CreateTeamMemberDto,
+  UpdateTeamMemberDto,
+} from './dto/team-member.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CsrfGuard } from '../guards/csrf.guard';
 
@@ -79,7 +82,10 @@ export class TeamController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, CsrfGuard)
-  async deleteTeamMember(@Param('id', ParseIntPipe) id: number, @Request() req) {
+  async deleteTeamMember(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+  ) {
     const deleted = await this.teamService.remove(id, req.user.id);
     if (!deleted) {
       throw new NotFoundException('Team member not found');

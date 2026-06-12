@@ -67,7 +67,10 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       await this.setupConsumer();
       this.logger.log('Kafka service initialized successfully');
     } catch (error) {
-      this.logger.warn('Kafka service initialization failed - running without Kafka:', error.message);
+      this.logger.warn(
+        'Kafka service initialization failed - running without Kafka:',
+        error.message,
+      );
       this.isConnected = false;
       // Don't throw error to prevent app startup failure
       // Kafka is optional for development
@@ -96,16 +99,16 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       // Add timeout to prevent hanging
       const connectPromise = Promise.all([
         this.producer.connect(),
-        this.consumer.connect()
+        this.consumer.connect(),
       ]);
-      
+
       await Promise.race([
         connectPromise,
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Connection timeout')), 10000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Connection timeout')), 10000),
+        ),
       ]);
-      
+
       this.isConnected = true;
       this.logger.log('Connected to Kafka cluster');
     } catch (error) {
@@ -350,9 +353,15 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    * @param teamMemberId - ID of the team member
    * @param data - Additional data related to the event
    */
-  async publishTeamMemberEvent(eventType: string, teamMemberId: number, data?: unknown) {
+  async publishTeamMemberEvent(
+    eventType: string,
+    teamMemberId: number,
+    data?: unknown,
+  ) {
     if (!this.isConnected) {
-      this.logger.warn('Kafka not connected, skipping team member event publication');
+      this.logger.warn(
+        'Kafka not connected, skipping team member event publication',
+      );
       return;
     }
 
@@ -382,9 +391,14 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         ],
       });
 
-      this.logger.log(`Published event: team-member.${eventType} for team member ${teamMemberId}`);
+      this.logger.log(
+        `Published event: team-member.${eventType} for team member ${teamMemberId}`,
+      );
     } catch (error) {
-      this.logger.error(`Failed to publish event team-member.${eventType}:`, error);
+      this.logger.error(
+        `Failed to publish event team-member.${eventType}:`,
+        error,
+      );
       // Don't throw error to prevent blocking the main operation
     }
   }
@@ -396,8 +410,15 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    * @param executiveLeadershipId - ID of the created executive leadership
    * @param executiveLeadershipData - Data of the created executive leadership
    */
-  async publishExecutiveLeadershipCreated(executiveLeadershipId: number, executiveLeadershipData: any) {
-    await this.publishExecutiveLeadershipEvent('created', executiveLeadershipId, executiveLeadershipData);
+  async publishExecutiveLeadershipCreated(
+    executiveLeadershipId: number,
+    executiveLeadershipData: any,
+  ) {
+    await this.publishExecutiveLeadershipEvent(
+      'created',
+      executiveLeadershipId,
+      executiveLeadershipData,
+    );
   }
 
   /**
@@ -407,8 +428,15 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    * @param executiveLeadershipId - ID of the updated executive leadership
    * @param executiveLeadershipData - Updated data of the executive leadership
    */
-  async publishExecutiveLeadershipUpdated(executiveLeadershipId: number, executiveLeadershipData: any) {
-    await this.publishExecutiveLeadershipEvent('updated', executiveLeadershipId, executiveLeadershipData);
+  async publishExecutiveLeadershipUpdated(
+    executiveLeadershipId: number,
+    executiveLeadershipData: any,
+  ) {
+    await this.publishExecutiveLeadershipEvent(
+      'updated',
+      executiveLeadershipId,
+      executiveLeadershipData,
+    );
   }
 
   /**
@@ -418,7 +446,10 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    * @param executiveLeadershipId - ID of the deleted executive leadership
    */
   async publishExecutiveLeadershipDeleted(executiveLeadershipId: number) {
-    await this.publishExecutiveLeadershipEvent('deleted', executiveLeadershipId);
+    await this.publishExecutiveLeadershipEvent(
+      'deleted',
+      executiveLeadershipId,
+    );
   }
 
   /**
@@ -428,8 +459,15 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    * @param executiveLeadershipId - ID of the executive leadership
    * @param isActive - New active status
    */
-  async publishExecutiveLeadershipActive(executiveLeadershipId: number, isActive: boolean) {
-    await this.publishExecutiveLeadershipEvent('active', executiveLeadershipId, { isActive });
+  async publishExecutiveLeadershipActive(
+    executiveLeadershipId: number,
+    isActive: boolean,
+  ) {
+    await this.publishExecutiveLeadershipEvent(
+      'active',
+      executiveLeadershipId,
+      { isActive },
+    );
   }
 
   /**
@@ -440,9 +478,15 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    * @param executiveLeadershipId - ID of the executive leadership
    * @param data - Additional data related to the event
    */
-  async publishExecutiveLeadershipEvent(eventType: string, executiveLeadershipId: number, data?: unknown) {
+  async publishExecutiveLeadershipEvent(
+    eventType: string,
+    executiveLeadershipId: number,
+    data?: unknown,
+  ) {
     if (!this.isConnected) {
-      this.logger.warn('Kafka not connected, skipping executive leadership event publication');
+      this.logger.warn(
+        'Kafka not connected, skipping executive leadership event publication',
+      );
       return;
     }
 
@@ -472,9 +516,14 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         ],
       });
 
-      this.logger.log(`Published event: executive-leadership.${eventType} for executive leadership ${executiveLeadershipId}`);
+      this.logger.log(
+        `Published event: executive-leadership.${eventType} for executive leadership ${executiveLeadershipId}`,
+      );
     } catch (error) {
-      this.logger.error(`Failed to publish event executive-leadership.${eventType}:`, error);
+      this.logger.error(
+        `Failed to publish event executive-leadership.${eventType}:`,
+        error,
+      );
       // Don't throw error to prevent blocking the main operation
     }
   }
@@ -487,7 +536,11 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    * @param testimonialData - Data of the created testimonial
    */
   async publishTestimonialCreated(testimonialId: number, testimonialData: any) {
-    await this.publishTestimonialEvent('created', testimonialId, testimonialData);
+    await this.publishTestimonialEvent(
+      'created',
+      testimonialId,
+      testimonialData,
+    );
   }
 
   /**
@@ -498,7 +551,11 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    * @param testimonialData - Updated data of the testimonial
    */
   async publishTestimonialUpdated(testimonialId: number, testimonialData: any) {
-    await this.publishTestimonialEvent('updated', testimonialId, testimonialData);
+    await this.publishTestimonialEvent(
+      'updated',
+      testimonialId,
+      testimonialData,
+    );
   }
 
   /**
@@ -530,9 +587,15 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
    * @param testimonialId - ID of the testimonial
    * @param data - Additional data related to the event
    */
-  async publishTestimonialEvent(eventType: string, testimonialId: number, data?: unknown) {
+  async publishTestimonialEvent(
+    eventType: string,
+    testimonialId: number,
+    data?: unknown,
+  ) {
     if (!this.isConnected) {
-      this.logger.warn('Kafka not connected, skipping testimonial event publication');
+      this.logger.warn(
+        'Kafka not connected, skipping testimonial event publication',
+      );
       return;
     }
 
@@ -562,9 +625,14 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         ],
       });
 
-      this.logger.log(`Published event: testimonial.${eventType} for testimonial ${testimonialId}`);
+      this.logger.log(
+        `Published event: testimonial.${eventType} for testimonial ${testimonialId}`,
+      );
     } catch (error) {
-      this.logger.error(`Failed to publish event testimonial.${eventType}:`, error);
+      this.logger.error(
+        `Failed to publish event testimonial.${eventType}:`,
+        error,
+      );
       // Don't throw error to prevent blocking the main operation
     }
   }

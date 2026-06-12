@@ -13,7 +13,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ExecutiveService } from './executive.service';
-import { CreateExecutiveLeadershipDto, UpdateExecutiveLeadershipDto } from './dto/executive-leadership.dto';
+import {
+  CreateExecutiveLeadershipDto,
+  UpdateExecutiveLeadershipDto,
+} from './dto/executive-leadership.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CsrfGuard } from '../guards/csrf.guard';
 
@@ -34,7 +37,10 @@ export class ExecutiveController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  async getExecutiveLeadership(@Param('id', ParseIntPipe) id: number, @Request() req) {
+  async getExecutiveLeadership(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+  ) {
     const executive = await this.executiveService.findOne(id, req.user.id);
     if (!executive) {
       throw new NotFoundException('Executive leadership not found');
@@ -49,7 +55,10 @@ export class ExecutiveController {
     @Request() req,
   ) {
     try {
-      return await this.executiveService.create(createExecutiveLeadershipDto, req.user.id);
+      return await this.executiveService.create(
+        createExecutiveLeadershipDto,
+        req.user.id,
+      );
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -79,7 +88,10 @@ export class ExecutiveController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, CsrfGuard)
-  async deleteExecutiveLeadership(@Param('id', ParseIntPipe) id: number, @Request() req) {
+  async deleteExecutiveLeadership(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+  ) {
     const deleted = await this.executiveService.remove(id, req.user.id);
     if (!deleted) {
       throw new NotFoundException('Executive leadership not found');
