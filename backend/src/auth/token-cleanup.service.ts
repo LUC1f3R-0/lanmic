@@ -6,119 +6,66 @@ import { DatabaseService } from '../database.service';
 export class TokenCleanupService {
   private readonly logger = new Logger(TokenCleanupService.name);
 
-  constructor(private databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
-  // Run cleanup every 5 minutes to clean up any orphaned expired tokens
-  // Main cleanup happens on login and access token expiration
-  @Cron('0 */5 * * * *')
-  async cleanupExpiredTokens() {
-    try {
-      const result = await this.databaseService
-        .getPrismaClient()
-        .refreshToken.deleteMany({
+  @Cron(CronExpression.EVERY_HOUR)
+  async cleanupExpiredSecurityRecords(): Promise<number> {
+    const now = new Date();
+    const retentionBoundary = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    const [refreshTokens, challenges, emailChanges, sessions] =
+      await this.databaseService.$transaction([
+        this.databaseService.refreshToken.deleteMany({
           where: {
-            expiresAt: { lt: new Date() }, // Only expired tokens
+            OR: [
+              { expiresAt: { lt: now } },
+              { consumedAt: { lt: retentionBoundary } },
+              { revokedAt: { lt: retentionBoundary } },
+            ],
           },
-        });
+        }),
+        this.databaseService.verificationChallenge.deleteMany({
+          where: {
+            OR: [
+              { expiresAt: { lt: retentionBoundary } },
+              { consumedAt: { lt: retentionBoundary } },
+            ],
+          },
+        }),
+        this.databaseService.emailChangeRequest.deleteMany({
+          where: {
+            OR: [
+              { expiresAt: { lt: retentionBoundary } },
+              { completedAt: { lt: retentionBoundary } },
+            ],
+          },
+        }),
+        this.databaseService.authSession.deleteMany({
+          where: {
+            OR: [
+              { expiresAt: { lt: retentionBoundary } },
+              { revokedAt: { lt: retentionBoundary } },
+            ],
+          },
+        }),
+      ]);
 
-      if (result.count > 0) {
-        this.logger.log(`Cleaned up ${result.count} expired tokens`);
-      }
-    } catch (error) {
-      this.logger.error('Failed to cleanup expired tokens:', error);
+    const total =
+      refreshTokens.count +
+      challenges.count +
+      emailChanges.count +
+      sessions.count;
+    if (total > 0) {
+      this.logger.log(`Removed ${total} expired security records`);
     }
+    return total;
   }
 
-  // Manual cleanup method that can be called on demand
-  async manualCleanup(): Promise<number> {
-    try {
-      const result = await this.databaseService
-        .getPrismaClient()
-        .refreshToken.deleteMany({
-          where: {
-            expiresAt: { lt: new Date() }, // Only expired tokens
-          },
-        });
-
-      this.logger.log(`Manual cleanup: Removed ${result.count} expired tokens`);
-      return result.count;
-    } catch (error) {
-      this.logger.error('Failed to perform manual cleanup:', error);
-      throw error;
-    }
-  }
-
-  // Clean up expired tokens for a specific user
-  async cleanupExpiredTokensForUser(userId: number): Promise<number> {
-    try {
-      const result = await this.databaseService
-        .getPrismaClient()
-        .refreshToken.deleteMany({
-          where: {
-            userId,
-            expiresAt: { lt: new Date() }, // Only expired tokens
-          },
-        });
-
-      if (result.count > 0) {
-        this.logger.log(
-          `Cleaned up ${result.count} expired tokens for user ${userId}`,
-        );
-      }
-      return result.count;
-    } catch (error) {
-      this.logger.error(
-        `Failed to cleanup expired tokens for user ${userId}:`,
-        error,
-      );
-      throw error;
-    }
-  }
-
-  // Clean up ALL tokens for a specific user (used when access token expires)
-  async cleanupAllTokensForUser(userId: number): Promise<number> {
-    try {
-      const result = await this.databaseService
-        .getPrismaClient()
-        .refreshToken.deleteMany({
-          where: {
-            userId,
-          },
-        });
-
-      if (result.count > 0) {
-        this.logger.log(
-          `Cleaned up ALL ${result.count} tokens for user ${userId} due to access token expiration`,
-        );
-      }
-      return result.count;
-    } catch (error) {
-      this.logger.error(
-        `Failed to cleanup all tokens for user ${userId}:`,
-        error,
-      );
-      throw error;
-    }
-  }
-
-  // Clean up tokens that are close to expiring (within 1 hour) to prevent accumulation
-  @Cron('0 0 * * * *') // Run every hour
-  async cleanupTokensNearExpiry() {
-    try {
-      const oneHourFromNow = new Date(Date.now() + 60 * 60 * 1000);
-      const result = await this.databaseService
-        .getPrismaClient()
-        .refreshToken.deleteMany({
-          where: {
-            expiresAt: { lt: oneHourFromNow },
-          },
-        });
-
-      if (result.count > 0) {
-        this.logger.log(`Cleaned up ${result.count} tokens near expiry`);
-      }
-    } catch (error) {
-      this.logger.error('Failed to cleanup tokens near expiry:', error);
-    }
+  async revokeAllSessionsForUser(userId: number): Promise<number> {
+    const result = await this.databaseService.authSession.updateMany({
+      where: { userId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+    return result.count;
   }
 }

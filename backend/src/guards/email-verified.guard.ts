@@ -1,24 +1,18 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  Injectable,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from '../common/interfaces/authenticated-request.interface';
 
 @Injectable()
 export class EmailVerifiedGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
-
-    if (!user) {
-      throw new ForbiddenException('User not authenticated');
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    if (!request.user?.isVerified) {
+      throw new ForbiddenException('Email verification is required');
     }
-
-    if (!user.isVerified) {
-      throw new ForbiddenException('Email verification required');
-    }
-
     return true;
   }
 }

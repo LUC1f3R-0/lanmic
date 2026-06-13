@@ -1,76 +1,99 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
+import { randomUUID } from 'crypto';
+
+interface ErrorBody {
+  statusCode: number;
+  error: string;
+  message: string | string[];
+  requestId: string;
+  timestamp: string;
+  path: string;
+  details?: unknown;
+}
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
 
   catch(exception: unknown, host: ArgumentsHost): void {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const context = host.switchToHttp();
+    const response = context.getResponse<Response>();
+    const request = context.getRequest<Request>();
+    const requestId = this.safeRequestId(request.header('x-request-id'));
 
-    let status: number;
-    let message: string | object;
-    let error: string;
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    const payload = this.toResponseBody(exception, status, request, requestId);
+
+    if (status >= 500) {
+      this.logger.error(
+        `${request.method} ${this.redactPath(request.originalUrl)} -> ${status} [${requestId}]`,
+        exception instanceof Error ? exception.stack : undefined,
+      );
+    } else {
+      this.logger.warn(
+        `${request.method} ${this.redactPath(request.originalUrl)} -> ${status} [${requestId}]`,
+      );
+    }
+
+    response.setHeader('x-request-id', requestId);
+    response.status(status).json(payload);
+  }
+
+  private toResponseBody(
+    exception: unknown,
+    status: number,
+    request: Request,
+    requestId: string,
+  ): ErrorBody {
+    let message: string | string[] = 'Internal server error';
+    let error = HttpStatus[status] ?? 'Error';
+    let details: unknown;
 
     if (exception instanceof HttpException) {
-      status = exception.getStatus();
-      const exceptionResponse = exception.getResponse();
-
-      if (typeof exceptionResponse === 'string') {
-        message = exceptionResponse;
-        error = exception.name;
-      } else {
-        const responseObj = exceptionResponse as Record<string, any>;
-        message = responseObj.message || exception.message;
-        error = responseObj.error || exception.name;
+      const response = exception.getResponse();
+      if (typeof response === 'string') {
+        message = response;
+      } else if (response && typeof response === 'object') {
+        const body = response as Record<string, unknown>;
+        if (typeof body.error === 'string') error = body.error;
+        if (typeof body.message === 'string' || Array.isArray(body.message)) {
+          message = body.message as string | string[];
+        }
+        if ('details' in body) details = body.details;
       }
-    } else {
-      // Handle unexpected errors
-      status = HttpStatus.INTERNAL_SERVER_ERROR;
-      message = 'Internal server error';
-      error = 'InternalServerError';
-
-      // Log unexpected errors
-      this.logger.error(
-        `Unexpected error: ${exception}`,
-        (exception as Error).stack,
-      );
     }
 
-    // Log the error (but reduce noise for expected 401 errors)
-    if (status === 401) {
-      // Log 401 errors as warnings instead of errors since they're expected after logout
-      this.logger.warn(
-        `${request.method} ${request.url} - ${status} - ${typeof message === 'string' ? message : JSON.stringify(message)}`,
-      );
-    } else {
-      // Log other errors normally
-      this.logger.error(
-        `${request.method} ${request.url} - ${status} - ${typeof message === 'string' ? message : JSON.stringify(message)}`,
-        (exception as Error).stack,
-      );
-    }
-
-    const errorResponse = {
+    return {
       statusCode: status,
-      timestamp: new Date().toISOString(),
-      path: request.url,
-      method: request.method,
-      message: Array.isArray(message)
-        ? message
-        : [typeof message === 'string' ? message : JSON.stringify(message)],
       error,
+      message,
+      requestId,
+      timestamp: new Date().toISOString(),
+      path: this.redactPath(request.originalUrl),
+      ...(details === undefined ? {} : { details }),
     };
+  }
 
-    response.status(status).json(errorResponse);
+  private safeRequestId(value: string | undefined): string {
+    if (value && /^[a-zA-Z0-9_-]{8,100}$/.test(value)) return value;
+    return randomUUID();
+  }
+
+  private redactPath(path: string): string {
+    return path
+      .replace(/(verify-email\/)[^/?#]+/gi, '$1[redacted]')
+      .replace(/([?&](?:token|otp|code|grant)=)[^&#]+/gi, '$1[redacted]');
   }
 }

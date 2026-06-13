@@ -1,62 +1,28 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  Logger,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { ContactService, ContactFormData } from './contact.service';
+import { ContactService } from './contact.service';
 import { ContactFormDto } from './dto/contact.dto';
 
+@ApiTags('Contact')
 @Controller('contact')
 export class ContactController {
-  private readonly logger = new Logger(ContactController.name);
-
   constructor(private readonly contactService: ContactService) {}
 
   @Post()
-  @HttpCode(HttpStatus.OK)
-  @Throttle({ short: { limit: 5, ttl: 60000 } }) // 5 requests per minute to prevent spam
-  async submitContactForm(
-    @Body() contactFormDto: ContactFormDto,
-  ): Promise<{ message: string; success: boolean }> {
-    try {
-      this.logger.log(
-        `Contact form submission received from ${contactFormDto.email}`,
-      );
-
-      const contactData: ContactFormData = {
-        name: contactFormDto.name,
-        email: contactFormDto.email,
-        phone: contactFormDto.phone,
-        company: contactFormDto.company,
-        message: contactFormDto.message,
-      };
-
-      await this.contactService.sendContactEmail(contactData);
-
-      this.logger.log(
-        `Contact form processed successfully for ${contactFormDto.email}`,
-      );
-
-      return {
-        message:
-          'Thank you for your message! We will get back to you within 24 hours.',
-        success: true,
-      };
-    } catch (error) {
-      this.logger.error(
-        `Failed to process contact form from ${contactFormDto.email}:`,
-        error,
-      );
-
-      return {
-        message:
-          'We apologize, but there was an error processing your message. Please try again or contact us directly.',
-        success: false,
-      };
-    }
+  @HttpCode(HttpStatus.ACCEPTED)
+  @Throttle({
+    burst: { limit: 2, ttl: 10_000 },
+    short: { limit: 5, ttl: 60_000 },
+    long: { limit: 20, ttl: 3_600_000 },
+  })
+  @ApiOperation({ summary: 'Submit a public contact enquiry' })
+  @ApiResponse({ status: 202, description: 'Enquiry accepted' })
+  async submitContactForm(@Body() dto: ContactFormDto) {
+    await this.contactService.sendContactEmail(dto);
+    return {
+      success: true,
+      message: 'Thank you. Your message has been received.',
+    };
   }
 }

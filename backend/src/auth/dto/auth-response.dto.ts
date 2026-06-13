@@ -1,34 +1,32 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserRole } from '@prisma/client';
+
+export class UserResponseDto {
+  @ApiProperty()
+  id!: number;
+
+  @ApiProperty()
+  email!: string;
+
+  @ApiProperty()
+  username!: string;
+
+  @ApiProperty({ enum: UserRole })
+  role!: UserRole;
+
+  @ApiProperty()
+  isVerified!: boolean;
+}
 
 export class AuthResponseDto {
-  @ApiProperty({
-    description: 'Success message',
-    example: 'Login successful',
-  })
-  message: string;
+  @ApiProperty()
+  message!: string;
 
-  @ApiProperty({
-    description: 'User information',
-    type: 'object',
-    properties: {
-      id: { type: 'number', example: 1 },
-      email: { type: 'string', example: 'admin@gmail.com' },
-      username: { type: 'string', example: 'admin' },
-      isActive: { type: 'boolean', example: true },
-    },
-  })
-  user: {
-    id: number;
-    email: string;
-    username: string;
-    isActive: boolean;
-  };
+  @ApiProperty({ type: UserResponseDto })
+  user!: UserResponseDto;
 }
 
 export class LogoutResponseDto {
-  @ApiProperty({
-    description: 'Success message',
-    example: 'Logged out successfully',
-  })
-  message: string;
+  @ApiProperty()
+  message!: string;
 }

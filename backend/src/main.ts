@@ -1,197 +1,222 @@
+import { BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import {
-  ValidationPipe,
-  Logger,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { DatabaseService } from './database.service';
-import { GlobalExceptionFilter } from './filters/global-exception.filter';
-import * as dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
+import cookieParser from 'cookie-parser';
+import express, { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
-import { CsrfInterceptor } from './interceptors/csrf.interceptor';
+import { resolve } from 'path';
+import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
-dotenv.config({ path: __dirname + '/../.env' });
+async function bootstrap(): Promise<void> {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bodyParser: false,
+    bufferLogs: true,
+  });
 
-const PORT = process.env.PORT || 3002;
-const logger = new Logger('Bootstrap');
+  const logger = new Logger('Bootstrap');
 
-async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useLogger(logger);
 
-  // Test database connection
-  const databaseService = app.get(DatabaseService);
-  try {
-    const isConnected = await databaseService.testConnection();
-    if (isConnected) {
-      logger.log('✅ Database connection successful');
-    } else {
-      logger.error('❌ Database connection failed');
-      process.exit(1);
-    }
-  } catch (error) {
-    logger.error('❌ Database connection error:', error.message);
-    process.exit(1);
+  const configService = app.get(ConfigService);
+
+  const nodeEnv = configService.getOrThrow<string>('app.nodeEnv');
+
+  const isProduction = nodeEnv === 'production';
+
+  const port = configService.getOrThrow<number>('app.port');
+
+  const frontendUrl = configService.getOrThrow<string>('app.frontendUrl');
+
+  const trustProxyHops = configService.getOrThrow<number>('app.trustProxyHops');
+
+  const expressInstance = app.getHttpAdapter().getInstance();
+
+  if (trustProxyHops > 0) {
+    expressInstance.set('trust proxy', trustProxyHops);
   }
 
-  // Enable cookie parser
-  app.use(cookieParser());
+  expressInstance.disable('x-powered-by');
 
-  // Helmet for security headers (must be before other middleware)
   app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles for AOS and Tailwind
-          imgSrc: ["'self'", 'data:', 'https:'],
-          connectSrc: [
-            "'self'",
-            process.env.FRONTEND_URL || 'http://localhost:3000',
-          ],
-          fontSrc: ["'self'", 'data:'],
-          objectSrc: ["'none'"],
-          mediaSrc: ["'self'"],
-          frameSrc: ["'none'"],
-          upgradeInsecureRequests:
-            process.env.NODE_ENV === 'production' ? [] : null,
-        },
-      },
-      crossOriginEmbedderPolicy: false, // Allow external resources if needed
-      crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow CORS resources
+    express.json({
+      limit: '1mb',
+      strict: true,
     }),
   );
 
-  // Additional security headers
-  app.use((req, res, next) => {
-    // Strict Transport Security (HSTS) - only in production
-    if (process.env.NODE_ENV === 'production') {
-      res.setHeader(
-        'Strict-Transport-Security',
-        'max-age=31536000; includeSubDomains; preload',
-      );
-    }
+  app.use(
+    express.urlencoded({
+      extended: false,
+      limit: '64kb',
+      parameterLimit: 50,
+    }),
+  );
 
-    // Additional security headers
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('X-XSS-Protection', '1; mode=block');
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader(
+  app.use(cookieParser());
+
+  app.use(
+    helmet({
+      contentSecurityPolicy: isProduction
+        ? {
+            directives: {
+              defaultSrc: ["'none'"],
+              frameAncestors: ["'none'"],
+              baseUri: ["'none'"],
+              formAction: ["'none'"],
+            },
+          }
+        : false,
+
+      crossOriginEmbedderPolicy: false,
+
+      crossOriginResourcePolicy: {
+        policy: 'cross-origin',
+      },
+
+      hsts: isProduction
+        ? {
+            maxAge: 31_536_000,
+            includeSubDomains: true,
+            preload: true,
+          }
+        : false,
+
+      referrerPolicy: {
+        policy: 'no-referrer',
+      },
+    }),
+  );
+
+  app.use((request: Request, response: Response, next: NextFunction) => {
+    response.setHeader(
       'Permissions-Policy',
-      'geolocation=(), microphone=(), camera=()',
+      'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
     );
 
-    // Prevent caching of sensitive data
-    if (req.path.startsWith('/auth') || req.path.startsWith('/dashboard')) {
-      res.setHeader(
-        'Cache-Control',
-        'no-store, no-cache, must-revalidate, private',
-      );
-      res.setHeader('Pragma', 'no-cache');
-      res.setHeader('Expires', '0');
+    response.setHeader('X-Content-Type-Options', 'nosniff');
+
+    if (request.path.startsWith('/auth')) {
+      response.setHeader('Cache-Control', 'no-store, private');
+
+      response.setHeader('Pragma', 'no-cache');
     }
 
     next();
   });
 
-  // Serve static files from uploads directory (includes all subdirectories)
-  app.useStaticAssets(join(process.cwd(), 'uploads'), {
-    prefix: '/uploads/',
+  app.enableCors({
+    origin(origin, callback) {
+      if (origin === undefined || origin === frontendUrl) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error('Origin is not allowed'));
+    },
+
+    credentials: true,
+
+    methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+
+    allowedHeaders: [
+      'Accept',
+      'Authorization',
+      'Content-Type',
+      'X-CSRF-Token',
+      'X-Request-Id',
+      'Idempotency-Key',
+    ],
+
+    exposedHeaders: [
+      'X-Request-Id',
+      'RateLimit-Limit',
+      'RateLimit-Remaining',
+      'RateLimit-Reset',
+    ],
+
+    maxAge: 86_400,
   });
 
-  // Global CSRF interceptor to set CSRF token cookie
-  app.useGlobalInterceptors(new CsrfInterceptor());
+  const uploadDirectory = resolve(
+    process.cwd(),
+    configService.getOrThrow<string>('upload.directory'),
+  );
 
-  // Enable global validation
+  app.useStaticAssets(uploadDirectory, {
+    prefix: '/uploads/',
+    fallthrough: false,
+    dotfiles: 'deny',
+    index: false,
+    maxAge: isProduction ? '7d' : 0,
+    immutable: isProduction,
+
+    setHeaders(response: Response) {
+      response.setHeader('X-Content-Type-Options', 'nosniff');
+
+      response.setHeader(
+        'Content-Security-Policy',
+        "default-src 'none'; sandbox",
+      );
+
+      response.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    },
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+
+      transformOptions: {
+        enableImplicitConversion: false,
+      },
+
+      stopAtFirstError: false,
+
       exceptionFactory: (errors) => {
-        const result = errors.map((error) => ({
-          property: error.property,
-          value: error.value,
-          constraints: error.constraints,
-        }));
-        return new HttpException(
-          {
-            message: 'Validation failed',
-            errors: result,
-          },
-          HttpStatus.BAD_REQUEST,
-        );
+        return new BadRequestException({
+          message: 'Validation failed',
+
+          details: errors.map((error) => ({
+            field: error.property,
+            constraints: error.constraints ?? {},
+          })),
+        });
       },
     }),
   );
 
-  // Enable global exception filter
   app.useGlobalFilters(new GlobalExceptionFilter());
 
-  // Enable CORS with secure settings
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-  app.enableCors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, Postman, etc.) in development
-      if (!origin && process.env.NODE_ENV === 'development') {
-        return callback(null, true);
-      }
+  app.enableShutdownHooks();
 
-      // Validate origin
-      if (origin === frontendUrl || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true, // Allow cookies
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'Cookie',
-      'X-CSRF-Token',
-      'x-api-key',
-    ],
-    exposedHeaders: ['Set-Cookie'],
-    maxAge: 86400, // 24 hours
-  });
+  const swaggerEnabled =
+    configService.getOrThrow<boolean>('app.swaggerEnabled');
 
-  const config = new DocumentBuilder()
-    .setTitle('Lanmic API')
-    .setDescription(
-      'API documentation for Lanmic application with authentication system',
-    )
-    .setVersion('1.0')
-    .addTag('Auth', 'Authentication endpoints')
-    .addTag('lanmic', 'General application endpoints')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
+  if (swaggerEnabled) {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('LANMIC API')
+      .setDescription('LANMIC administrative and public API')
+      .setVersion('1.0.0')
+      .addCookieAuth('access_token')
+      .build();
+
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+
+    SwaggerModule.setup('docs', app, document, {
+      swaggerOptions: {
+        persistAuthorization: false,
       },
-      'JWT-auth',
-    )
-    .build();
+    });
+  }
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  await app.listen(port, '0.0.0.0');
 
-  await app.listen(PORT);
-  console.log(`Application is running on: http://localhost:${PORT}`);
-  console.log(
-    `Swagger documentation available at: http://localhost:${PORT}/api`,
-  );
+  logger.log(`LANMIC API listening on port ${port} (${nodeEnv})`);
 }
-bootstrap();
+
+void bootstrap();

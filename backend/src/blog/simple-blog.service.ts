@@ -1,47 +1,26 @@
-import {
-  Injectable,
-  NotFoundException,
-  Inject,
-  forwardRef,
-} from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import sanitizeHtml from 'sanitize-html';
 import { DatabaseService } from '../database.service';
-import { CreateBlogPostDto, UpdateBlogPostDto } from './dto/blog.dto';
 import { SimpleWebSocketGateway } from '../websocket/simple-websocket.gateway';
+import { CreateBlogPostDto, UpdateBlogPostDto } from './dto/blog.dto';
 
-/**
- * Simple Blog Service with Real-time Updates
- *
- * This service provides real-time blog updates WITHOUT requiring Kafka.
- * It directly broadcasts events via WebSocket when blog operations occur.
- *
- * Benefits of this approach:
- * - No Docker or Kafka setup required
- * - Simpler to understand and maintain
- * - Still provides real-time updates
- * - Perfect for development and small applications
- * - Faster setup and deployment
- */
 @Injectable()
 export class SimpleBlogService {
   constructor(
-    private databaseService: DatabaseService,
+    private readonly databaseService: DatabaseService,
     @Inject(forwardRef(() => SimpleWebSocketGateway))
-    private webSocketGateway: SimpleWebSocketGateway,
+    private readonly webSocketGateway: SimpleWebSocketGateway,
   ) {}
 
-  private get prisma() {
-    return this.databaseService.getPrismaClient();
-  }
-
-  async findAll(userId: number) {
-    return await this.prisma.blogPost.findMany({
+  findAll(userId: number) {
+    return this.databaseService.blogPost.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findPublished() {
-    return await this.prisma.blogPost.findMany({
+  findPublished() {
+    return this.databaseService.blogPost.findMany({
       where: { published: true },
       orderBy: { createdAt: 'desc' },
       select: {
@@ -62,95 +41,115 @@ export class SimpleBlogService {
     });
   }
 
-  async findOne(id: number, userId: number) {
-    return await this.prisma.blogPost.findFirst({
-      where: { id, userId },
-    });
+  findOne(id: number, userId: number) {
+    return this.databaseService.blogPost.findFirst({ where: { id, userId } });
   }
 
-  async create(createBlogPostDto: CreateBlogPostDto, userId: number) {
-    // Create the blog post in the database
-    const newBlogPost = await this.prisma.blogPost.create({
+  async create(dto: CreateBlogPostDto, userId: number) {
+    const created = await this.databaseService.blogPost.create({
       data: {
-        ...createBlogPostDto,
+        ...dto,
+        title: this.plain(dto.title),
+        description: this.plain(dto.description),
+        category: this.plain(dto.category),
+        authorName: this.plain(dto.authorName),
+        authorPosition: dto.authorPosition
+          ? this.plain(dto.authorPosition)
+          : undefined,
+        content: this.richText(dto.content),
         userId,
       },
     });
-
-    // Broadcast the blog created event directly via WebSocket
-    // This provides immediate real-time updates to admin users
-    // WITHOUT requiring Kafka or Docker!
-    this.webSocketGateway.broadcastBlogCreated(newBlogPost);
-
-    return newBlogPost;
+    this.webSocketGateway.broadcastBlogCreated(created);
+    return created;
   }
 
-  async update(
-    id: number,
-    updateBlogPostDto: UpdateBlogPostDto,
-    userId: number,
-  ) {
-    const existingPost = await this.prisma.blogPost.findFirst({
+  async update(id: number, dto: UpdateBlogPostDto, userId: number) {
+    const existing = await this.databaseService.blogPost.findFirst({
       where: { id, userId },
     });
+    if (!existing) return null;
 
-    if (!existingPost) {
-      return null;
-    }
-
-    // Update the blog post in the database
-    const updatedBlogPost = await this.prisma.blogPost.update({
+    const updated = await this.databaseService.blogPost.update({
       where: { id },
-      data: updateBlogPostDto,
+      data: {
+        ...dto,
+        title: dto.title ? this.plain(dto.title) : undefined,
+        description: dto.description ? this.plain(dto.description) : undefined,
+        category: dto.category ? this.plain(dto.category) : undefined,
+        authorName: dto.authorName ? this.plain(dto.authorName) : undefined,
+        authorPosition: dto.authorPosition
+          ? this.plain(dto.authorPosition)
+          : dto.authorPosition,
+        content: dto.content ? this.richText(dto.content) : undefined,
+      },
     });
-
-    // Broadcast the blog updated event directly via WebSocket
-    // This provides immediate real-time updates to admin users
-    this.webSocketGateway.broadcastBlogUpdated(updatedBlogPost);
-
-    return updatedBlogPost;
+    this.webSocketGateway.broadcastBlogUpdated(updated);
+    return updated;
   }
 
   async remove(id: number, userId: number) {
-    const existingPost = await this.prisma.blogPost.findFirst({
+    const existing = await this.databaseService.blogPost.findFirst({
       where: { id, userId },
     });
+    if (!existing) return null;
 
-    if (!existingPost) {
-      return null;
-    }
-
-    // Delete the blog post from the database
-    await this.prisma.blogPost.delete({
-      where: { id },
-    });
-
-    // Broadcast the blog deleted event directly via WebSocket
-    // This provides immediate real-time updates to admin users
+    await this.databaseService.blogPost.delete({ where: { id } });
     this.webSocketGateway.broadcastBlogDeleted(id);
-
     return true;
   }
 
   async togglePublish(id: number, userId: number) {
-    const existingPost = await this.prisma.blogPost.findFirst({
+    const existing = await this.databaseService.blogPost.findFirst({
       where: { id, userId },
     });
+    if (!existing) return null;
 
-    if (!existingPost) {
-      return null;
-    }
-
-    // Update the published status in the database
-    const updatedBlogPost = await this.prisma.blogPost.update({
+    const updated = await this.databaseService.blogPost.update({
       where: { id },
-      data: { published: !existingPost.published },
+      data: { published: !existing.published },
     });
+    this.webSocketGateway.broadcastBlogPublished(updated);
+    return updated;
+  }
 
-    // Broadcast the blog published event directly via WebSocket
-    // This provides immediate real-time updates to admin users
-    this.webSocketGateway.broadcastBlogPublished(updatedBlogPost);
+  private plain(value: string): string {
+    return sanitizeHtml(value, {
+      allowedTags: [],
+      allowedAttributes: {},
+    }).trim();
+  }
 
-    return updatedBlogPost;
+  private richText(value: string): string {
+    return sanitizeHtml(value, {
+      allowedTags: [
+        'p',
+        'br',
+        'strong',
+        'em',
+        'u',
+        's',
+        'blockquote',
+        'ul',
+        'ol',
+        'li',
+        'h2',
+        'h3',
+        'h4',
+        'a',
+        'code',
+        'pre',
+      ],
+      allowedAttributes: {
+        a: ['href', 'title', 'target', 'rel'],
+      },
+      allowedSchemes: ['http', 'https', 'mailto'],
+      transformTags: {
+        a: sanitizeHtml.simpleTransform('a', {
+          rel: 'noopener noreferrer',
+          target: '_blank',
+        }),
+      },
+    });
   }
 }

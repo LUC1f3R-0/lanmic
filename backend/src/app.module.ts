@@ -1,62 +1,96 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerModule } from '@nestjs/throttler';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DatabaseService } from './database.service';
 import { AuthModule } from './auth/auth.module';
 import { SimpleBlogModule } from './blog/simple-blog.module';
-import { TeamModule } from './team/team.module';
+import configuration from './config/configuration';
+import { envValidationSchema } from './config/env.validation';
+import { ContactModule } from './contact/contact.module';
+import { DatabaseModule } from './database.module';
 import { ExecutiveModule } from './executive/executive.module';
+import { CsrfGuard } from './guards/csrf.guard';
+import { HealthModule } from './health/health.module';
+import { SecurityModule } from './security/security.module';
+import { AppThrottlerGuard } from './security/app-throttler.guard';
+import { TeamModule } from './team/team.module';
 import { TestimonialsModule } from './testimonials/testimonials.module';
 import { UploadModule } from './upload/upload.module';
 import { SimpleWebSocketModule } from './websocket/simple-websocket.module';
-import { ContactModule } from './contact/contact.module';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
-import { ApiKeyMiddleware } from './middleware/api-key.middleware';
 
 @Module({
   imports: [
-    // Rate limiting configuration
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      expandVariables: false,
+      load: [configuration],
+      validationSchema: envValidationSchema,
+      validationOptions: {
+        abortEarly: false,
+        allowUnknown: true,
+      },
+    }),
+
+    ScheduleModule.forRoot(),
+
+    DatabaseModule,
+    SecurityModule,
+
+    // Uses NestJS's built-in in-memory throttling storage.
+    // The counters reset whenever this Node.js process restarts.
     ThrottlerModule.forRoot([
       {
+        name: 'burst',
+        ttl: 1_000,
+        limit: 15,
+      },
+      {
         name: 'short',
-        ttl: 60000, // 1 minute
-        limit: 10, // 10 requests per minute
+        ttl: 60_000,
+        limit: 120,
       },
       {
         name: 'medium',
-        ttl: 600000, // 10 minutes
-        limit: 100, // 100 requests per 10 minutes
+        ttl: 600_000,
+        limit: 500,
       },
       {
         name: 'long',
-        ttl: 3600000, // 1 hour
-        limit: 1000, // 1000 requests per hour
+        ttl: 3_600_000,
+        limit: 3_000,
       },
     ]),
+
     AuthModule,
+    SimpleWebSocketModule,
     SimpleBlogModule,
     TeamModule,
     ExecutiveModule,
     TestimonialsModule,
     UploadModule,
-    SimpleWebSocketModule,
     ContactModule,
+    HealthModule,
   ],
+
   controllers: [AppController],
+
   providers: [
     AppService,
-    DatabaseService,
-    // Global rate limiting guard
+
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: AppThrottlerGuard,
+    },
+
+    {
+      provide: APP_GUARD,
+      useClass: CsrfGuard,
     },
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    // Apply API key middleware to all routes under the main API path
-    consumer.apply(ApiKeyMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}

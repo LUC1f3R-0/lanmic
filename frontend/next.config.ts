@@ -2,28 +2,25 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        port: "",
+        pathname: "/**",
       },
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3002',
-        pathname: '/uploads/**',
+        protocol: "http",
+        hostname: "localhost",
+        port: "3002",
+        pathname: "/uploads/**",
       },
     ],
   },
-  // Use webpack for production builds (Turbopack is default in Next.js 16)
   turbopack: {},
-  // Webpack configuration for production builds (Turbopack handles Node.js polyfills automatically)
   webpack: (config, { isServer, dev }) => {
-    // Only apply webpack fallbacks for production builds or when not using turbopack
     if (!isServer && !dev) {
-      // Fallbacks for Node.js modules in client-side code
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -45,6 +42,7 @@ const nextConfig: NextConfig = {
         child_process: false,
       };
     }
+
     return config;
   },
 };

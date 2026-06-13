@@ -1,36 +1,54 @@
+import { Transform } from 'class-transformer';
 import {
-  IsString,
-  IsOptional,
   IsBoolean,
   IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
   IsUrl,
-  Min,
+  Max,
   MaxLength,
+  Min,
 } from 'class-validator';
 
+const trim = ({ value }: { value: unknown }): unknown =>
+  typeof value === 'string' ? value.trim() : value;
+
 export class CreateExecutiveLeadershipDto {
+  @Transform(trim)
   @IsString()
+  @IsNotEmpty()
   @MaxLength(100)
-  name: string;
+  name!: string;
 
+  @Transform(trim)
   @IsString()
-  @MaxLength(200)
-  position: string;
+  @IsNotEmpty()
+  @MaxLength(150)
+  position!: string;
 
+  @Transform(trim)
   @IsString()
-  @MaxLength(1000)
-  description: string;
+  @IsNotEmpty()
+  @MaxLength(10_000)
+  description!: string;
 
+  @Transform(trim)
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   image?: string;
 
+  @Transform(trim)
   @IsOptional()
-  @IsString()
+  @IsUrl({ protocols: ['https'], require_protocol: true })
+  @MaxLength(500)
   linkedinUrl?: string;
 
+  @Transform(trim)
   @IsOptional()
-  @IsString()
+  @IsUrl({ protocols: ['https'], require_protocol: true })
+  @MaxLength(500)
   twitterUrl?: string;
 
   @IsOptional()
@@ -40,35 +58,48 @@ export class CreateExecutiveLeadershipDto {
   @IsOptional()
   @IsInt()
   @Min(1)
+  @Max(10_000)
   displayOrder?: number;
 }
 
 export class UpdateExecutiveLeadershipDto {
+  @Transform(trim)
   @IsOptional()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(100)
   name?: string;
 
+  @Transform(trim)
   @IsOptional()
   @IsString()
-  @MaxLength(200)
+  @IsNotEmpty()
+  @MaxLength(150)
   position?: string;
 
+  @Transform(trim)
   @IsOptional()
   @IsString()
-  @MaxLength(1000)
+  @IsNotEmpty()
+  @MaxLength(10_000)
   description?: string;
 
+  @Transform(trim)
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   image?: string;
 
+  @Transform(trim)
   @IsOptional()
-  @IsString()
+  @IsUrl({ protocols: ['https'], require_protocol: true })
+  @MaxLength(500)
   linkedinUrl?: string;
 
+  @Transform(trim)
   @IsOptional()
-  @IsString()
+  @IsUrl({ protocols: ['https'], require_protocol: true })
+  @MaxLength(500)
   twitterUrl?: string;
 
   @IsOptional()
@@ -78,5 +109,6 @@ export class UpdateExecutiveLeadershipDto {
   @IsOptional()
   @IsInt()
   @Min(1)
+  @Max(10_000)
   displayOrder?: number;
 }

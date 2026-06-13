@@ -7,121 +7,193 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                   Int                   @id @default(autoincrement())
-  email                String                @unique
-  username             String                @unique
-  password             String
-  isVerified           Boolean               @default(false)
-  otp                  String?
-  otpExpiresAt         DateTime?
-  newEmail             String?               // Temporary field to store new email during change process
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
-  refreshTokens        RefreshToken[]
-  blogPosts            BlogPost[]
-  teamMembers          TeamMember[]
-  executiveLeadership  ExecutiveLeadership[]
-  testimonials         Testimonial[]
+enum UserRole {
+  ADMIN
+  EDITOR
+  USER
+}
 
+enum ChallengePurpose {
+  REGISTER
+  PASSWORD_RESET
+  VERIFY_EMAIL
+}
+
+model User {
+  id                  Int                     @id @default(autoincrement())
+  email               String                  @unique @db.VarChar(191)
+  username            String                  @unique @db.VarChar(64)
+  passwordHash        String                  @map("password") @db.VarChar(255)
+  role                UserRole                @default(USER)
+  isActive            Boolean                 @default(true)
+  emailVerifiedAt     DateTime?
+  tokenVersion        Int                     @default(0)
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  sessions            AuthSession[]
+  challenges          VerificationChallenge[]
+  emailChangeRequests EmailChangeRequest[]
+  blogPosts           BlogPost[]
+  teamMembers         TeamMember[]
+  executiveLeadership ExecutiveLeadership[]
+  testimonials        Testimonial[]
+
+  @@index([role, isActive])
   @@map("users")
 }
 
-model RefreshToken {
-  id         Int      @id @default(autoincrement())
-  token      String   @unique
-  expiresAt  DateTime
-  revoked    Boolean  @default(false)
-  rememberMe Boolean  @default(false)
-  userId     Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model AuthSession {
+  id            String         @id @default(cuid()) @db.VarChar(191)
+  userId        Int
+  rememberMe    Boolean        @default(false)
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  lastUsedAt    DateTime       @default(now())
+  ipAddress     String?        @db.VarChar(45)
+  userAgent     String?        @db.Text
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokens RefreshToken[]
 
-  @@index([userId], map: "refresh_tokens_userId_fkey")
+  @@index([userId, revokedAt, expiresAt])
+  @@map("auth_sessions")
+}
+
+model RefreshToken {
+  id         String      @id @default(cuid()) @db.VarChar(191)
+  tokenHash  String      @unique @db.Char(64)
+  sessionId  String      @db.VarChar(191)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime    @default(now())
+  session    AuthSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, revokedAt, expiresAt])
   @@map("refresh_tokens")
 }
 
-model BlogPost {
-  id            Int      @id @default(autoincrement())
-  title         String
-  description   String   @db.Text
-  content       String   @db.Text
-  category      String
-  readTime      String?
-  authorName    String
-  authorPosition String?
-  authorImage   String?
-  blogImage     String?
-  published     Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  userId        Int
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model VerificationChallenge {
+  id          String           @id @default(cuid()) @db.VarChar(191)
+  purpose     ChallengePurpose
+  target      String           @db.VarChar(191)
+  codeHash    String           @db.Char(64)
+  grantHash   String?          @unique @db.Char(64)
+  attempts    Int              @default(0)
+  maxAttempts Int              @default(5)
+  expiresAt   DateTime
+  verifiedAt  DateTime?
+  consumedAt  DateTime?
+  userId      Int?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  user        User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId], map: "blog_posts_userId_fkey")
-  @@index([published], map: "blog_posts_published_idx")
-  @@index([category], map: "blog_posts_category_idx")
+  @@index([target, purpose, expiresAt])
+  @@index([userId, purpose, expiresAt])
+  @@map("verification_challenges")
+}
+
+model EmailChangeRequest {
+  id                   String    @id @default(cuid()) @db.VarChar(191)
+  userId               Int
+  newEmail             String?   @db.VarChar(191)
+  currentCodeHash      String    @db.Char(64)
+  currentCodeExpiresAt DateTime
+  currentAttempts      Int       @default(0)
+  currentVerifiedAt    DateTime?
+  newCodeHash          String?   @db.Char(64)
+  newCodeExpiresAt     DateTime?
+  newAttempts          Int       @default(0)
+  newVerifiedAt        DateTime?
+  expiresAt            DateTime
+  completedAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, completedAt, expiresAt])
+  @@map("email_change_requests")
+}
+
+model BlogPost {
+  id             Int      @id @default(autoincrement())
+  title          String   @db.VarChar(200)
+  description    String   @db.Text
+  content        String   @db.LongText
+  category       String   @db.VarChar(100)
+  readTime       String?  @db.VarChar(50)
+  authorName     String   @db.VarChar(100)
+  authorPosition String?  @db.VarChar(100)
+  authorImage    String?  @db.VarChar(255)
+  blogImage      String?  @db.VarChar(255)
+  published      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([published, createdAt])
+  @@index([category])
   @@map("blog_posts")
 }
 
 model TeamMember {
-  id            Int      @id @default(autoincrement())
-  name          String
-  position      String
-  description   String   @db.Text
-  image         String?  // Store only the image filename, not full URL
-  department    String?
-  isActive      Boolean  @default(true)
-  displayOrder  Int      @default(1) // For ordering team members (minimum 1)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  userId        Int
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  position     String   @db.VarChar(150)
+  description  String   @db.Text
+  image        String?  @db.VarChar(255)
+  department   String?  @db.VarChar(100)
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId], map: "team_members_userId_fkey")
-  @@index([isActive], map: "team_members_isActive_idx")
-  @@index([displayOrder], map: "team_members_displayOrder_idx")
+  @@index([userId])
+  @@index([isActive, displayOrder])
   @@map("team_members")
 }
 
 model ExecutiveLeadership {
-  id            Int      @id @default(autoincrement())
-  name          String
-  position      String
-  description   String   @db.Text
-  image         String?  // Store only the image filename, not full URL
-  linkedinUrl   String?
-  twitterUrl    String?
-  isActive      Boolean  @default(true)
-  displayOrder  Int      @default(1) // For ordering executive leadership (minimum 1)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  userId        Int
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  position     String   @db.VarChar(150)
+  description  String   @db.Text
+  image        String?  @db.VarChar(255)
+  linkedinUrl  String?  @db.VarChar(500)
+  twitterUrl   String?  @db.VarChar(500)
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId], map: "executive_leadership_userId_fkey")
-  @@index([isActive], map: "executive_leadership_isActive_idx")
-  @@index([displayOrder], map: "executive_leadership_displayOrder_idx")
+  @@index([userId])
+  @@index([isActive, displayOrder])
   @@map("executive_leadership")
 }
 
 model Testimonial {
-  id            Int      @id @default(autoincrement())
-  name          String
-  position      String?
-  company       String?
-  content       String   @db.Text
-  image         String?  // Store only the image filename, not full URL (optional)
-  isActive      Boolean  @default(true)
-  displayOrder  Int      @default(1) // For ordering testimonials (minimum 1)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  userId        Int
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  position     String?  @db.VarChar(150)
+  company      String?  @db.VarChar(150)
+  content      String   @db.Text
+  image        String?  @db.VarChar(255)
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId], map: "testimonials_userId_fkey")
-  @@index([isActive], map: "testimonials_isActive_idx")
-  @@index([displayOrder], map: "testimonials_displayOrder_idx")
+  @@index([userId])
+  @@index([isActive, displayOrder])
   @@map("testimonials")
 }

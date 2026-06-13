@@ -1,158 +1,78 @@
-import {
-  Injectable,
-  NotFoundException,
-  Inject,
-  forwardRef,
-} from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { DatabaseService } from '../database.service';
+import { SimpleWebSocketGateway } from '../websocket/simple-websocket.gateway';
 import {
   CreateTeamMemberDto,
   UpdateTeamMemberDto,
 } from './dto/team-member.dto';
-import { KafkaService } from '../kafka/kafka.service';
-import { SimpleWebSocketGateway } from '../websocket/simple-websocket.gateway';
 
 @Injectable()
 export class TeamService {
   constructor(
-    private databaseService: DatabaseService,
-    @Inject(forwardRef(() => KafkaService))
-    private kafkaService: KafkaService,
+    private readonly databaseService: DatabaseService,
     @Inject(forwardRef(() => SimpleWebSocketGateway))
-    private webSocketGateway: SimpleWebSocketGateway,
+    private readonly webSocketGateway: SimpleWebSocketGateway,
   ) {}
 
-  private get prisma() {
-    return this.databaseService.getPrismaClient();
-  }
-
-  async findAll(userId: number) {
-    return await this.prisma.teamMember.findMany({
+  findAll(userId: number) {
+    return this.databaseService.teamMember.findMany({
       where: { userId },
       orderBy: { displayOrder: 'asc' },
     });
   }
 
-  async findActive() {
-    return await this.prisma.teamMember.findMany({
+  findActive() {
+    return this.databaseService.teamMember.findMany({
       where: { isActive: true },
       orderBy: { displayOrder: 'asc' },
     });
   }
 
-  async findOne(id: number, userId: number) {
-    return await this.prisma.teamMember.findFirst({
-      where: { id, userId },
-    });
+  findOne(id: number, userId: number) {
+    return this.databaseService.teamMember.findFirst({ where: { id, userId } });
   }
 
-  async create(createTeamMemberDto: CreateTeamMemberDto, userId: number) {
-    // Create the team member in the database
-    const newTeamMember = await this.prisma.teamMember.create({
-      data: {
-        ...createTeamMemberDto,
-        userId,
-      },
+  async create(dto: CreateTeamMemberDto, userId: number) {
+    const created = await this.databaseService.teamMember.create({
+      data: { ...dto, userId },
     });
-
-    // Publish team member created event to Kafka for real-time updates
-    // This allows other services to react to team member creation
-    await this.kafkaService.publishTeamMemberCreated(
-      newTeamMember.id,
-      newTeamMember,
-    );
-
-    // Broadcast the team member created event to connected WebSocket clients
-    // This provides immediate real-time updates to admin users
-    this.webSocketGateway.broadcastTeamMemberCreated(newTeamMember);
-
-    return newTeamMember;
+    this.webSocketGateway.broadcastTeamMemberCreated(created);
+    return created;
   }
 
-  async update(
-    id: number,
-    updateTeamMemberDto: UpdateTeamMemberDto,
-    userId: number,
-  ) {
-    const existingMember = await this.prisma.teamMember.findFirst({
+  async update(id: number, dto: UpdateTeamMemberDto, userId: number) {
+    const existing = await this.databaseService.teamMember.findFirst({
       where: { id, userId },
     });
-
-    if (!existingMember) {
-      return null;
-    }
-
-    // Update the team member in the database
-    const updatedTeamMember = await this.prisma.teamMember.update({
+    if (!existing) return null;
+    const updated = await this.databaseService.teamMember.update({
       where: { id },
-      data: updateTeamMemberDto,
+      data: dto,
     });
-
-    // Publish team member updated event to Kafka for real-time updates
-    // This allows other services to react to team member updates
-    await this.kafkaService.publishTeamMemberUpdated(
-      updatedTeamMember.id,
-      updatedTeamMember,
-    );
-
-    // Broadcast the team member updated event to connected WebSocket clients
-    // This provides immediate real-time updates to admin users
-    this.webSocketGateway.broadcastTeamMemberUpdated(updatedTeamMember);
-
-    return updatedTeamMember;
+    this.webSocketGateway.broadcastTeamMemberUpdated(updated);
+    return updated;
   }
 
   async remove(id: number, userId: number) {
-    const existingMember = await this.prisma.teamMember.findFirst({
+    const existing = await this.databaseService.teamMember.findFirst({
       where: { id, userId },
     });
-
-    if (!existingMember) {
-      return null;
-    }
-
-    // Delete the team member from the database
-    await this.prisma.teamMember.delete({
-      where: { id },
-    });
-
-    // Publish team member deleted event to Kafka for real-time updates
-    // This allows other services to react to team member deletion
-    await this.kafkaService.publishTeamMemberDeleted(id);
-
-    // Broadcast the team member deleted event to connected WebSocket clients
-    // This provides immediate real-time updates to admin users
+    if (!existing) return null;
+    await this.databaseService.teamMember.delete({ where: { id } });
     this.webSocketGateway.broadcastTeamMemberDeleted(id);
-
     return true;
   }
 
   async toggleActive(id: number, userId: number) {
-    const existingMember = await this.prisma.teamMember.findFirst({
+    const existing = await this.databaseService.teamMember.findFirst({
       where: { id, userId },
     });
-
-    if (!existingMember) {
-      return null;
-    }
-
-    // Update the active status in the database
-    const updatedTeamMember = await this.prisma.teamMember.update({
+    if (!existing) return null;
+    const updated = await this.databaseService.teamMember.update({
       where: { id },
-      data: { isActive: !existingMember.isActive },
+      data: { isActive: !existing.isActive },
     });
-
-    // Publish team member active event to Kafka for real-time updates
-    // This allows other services to react to active status changes
-    await this.kafkaService.publishTeamMemberActive(
-      id,
-      updatedTeamMember.isActive,
-    );
-
-    // Broadcast the team member active event to connected WebSocket clients
-    // This provides immediate real-time updates to admin users
-    this.webSocketGateway.broadcastTeamMemberActive(updatedTeamMember);
-
-    return updatedTeamMember;
+    this.webSocketGateway.broadcastTeamMemberActive(updated);
+    return updated;
   }
 }

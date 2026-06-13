@@ -1,78 +1,112 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Put,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
-  Request,
+  Get,
+  NotFoundException,
+  Param,
   ParseIntPipe,
+  Post,
+  Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
-import { TestimonialsService } from './testimonials.service';
+import { UserRole } from '@prisma/client';
+import { Roles } from '../common/decorators/roles.decorator';
+import { RolesGuard } from '../common/guards/roles.guard';
+import type { AuthenticatedRequest } from '../common/interfaces/authenticated-request.interface';
+import { EmailVerifiedGuard } from '../guards/email-verified.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import {
   CreateTestimonialDto,
   UpdateTestimonialDto,
 } from './dto/testimonial.dto';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { EmailVerifiedGuard } from '../guards/email-verified.guard';
-import { CsrfGuard } from '../guards/csrf.guard';
+import { TestimonialsService } from './testimonials.service';
+
+const CMS_ROLES = [UserRole.ADMIN, UserRole.EDITOR];
 
 @Controller('testimonials')
 export class TestimonialsController {
   constructor(private readonly testimonialsService: TestimonialsService) {}
-
-  @Post()
-  @UseGuards(JwtAuthGuard, EmailVerifiedGuard, CsrfGuard)
-  create(
-    @Body() createTestimonialDto: CreateTestimonialDto,
-    @Request() req: any,
-  ) {
-    return this.testimonialsService.create(createTestimonialDto, req.user.id);
-  }
-
-  @Get()
-  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
-  findAll(@Request() req: any) {
-    return this.testimonialsService.findAll(req.user.id);
-  }
 
   @Get('active')
   findActive() {
     return this.testimonialsService.findActive();
   }
 
+  @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
+  findAll(@Req() request: AuthenticatedRequest) {
+    return this.testimonialsService.findAll(request.user.id);
+  }
+
   @Get(':id')
-  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
-  findOne(@Param('id', ParseIntPipe) id: number, @Request() req: any) {
-    return this.testimonialsService.findOne(id, req.user.id);
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    const testimonial = await this.testimonialsService.findOne(
+      id,
+      request.user.id,
+    );
+    if (!testimonial) throw new NotFoundException('Testimonial not found');
+    return testimonial;
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
+  create(
+    @Body() dto: CreateTestimonialDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.testimonialsService.create(dto, request.user.id);
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard, EmailVerifiedGuard, CsrfGuard)
-  update(
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
+  async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateTestimonialDto: UpdateTestimonialDto,
-    @Request() req: any,
+    @Body() dto: UpdateTestimonialDto,
+    @Req() request: AuthenticatedRequest,
   ) {
-    return this.testimonialsService.update(
+    const testimonial = await this.testimonialsService.update(
       id,
-      updateTestimonialDto,
-      req.user.id,
+      dto,
+      request.user.id,
     );
+    if (!testimonial) throw new NotFoundException('Testimonial not found');
+    return testimonial;
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, EmailVerifiedGuard, CsrfGuard)
-  remove(@Param('id', ParseIntPipe) id: number, @Request() req: any) {
-    return this.testimonialsService.remove(id, req.user.id);
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    const deleted = await this.testimonialsService.remove(id, request.user.id);
+    if (!deleted) throw new NotFoundException('Testimonial not found');
+    return { message: 'Testimonial deleted successfully' };
   }
 
   @Put(':id/active')
-  @UseGuards(JwtAuthGuard, EmailVerifiedGuard, CsrfGuard)
-  toggleActive(@Param('id', ParseIntPipe) id: number, @Request() req: any) {
-    return this.testimonialsService.toggleActive(id, req.user.id);
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
+  async toggleActive(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    const testimonial = await this.testimonialsService.toggleActive(
+      id,
+      request.user.id,
+    );
+    if (!testimonial) throw new NotFoundException('Testimonial not found');
+    return testimonial;
   }
 }

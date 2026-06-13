@@ -1,37 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
-export class DatabaseService {
-  private prisma: PrismaClient;
+export class DatabaseService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
+  private readonly logger = new Logger(DatabaseService.name);
 
   constructor() {
-    this.prisma = new PrismaClient();
+    super({
+      log:
+        process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+    });
   }
 
-  getPrismaClient(): PrismaClient {
-    return this.prisma;
+  async onModuleInit(): Promise<void> {
+    await this.$connect();
+    await this.$queryRaw`SELECT 1`;
+
+    this.logger.log('Database connection established');
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.$disconnect();
   }
 
   async testConnection(): Promise<boolean> {
     try {
-      // Try to connect to the database
-      await this.prisma.$connect();
-
-      // Test a simple query to ensure the connection is working
-      await this.prisma.$queryRaw`SELECT 1 as test`;
-
+      await this.$queryRaw`SELECT 1`;
       return true;
-    } catch (error) {
-      console.error('Database connection failed:', error);
+    } catch {
       return false;
-    } finally {
-      // Always disconnect after the test
-      await this.prisma.$disconnect();
     }
   }
 
-  async onModuleDestroy() {
-    await this.prisma.$disconnect();
+  getPrismaClient(): DatabaseService {
+    return this;
   }
 }

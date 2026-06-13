@@ -1,87 +1,56 @@
 import { Injectable } from '@nestjs/common';
-import { Response, CookieOptions } from 'express';
+import { ConfigService } from '@nestjs/config';
+import type { CookieOptions, Response } from 'express';
 
 @Injectable()
 export class CookieService {
-  private readonly ACCESS_TOKEN_COOKIE_NAME = 'access_token';
-  private readonly REFRESH_TOKEN_COOKIE_NAME = 'refresh_token';
+  constructor(private readonly configService: ConfigService) {}
 
-  private getSameSite(): 'lax' | 'strict' | 'none' {
-    const value = (process.env.COOKIE_SAME_SITE || 'lax').toLowerCase();
+  setAuthCookies(
+    response: Response,
+    accessToken: string,
+    refreshToken: string,
+    rememberMe: boolean,
+  ): void {
+    const accessTtlSeconds = this.configService.getOrThrow<number>(
+      'auth.accessTtlSeconds',
+    );
+    const refreshTtlSeconds = rememberMe
+      ? this.configService.getOrThrow<number>('auth.refreshRememberTtlSeconds')
+      : this.configService.getOrThrow<number>('auth.refreshTtlSeconds');
 
-    if (value === 'strict' || value === 'lax' || value === 'none') {
-      return value;
-    }
+    response.cookie('access_token', accessToken, {
+      ...this.baseCookieOptions(),
+      httpOnly: true,
+      maxAge: accessTtlSeconds * 1000,
+    });
 
-    return 'lax';
+    response.cookie('refresh_token', refreshToken, {
+      ...this.baseCookieOptions(),
+      httpOnly: true,
+      maxAge: refreshTtlSeconds * 1000,
+    });
   }
 
-  private getCookieOptions(): CookieOptions {
-    const sameSite = this.getSameSite();
-    const isProduction = process.env.NODE_ENV === 'production';
+  clearAuthCookies(response: Response): void {
+    const options = this.baseCookieOptions();
+    response.clearCookie('access_token', options);
+    response.clearCookie('refresh_token', options);
+  }
+
+  private baseCookieOptions(): CookieOptions {
+    const isProduction =
+      this.configService.getOrThrow<string>('app.nodeEnv') === 'production';
+    const sameSite = this.configService.getOrThrow<'lax' | 'strict' | 'none'>(
+      'cookie.sameSite',
+    );
+    const domain = this.configService.get<string>('cookie.domain');
 
     return {
-      httpOnly: true,
-      secure: sameSite === 'none' ? true : isProduction,
+      secure: isProduction,
       sameSite,
+      domain: domain || undefined,
       path: '/',
     };
-  }
-
-  setAccessTokenCookie(res: Response, token: string, expiresIn: string): void {
-    const maxAge = this.parseExpiryToMs(expiresIn);
-
-    res.cookie(this.ACCESS_TOKEN_COOKIE_NAME, token, {
-      ...this.getCookieOptions(),
-      maxAge,
-    });
-  }
-
-  setRefreshTokenCookie(res: Response, token: string, expiresIn: string): void {
-    const maxAge = this.parseExpiryToMs(expiresIn);
-
-    res.cookie(this.REFRESH_TOKEN_COOKIE_NAME, token, {
-      ...this.getCookieOptions(),
-      maxAge,
-    });
-  }
-
-  clearAccessTokenCookie(res: Response): void {
-    res.clearCookie(this.ACCESS_TOKEN_COOKIE_NAME, {
-      ...this.getCookieOptions(),
-    });
-  }
-
-  clearRefreshTokenCookie(res: Response): void {
-    res.clearCookie(this.REFRESH_TOKEN_COOKIE_NAME, {
-      ...this.getCookieOptions(),
-    });
-  }
-
-  clearAllAuthCookies(res: Response): void {
-    this.clearAccessTokenCookie(res);
-    this.clearRefreshTokenCookie(res);
-  }
-
-  private parseExpiryToMs(expiry: string): number {
-    const unit = expiry.slice(-1);
-    const value = parseInt(expiry.slice(0, -1), 10);
-
-    if (Number.isNaN(value)) {
-      return 15 * 60 * 1000;
-    }
-
-    switch (unit) {
-      case 's':
-        return value * 1000;
-      case 'm':
-        return value * 60 * 1000;
-      case 'h':
-        return value * 60 * 60 * 1000;
-      case 'd':
-        return value * 24 * 60 * 60 * 1000;
-      default:
-        return 15 * 60 * 1000;
-    }
   }
 }

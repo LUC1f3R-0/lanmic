@@ -14,6 +14,7 @@ import { getDisplayImageUrl } from "@/lib/imageUtils";
 import "swiper/css";
 import "swiper/css/pagination";
 
+import BackendImage from "@/components/BackendImage";
 const HERO_VIDEO_SRC =
   process.env.NEXT_PUBLIC_HERO_VIDEO_URL?.trim() ||
   "/video/08_Lanmic_Polymers_Video.mp4";
@@ -169,7 +170,7 @@ export default function Home() {
               data-aos-easing="ease-out-cubic"
               data-large-logo
             >
-              <div className="relative group">
+              {/*<div className="relative group">
                 <Image
                   src="/LMC_LFO_LOGO.png"
                   alt="LANMIC Polymers Logo"
@@ -179,7 +180,7 @@ export default function Home() {
                   style={{ width: 'auto', height: 'auto' }}
                   priority
                 />
-              </div>
+              </div>*/}
             </div>
             
             <h1
@@ -678,17 +679,12 @@ export default function Home() {
                   data-aos-easing="ease-out-cubic"
                 >
                   <div className="relative overflow-hidden">
-                    <Image
-                      src={getDisplayImageUrl(post.blogImage)}
-                      alt={post.title}
-                      width={400}
-                      height={250}
-                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                      }}
-                    />
+                    <BackendImage
+  src={post.blogImage}
+  alt={post.title}
+  type="blog"
+  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+/>
                     <div className="absolute top-4 left-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         post.category === 'Technology' ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white' :
@@ -719,17 +715,12 @@ export default function Home() {
                       {post.description}
                     </p>
                     <div className="flex items-center">
-                      <Image
-                        src={getDisplayImageUrl(post.authorImage, 'author')}
-                        alt={post.authorName}
-                        width={40}
-                        height={40}
-                        className="w-10 h-10 rounded-full mr-3"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
+                      <BackendImage
+  src={post.authorImage}
+  alt={post.authorName}
+  type="author"
+  className="w-10 h-10 rounded-full mr-3"
+/>
                       <div>
                         <div className="font-semibold text-gray-900">
                           {post.authorName}

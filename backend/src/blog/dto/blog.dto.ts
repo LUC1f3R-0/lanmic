@@ -1,85 +1,136 @@
-import { IsString, IsOptional, IsBoolean, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
+
+const trim = ({ value }: { value: unknown }): unknown =>
+  typeof value === 'string' ? value.trim() : value;
 
 export class CreateBlogPostDto {
+  @Transform(trim)
   @IsString()
   @IsNotEmpty()
-  title: string;
+  @MaxLength(200)
+  title!: string;
 
+  @Transform(trim)
   @IsString()
   @IsNotEmpty()
-  description: string;
+  @MaxLength(10_000)
+  description!: string;
 
+  @Transform(trim)
   @IsString()
   @IsNotEmpty()
-  content: string;
+  @MaxLength(250_000)
+  content!: string;
 
+  @Transform(trim)
   @IsString()
   @IsNotEmpty()
-  category: string;
+  @MaxLength(100)
+  category!: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(50)
   readTime?: string;
 
+  @Transform(trim)
   @IsString()
   @IsNotEmpty()
-  authorName: string;
+  @MaxLength(100)
+  authorName!: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(100)
   authorPosition?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(255)
   authorImage?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(255)
   blogImage?: string;
 
-  @IsBoolean()
   @IsOptional()
+  @IsBoolean()
   published?: boolean;
 }
 
 export class UpdateBlogPostDto {
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(200)
   title?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(10_000)
   description?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(250_000)
   content?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
   category?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(50)
   readTime?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
   authorName?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(100)
   authorPosition?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(255)
   authorImage?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(255)
   blogImage?: string;
 
-  @IsBoolean()
   @IsOptional()
+  @IsBoolean()
   published?: boolean;
 }

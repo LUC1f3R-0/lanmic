@@ -1,1232 +1,1029 @@
 import {
-  Injectable,
-  UnauthorizedException,
   BadRequestException,
-  NotFoundException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
+import {
+  ChallengePurpose,
+  Prisma,
+  User,
+  UserRole,
+  VerificationChallenge,
+} from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import type { Response } from 'express';
 import { DatabaseService } from '../database.service';
+import type { AuthenticatedUser } from '../common/interfaces/authenticated-user.interface';
+import { CryptoService } from '../security/crypto.service';
 import { CookieService } from './cookie.service';
 import { EmailService } from './email.service';
 import { TokenCleanupService } from './token-cleanup.service';
 import {
-  LoginDto,
-  RefreshTokenDto,
-  ForgotPasswordDto,
-  VerifyOtpDto,
-  VerifyEmailChangeOtpDto,
-  ResetPasswordDto,
-  ConfirmEmailChangeDto,
   ChangePasswordDto,
+  CompleteRegistrationDto,
+  ConfirmEmailChangeDto,
+  ForgotPasswordDto,
+  LoginDto,
+  RequestNewEmailOtpDto,
+  RequestRegistrationOtpDto,
+  VerifyEmailChangeOtpDto,
+  VerifyOtpDto,
+  ResetPasswordDto,
 } from './dto';
+
+interface RequestMetadata {
+  ipAddress?: string;
+  userAgent?: string;
+}
+
+interface SessionTokens {
+  accessToken: string;
+  refreshToken: string;
+  sessionId: string;
+}
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
+  private static readonly OTP_TTL_MS = 10 * 60 * 1000;
+  private static readonly GRANT_TTL_MS = 15 * 60 * 1000;
+  private static readonly EMAIL_CHANGE_TTL_MS = 30 * 60 * 1000;
+  private static readonly PASSWORD_COST = 12;
+
   constructor(
-    private databaseService: DatabaseService,
-    private jwtService: JwtService,
-    private cookieService: CookieService,
-    private emailService: EmailService,
-    private tokenCleanupService: TokenCleanupService,
+    private readonly databaseService: DatabaseService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly cryptoService: CryptoService,
+    private readonly cookieService: CookieService,
+    private readonly emailService: EmailService,
+    private readonly tokenCleanupService: TokenCleanupService,
   ) {}
 
-  async login(loginDto: LoginDto, res: Response) {
-    const { email, password, rememberMe } = loginDto;
-
-    console.log('Auth Service: Login attempt:', {
-      email: email,
-      hasPassword: !!password,
-      passwordLength: password?.length,
-      rememberMe: rememberMe,
-    });
-
-    const user = await this.databaseService.getPrismaClient().user.findUnique({
+  async login(
+    dto: LoginDto,
+    response: Response,
+    metadata: RequestMetadata,
+  ): Promise<{
+    message: string;
+    user: ReturnType<AuthService['toUserResponse']>;
+  }> {
+    const email = this.normalizeEmail(dto.email);
+    const user = await this.databaseService.user.findUnique({
       where: { email },
     });
 
-    if (!user) {
-      console.log('Auth Service: User not found for email:', email);
+    if (!user || !user.isActive) {
+      await this.performDummyPasswordCheck(dto.password);
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    console.log('Auth Service: User found:', {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      hasPassword: !!user.password,
-      isVerified: user.isVerified,
-    });
-
-    if (!user.password) {
-      console.log('Auth Service: User has no password set');
+    const validPassword = await bcrypt.compare(dto.password, user.passwordHash);
+    if (!validPassword) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log('Auth Service: Password validation result:', isPasswordValid);
-
-    if (!isPasswordValid) {
-      console.log(
-        'Auth Service: Password validation failed for user:',
-        user.id,
-      );
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const updateData: any = {
-      isVerified: false,
-    };
-
-    if (!user.newEmail) {
-      updateData.otp = null;
-      updateData.otpExpiresAt = null;
-    }
-
-    await this.databaseService.getPrismaClient().user.update({
-      where: { id: user.id },
-      data: updateData,
-    });
-
-    const beforeCleanup = await this.getUserTokenCount(user.id);
-    await this.cleanupAllUserTokens(user.id);
-    const afterCleanup = await this.getUserTokenCount(user.id);
-
-    const tokens = await this.generateTokens(user.id, rememberMe);
-    const afterLogin = await this.getUserTokenCount(user.id);
-
-    console.log(
-      `Auth Service: Token cleanup for user ${user.id}: ${beforeCleanup} -> ${afterCleanup} -> ${afterLogin} tokens`,
+    const tokens = await this.createSession(
+      user,
+      Boolean(dto.rememberMe),
+      metadata,
     );
-
-    console.log('Auth Service: Generated tokens:', {
-      hasAccessToken: !!tokens.accessToken,
-      hasRefreshToken: !!tokens.refreshToken,
-      accessTokenLength: tokens.accessToken?.length,
-      refreshTokenLength: tokens.refreshToken?.length,
-    });
-
-    const accessTokenExpiry = rememberMe
-      ? process.env.ACCESS_TOKEN_EXPIRY_REMEMBER || '24h'
-      : process.env.ACCESS_TOKEN_EXPIRY || '15m';
-
-    const refreshTokenExpiry = rememberMe
-      ? process.env.REFRESH_TOKEN_EXPIRY_REMEMBER || '30d'
-      : process.env.REFRESH_TOKEN_EXPIRY || '7d';
-
-    this.cookieService.setAccessTokenCookie(
-      res,
+    this.cookieService.setAuthCookies(
+      response,
       tokens.accessToken,
-      accessTokenExpiry,
-    );
-
-    this.cookieService.setRefreshTokenCookie(
-      res,
       tokens.refreshToken,
-      refreshTokenExpiry,
-    );
-
-    const updatedUser = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { id: user.id },
-      });
-
-    return {
-      message: updatedUser?.isVerified
-        ? 'Login successful'
-        : 'Login successful - Email verification required',
-      user: {
-        id: updatedUser?.id || user.id,
-        email: updatedUser?.email || user.email,
-        username: updatedUser?.username || user.username,
-        isVerified: updatedUser?.isVerified || false,
-      },
-    };
-  }
-
-  async refreshToken(refreshTokenDto: RefreshTokenDto, res: Response) {
-    const { refreshToken } = refreshTokenDto;
-
-    const tokenRecord = await this.databaseService
-      .getPrismaClient()
-      .refreshToken.findUnique({
-        where: { token: refreshToken },
-        include: { user: true },
-      });
-
-    if (!tokenRecord) {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
-
-    if (tokenRecord.revoked) {
-      throw new UnauthorizedException('Refresh token has been revoked');
-    }
-
-    if (new Date() > tokenRecord.expiresAt) {
-      await this.cleanupUserTokens(tokenRecord.userId);
-      throw new UnauthorizedException('Refresh token has expired');
-    }
-
-    await this.databaseService.getPrismaClient().refreshToken.delete({
-      where: { id: tokenRecord.id },
-    });
-
-    console.log(
-      `Auth Service: Deleted old refresh token with ID ${tokenRecord.id} during refresh`,
-    );
-
-    if (!tokenRecord.rememberMe) {
-      await this.tokenCleanupService.cleanupAllTokensForUser(
-        tokenRecord.user.id,
-      );
-
-      this.cookieService.clearAllAuthCookies(res);
-
-      throw new UnauthorizedException('Session expired - please login again');
-    }
-
-    const tokens = await this.generateTokens(
-      tokenRecord.user.id,
-      tokenRecord.rememberMe,
-    );
-
-    this.cookieService.setAccessTokenCookie(
-      res,
-      tokens.accessToken,
-      process.env.ACCESS_TOKEN_EXPIRY || '15m',
-    );
-
-    this.cookieService.setRefreshTokenCookie(
-      res,
-      tokens.refreshToken,
-      process.env.REFRESH_TOKEN_EXPIRY || '7d',
+      Boolean(dto.rememberMe),
     );
 
     return {
-      message: tokenRecord.user.isVerified
-        ? 'Tokens refreshed successfully'
-        : 'Tokens refreshed successfully - Email verification required',
-      user: {
-        id: tokenRecord.user.id,
-        email: tokenRecord.user.email,
-        username: tokenRecord.user.username,
-        isVerified: tokenRecord.user.isVerified,
-      },
+      message: 'Login successful',
+      user: this.toUserResponse(user),
     };
   }
 
-  async logout(refreshToken: string, res: Response, userId?: number | null) {
-    try {
-      let targetUserId: number | null = userId || null;
+  async refresh(
+    refreshToken: string | undefined,
+    response: Response,
+    metadata: RequestMetadata,
+  ): Promise<{
+    message: string;
+    user: ReturnType<AuthService['toUserResponse']>;
+  }> {
+    if (!refreshToken) {
+      this.cookieService.clearAuthCookies(response);
+      throw new UnauthorizedException('Invalid session');
+    }
 
-      if (!targetUserId && refreshToken) {
-        const tokenRecord = await this.databaseService
-          .getPrismaClient()
-          .refreshToken.findUnique({
-            where: { token: refreshToken },
-            include: { user: true },
-          });
+    const tokenHash = this.cryptoService.hashRefreshToken(refreshToken);
+    const storedToken = await this.databaseService.refreshToken.findUnique({
+      where: { tokenHash },
+      include: {
+        session: {
+          include: { user: true },
+        },
+      },
+    });
 
-        if (tokenRecord) {
-          targetUserId = tokenRecord.userId;
+    if (!storedToken) {
+      this.cookieService.clearAuthCookies(response);
+      throw new UnauthorizedException('Invalid session');
+    }
 
-          console.log(
-            `Auth Service: Logout requested for user ${tokenRecord.user.email} (ID: ${targetUserId})`,
-          );
-        }
-      } else if (targetUserId) {
-        console.log(
-          `Auth Service: Logout requested for user ID ${targetUserId}`,
-        );
-      }
+    const now = new Date();
+    const { session } = storedToken;
+    const user = session.user;
 
-      if (targetUserId) {
-        const deletedCount =
-          await this.tokenCleanupService.cleanupAllTokensForUser(targetUserId);
+    if (storedToken.consumedAt || storedToken.revokedAt) {
+      await this.revokeSession(session.id);
+      this.cookieService.clearAuthCookies(response);
+      throw new UnauthorizedException('Session reuse detected');
+    }
 
-        console.log(
-          `Auth Service: Logout cleanup - Deleted ${deletedCount} tokens for user ${targetUserId}`,
-        );
+    if (
+      storedToken.expiresAt <= now ||
+      session.expiresAt <= now ||
+      session.revokedAt ||
+      !user.isActive
+    ) {
+      await this.revokeSession(session.id);
+      this.cookieService.clearAuthCookies(response);
+      throw new UnauthorizedException('Session expired');
+    }
 
-        await this.databaseService.getPrismaClient().user.update({
-          where: { id: targetUserId },
-          data: { isVerified: false },
+    const newRefreshToken = this.cryptoService.randomToken(64);
+    const newRefreshHash = this.cryptoService.hashRefreshToken(newRefreshToken);
+
+    await this.databaseService.$transaction(async (transaction) => {
+      const consumeResult = await transaction.refreshToken.updateMany({
+        where: {
+          id: storedToken.id,
+          consumedAt: null,
+          revokedAt: null,
+        },
+        data: { consumedAt: now },
+      });
+
+      if (consumeResult.count !== 1) {
+        await transaction.authSession.update({
+          where: { id: session.id },
+          data: { revokedAt: now },
         });
-
-        console.log(
-          `Auth Service: Reset email verification for user ${targetUserId} on logout`,
-        );
+        throw new UnauthorizedException('Session reuse detected');
       }
 
-      this.cookieService.clearAllAuthCookies(res);
+      await transaction.refreshToken.create({
+        data: {
+          tokenHash: newRefreshHash,
+          sessionId: session.id,
+          expiresAt: session.expiresAt,
+        },
+      });
 
-      return { message: 'Logged out successfully' };
-    } catch (error) {
-      console.error('Logout error:', error);
-
-      this.cookieService.clearAllAuthCookies(res);
-
-      return { message: 'Logged out successfully' };
-    }
-  }
-
-  getProfile(req: any) {
-    const user = req.user;
-
-    if (!user) {
-      throw new UnauthorizedException('Not authenticated');
-    }
-
-    return {
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        isVerified: user.isVerified,
-      },
-    };
-  }
-
-  private async generateTokens(userId: number, rememberMe: boolean = false) {
-    const payload = {
-      sub: userId,
-      type: 'access',
-      iat: Math.floor(Date.now() / 1000),
-    };
-
-    const accessToken = this.jwtService.sign(payload, {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '15m',
-      algorithm: 'HS256',
+      await transaction.authSession.update({
+        where: { id: session.id },
+        data: {
+          lastUsedAt: now,
+          ipAddress: metadata.ipAddress,
+          userAgent: metadata.userAgent,
+        },
+      });
     });
 
-    const refreshToken = this.generateRandomToken();
-
-    const refreshTokenExpiry = new Date(
-      Date.now() + this.parseExpiry(process.env.REFRESH_TOKEN_EXPIRY || '7d'),
-    );
-
-    await this.databaseService.getPrismaClient().refreshToken.create({
-      data: {
-        token: refreshToken,
-        expiresAt: refreshTokenExpiry,
-        userId,
-        rememberMe,
-        createdAt: new Date(),
-      },
-    });
-
-    return {
+    const accessToken = await this.signAccessToken(user, session.id);
+    this.cookieService.setAuthCookies(
+      response,
       accessToken,
-      refreshToken,
-    };
-  }
-
-  private generateRandomToken(): string {
-    const crypto = require('crypto');
-    return crypto.randomBytes(32).toString('hex');
-  }
-
-  async cleanupExpiredTokens() {
-    const result = await this.databaseService
-      .getPrismaClient()
-      .refreshToken.deleteMany({
-        where: {
-          expiresAt: { lt: new Date() },
-        },
-      });
-
-    if (result.count > 0) {
-      console.log(
-        `Auth Service: Cleaned up ${result.count} expired tokens globally`,
-      );
-    }
-
-    return result.count;
-  }
-
-  async revokeAllUserTokens(userId: number) {
-    const result = await this.databaseService
-      .getPrismaClient()
-      .refreshToken.deleteMany({
-        where: { userId },
-      });
-
-    if (result.count > 0) {
-      console.log(
-        `Auth Service: Deleted all ${result.count} tokens for user ${userId}`,
-      );
-    }
-
-    return result.count;
-  }
-
-  async cleanupUserTokens(userId: number) {
-    return await this.tokenCleanupService.cleanupExpiredTokensForUser(userId);
-  }
-
-  async cleanupAllUserTokens(userId: number) {
-    return await this.tokenCleanupService.cleanupAllTokensForUser(userId);
-  }
-
-  async manualCleanup(): Promise<number> {
-    return await this.tokenCleanupService.manualCleanup();
-  }
-
-  async getUserTokenCount(userId: number): Promise<number> {
-    const count = await this.databaseService
-      .getPrismaClient()
-      .refreshToken.count({
-        where: { userId },
-      });
-
-    return count;
-  }
-
-  async getTotalTokenCount(): Promise<number> {
-    const count = await this.databaseService
-      .getPrismaClient()
-      .refreshToken.count();
-
-    return count;
-  }
-
-  async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
-    const { email } = forgotPasswordDto;
-
-    let user = await this.databaseService.getPrismaClient().user.findFirst({
-      where: {
-        email: {
-          equals: email,
-        },
-      },
-    });
-
-    if (!user) {
-      user = await this.databaseService.getPrismaClient().user.findFirst({
-        where: {
-          email: {
-            contains: email,
-          },
-        },
-      });
-    }
-
-    if (!user) {
-      throw new BadRequestException(
-        'Email address not found in our system. Please check your email address or contact the administrator.',
-      );
-    }
-
-    if (!user.isVerified) {
-      throw new BadRequestException(
-        'Account is deactivated. Please contact the administrator.',
-      );
-    }
-
-    const otp = this.generateOtp();
-    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
-    await this.databaseService.getPrismaClient().user.update({
-      where: { id: user.id },
-      data: {
-        otp,
-        otpExpiresAt,
-      },
-    });
-
-    await this.emailService.sendOtpEmail(email, otp);
-
-    return {
-      message:
-        'OTP has been sent to your email address. Please check your inbox and enter the 5-digit code.',
-    };
-  }
-
-  async verifyOtp(verifyOtpDto: VerifyOtpDto) {
-    const { email, otp } = verifyOtpDto;
-
-    let user = await this.databaseService.getPrismaClient().user.findFirst({
-      where: {
-        email: {
-          equals: email,
-        },
-      },
-    });
-
-    if (!user) {
-      user = await this.databaseService.getPrismaClient().user.findFirst({
-        where: {
-          email: {
-            contains: email,
-          },
-        },
-      });
-    }
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (!user.otp || !user.otpExpiresAt) {
-      throw new BadRequestException('No OTP found for this email');
-    }
-
-    if (new Date() > user.otpExpiresAt) {
-      throw new BadRequestException('OTP has expired');
-    }
-
-    if (user.otp !== otp) {
-      throw new BadRequestException('Invalid OTP');
-    }
-
-    return { message: 'OTP verified successfully' };
-  }
-
-  async resetPassword(resetPasswordDto: ResetPasswordDto) {
-    const { email, newPassword, confirmPassword } = resetPasswordDto;
-
-    if (newPassword !== confirmPassword) {
-      throw new BadRequestException('Passwords do not match');
-    }
-
-    let user = await this.databaseService.getPrismaClient().user.findFirst({
-      where: {
-        email: {
-          equals: email,
-        },
-      },
-    });
-
-    if (!user) {
-      user = await this.databaseService.getPrismaClient().user.findFirst({
-        where: {
-          email: {
-            contains: email,
-          },
-        },
-      });
-    }
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (!user.otp || !user.otpExpiresAt) {
-      throw new BadRequestException(
-        'No valid OTP found. Please request a new OTP.',
-      );
-    }
-
-    if (new Date() > user.otpExpiresAt) {
-      throw new BadRequestException(
-        'OTP has expired. Please request a new OTP.',
-      );
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    console.log(
-      'Auth Service: Cleaning up all tokens for user before password reset:',
-      user.id,
-    );
-
-    const tokensCleaned =
-      await this.tokenCleanupService.cleanupAllTokensForUser(user.id);
-
-    console.log(
-      `Auth Service: Cleaned up ${tokensCleaned} tokens for user ${user.id}`,
-    );
-
-    await this.databaseService.getPrismaClient().user.update({
-      where: { id: user.id },
-      data: {
-        password: hashedPassword,
-        otp: null,
-        otpExpiresAt: null,
-      },
-    });
-
-    await this.emailService.sendPasswordResetSuccessEmail(email);
-
-    return {
-      message:
-        'Password reset successfully. You will need to login again with your new password.',
-      requiresReauth: true,
-    };
-  }
-
-  async changePassword(user: any, changePasswordDto: ChangePasswordDto) {
-    const { currentPassword, newPassword, confirmPassword } = changePasswordDto;
-
-    if (newPassword !== confirmPassword) {
-      throw new BadRequestException('New passwords do not match');
-    }
-
-    if (currentPassword === newPassword) {
-      throw new BadRequestException(
-        'New password must be different from current password',
-      );
-    }
-
-    const userRecord = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { id: user.id },
-      });
-
-    if (!userRecord) {
-      throw new NotFoundException('User not found');
-    }
-
-    const isCurrentPasswordValid = await bcrypt.compare(
-      currentPassword,
-      userRecord.password,
-    );
-
-    if (!isCurrentPasswordValid) {
-      throw new UnauthorizedException('Current password is incorrect');
-    }
-
-    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
-
-    console.log(
-      'Auth Service: Cleaning up all tokens for user before password change:',
-      user.id,
-    );
-
-    const tokensCleaned =
-      await this.tokenCleanupService.cleanupAllTokensForUser(user.id);
-
-    console.log(
-      `Auth Service: Cleaned up ${tokensCleaned} tokens for user ${user.id}`,
-    );
-
-    await this.databaseService.getPrismaClient().user.update({
-      where: { id: user.id },
-      data: {
-        password: hashedNewPassword,
-      },
-    });
-
-    await this.emailService.sendPasswordChangeConfirmationEmail(
-      userRecord.email,
+      newRefreshToken,
+      session.rememberMe,
     );
 
     return {
-      message:
-        'Password changed successfully. You will need to login again with your new password.',
-      requiresReauth: true,
+      message: 'Session refreshed',
+      user: this.toUserResponse(user),
     };
   }
 
-  async debugUserLookup(email: string) {
+  async logout(
+    refreshToken: string | undefined,
+    response: Response,
+  ): Promise<{ message: string }> {
     try {
-      console.log(`Debug: Looking up user with email: "${email}"`);
-
-      const allUsers = await this.databaseService
-        .getPrismaClient()
-        .user.findMany({
-          select: { id: true, email: true, username: true, isVerified: true },
+      if (refreshToken) {
+        const tokenHash = this.cryptoService.hashRefreshToken(refreshToken);
+        const token = await this.databaseService.refreshToken.findUnique({
+          where: { tokenHash },
+          select: { sessionId: true },
         });
-
-      console.log('Debug: All users in database:', allUsers);
-
-      const exactUser = await this.databaseService
-        .getPrismaClient()
-        .user.findUnique({
-          where: { email: email },
-        });
-
-      console.log('Debug: Exact match result:', exactUser);
-
-      const caseInsensitiveUser = await this.databaseService
-        .getPrismaClient()
-        .user.findFirst({
-          where: {
-            email: {
-              contains: email,
-            },
-          },
-        });
-
-      console.log('Debug: Case-insensitive match result:', caseInsensitiveUser);
-
-      return {
-        searchedEmail: email,
-        allUsers,
-        exactMatch: exactUser,
-        caseInsensitiveMatch: caseInsensitiveUser,
-        totalUsers: allUsers.length,
-      };
-    } catch (error) {
-      console.error('Debug: Error in user lookup:', error);
-
-      return {
-        error: error.message,
-        searchedEmail: email,
-      };
+        if (token) {
+          await this.revokeSession(token.sessionId);
+        }
+      }
+    } finally {
+      this.cookieService.clearAuthCookies(response);
     }
+
+    return { message: 'Logged out successfully' };
   }
 
-  private generateOtp(): string {
-    return Math.floor(10000 + Math.random() * 90000).toString();
+  getProfile(user: AuthenticatedUser): { user: AuthenticatedUser } {
+    return { user };
   }
 
-  private generateVerificationToken(): string {
-    const crypto = require('crypto');
-    return crypto.randomBytes(32).toString('hex');
-  }
+  async requestRegistrationOtp(dto: RequestRegistrationOtpDto): Promise<{
+    message: string;
+    challengeId: string;
+    expiresInMinutes: number;
+  }> {
+    if (
+      !this.configService.getOrThrow<boolean>('app.allowPublicRegistration')
+    ) {
+      throw new ForbiddenException('Public registration is disabled');
+    }
 
-  async sendRegistrationOtp(forgotPasswordDto: ForgotPasswordDto) {
-    const { email } = forgotPasswordDto;
-
-    const existingUser = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { email },
-      });
+    const email = this.normalizeEmail(dto.email);
+    const existingUser = await this.databaseService.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
 
     if (existingUser) {
-      throw new BadRequestException('Email address is already registered');
+      return this.fakeChallengeResponse(
+        'If this email can be registered, a verification code has been sent.',
+      );
     }
 
-    const otp = this.generateOtp();
-    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
-    await this.databaseService.getPrismaClient().user.create({
-      data: {
-        email,
-        username: `temp_${Date.now()}`,
-        password: 'temporary_password',
-        isVerified: false,
-        otp,
-        otpExpiresAt,
-      },
-    });
-
-    await this.emailService.sendRegistrationOtpEmail(email, otp);
+    const { challenge, otp } = await this.createChallenge(
+      ChallengePurpose.REGISTER,
+      email,
+    );
+    await this.emailService.sendOtpEmail(email, otp, 'registration');
 
     return {
       message:
-        'OTP has been sent to your email address. Please check your inbox and enter the 5-digit code.',
+        'If this email can be registered, a verification code has been sent.',
+      challengeId: challenge.id,
       expiresInMinutes: 10,
     };
   }
 
-  async verifyRegistrationOtp(verifyOtpDto: VerifyOtpDto) {
-    const { email, otp } = verifyOtpDto;
-
-    const user = await this.databaseService.getPrismaClient().user.findUnique({
-      where: { email },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (!user.otp || !user.otpExpiresAt) {
-      throw new BadRequestException('No OTP found for this email');
-    }
-
-    if (new Date() > user.otpExpiresAt) {
-      throw new BadRequestException('OTP has expired');
-    }
-
-    if (user.otp !== otp) {
-      throw new BadRequestException('Invalid OTP');
-    }
+  async verifyRegistrationOtp(
+    dto: VerifyOtpDto,
+  ): Promise<{ message: string; registrationGrant: string }> {
+    const registrationGrant = await this.verifyChallengeAndIssueGrant(
+      dto,
+      ChallengePurpose.REGISTER,
+    );
 
     return {
       message:
-        'OTP verified successfully. You can now complete your registration.',
-      canProceed: true,
+        'Email verified. Complete registration before the grant expires.',
+      registrationGrant,
     };
   }
 
-  async registerDetails(data: {
-    email: string;
-    username: string;
-    password: string;
-    confirmPassword: string;
-  }) {
-    const { email, username, password, confirmPassword } = data;
-
-    if (password !== confirmPassword) {
+  async completeRegistration(dto: CompleteRegistrationDto): Promise<{
+    message: string;
+    user: ReturnType<AuthService['toUserResponse']>;
+  }> {
+    if (
+      !this.configService.getOrThrow<boolean>('app.allowPublicRegistration')
+    ) {
+      throw new ForbiddenException('Public registration is disabled');
+    }
+    if (dto.password !== dto.confirmPassword) {
       throw new BadRequestException('Passwords do not match');
     }
 
-    const user = await this.databaseService.getPrismaClient().user.findUnique({
+    const grantHash = this.cryptoService.hashGrant(dto.registrationGrant);
+    const challenge = await this.getUsableGrant(
+      grantHash,
+      ChallengePurpose.REGISTER,
+    );
+    const username = dto.username.trim().toLowerCase();
+    const passwordHash = await bcrypt.hash(
+      dto.password,
+      AuthService.PASSWORD_COST,
+    );
+
+    try {
+      const user = await this.databaseService.$transaction(
+        async (transaction) => {
+          const createdUser = await transaction.user.create({
+            data: {
+              email: challenge.target,
+              username,
+              passwordHash,
+              role: UserRole.USER,
+              emailVerifiedAt: new Date(),
+            },
+          });
+
+          const consumed = await transaction.verificationChallenge.updateMany({
+            where: { id: challenge.id, consumedAt: null },
+            data: { consumedAt: new Date() },
+          });
+          if (consumed.count !== 1) {
+            throw new BadRequestException(
+              'Registration grant has already been used',
+            );
+          }
+
+          return createdUser;
+        },
+      );
+
+      return {
+        message: 'Registration completed successfully',
+        user: this.toUserResponse(user),
+      };
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Email or username is already in use');
+      }
+      throw error;
+    }
+  }
+
+  async forgotPassword(dto: ForgotPasswordDto): Promise<{
+    message: string;
+    challengeId: string;
+    expiresInMinutes: number;
+  }> {
+    const email = this.normalizeEmail(dto.email);
+    const user = await this.databaseService.user.findUnique({
       where: { email },
     });
+    const genericMessage =
+      'If an active account exists for that email, a reset code has been sent.';
 
-    if (!user) {
-      throw new NotFoundException(
-        'User not found. Please start the registration process again.',
-      );
+    if (!user || !user.isActive) {
+      return this.fakeChallengeResponse(genericMessage);
     }
 
-    if (!user.otp || !user.otpExpiresAt) {
-      throw new BadRequestException(
-        'No valid OTP found. Please request a new OTP.',
-      );
-    }
-
-    if (new Date() > user.otpExpiresAt) {
-      throw new BadRequestException(
-        'OTP has expired. Please request a new OTP.',
-      );
-    }
-
-    const existingUsername = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { username },
-      });
-
-    if (existingUsername && existingUsername.id !== user.id) {
-      throw new BadRequestException('Username is already taken');
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const updatedUser = await this.databaseService
-      .getPrismaClient()
-      .user.update({
-        where: { id: user.id },
-        data: {
-          username,
-          password: hashedPassword,
-          isVerified: true,
-          otp: null,
-          otpExpiresAt: null,
-        },
-      });
+    const { challenge, otp } = await this.createChallenge(
+      ChallengePurpose.PASSWORD_RESET,
+      email,
+      user.id,
+    );
+    await this.emailService.sendOtpEmail(email, otp, 'password reset');
 
     return {
-      message: 'Registration completed successfully',
-      user: {
-        id: updatedUser.id,
-        email: updatedUser.email,
-        username: updatedUser.username,
-        isVerified: updatedUser.isVerified,
-      },
+      message: genericMessage,
+      challengeId: challenge.id,
+      expiresInMinutes: 10,
     };
   }
 
-  async sendVerificationEmail(user: any, providedEmail?: string) {
-    const email = providedEmail || user.email;
-
-    if (providedEmail && providedEmail !== user.email) {
-      throw new BadRequestException(
-        'Email must match your logged-in email address',
-      );
-    }
-
-    const verificationToken = this.generateVerificationToken();
-    const tokenExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
-    await this.databaseService.getPrismaClient().user.update({
-      where: { id: user.id },
-      data: {
-        otp: verificationToken,
-        otpExpiresAt: tokenExpiresAt,
-      },
-    });
-
-    await this.emailService.sendVerificationEmail(email, verificationToken);
+  async verifyResetOtp(
+    dto: VerifyOtpDto,
+  ): Promise<{ message: string; resetGrant: string }> {
+    const resetGrant = await this.verifyChallengeAndIssueGrant(
+      dto,
+      ChallengePurpose.PASSWORD_RESET,
+    );
 
     return {
-      message:
-        'Verification email has been sent to your email address. Please check your inbox and click the verification link.',
+      message: 'Code verified. Reset the password before the grant expires.',
+      resetGrant,
     };
   }
 
-  async verifyEmail(user: any, verifyOtpDto: VerifyOtpDto) {
-    const { otp } = verifyOtpDto;
-
-    const userRecord = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { id: user.id },
-      });
-
-    if (!userRecord) {
-      throw new NotFoundException('User not found');
+  async resetPassword(
+    dto: ResetPasswordDto,
+  ): Promise<{ message: string; requiresReauth: true }> {
+    if (dto.newPassword !== dto.confirmPassword) {
+      throw new BadRequestException('Passwords do not match');
     }
 
-    if (!userRecord.otp || !userRecord.otpExpiresAt) {
-      throw new BadRequestException('No OTP found for this user');
+    const grantHash = this.cryptoService.hashGrant(dto.resetGrant);
+    const challenge = await this.getUsableGrant(
+      grantHash,
+      ChallengePurpose.PASSWORD_RESET,
+    );
+    if (!challenge.userId) {
+      throw new BadRequestException('Invalid reset grant');
     }
 
-    if (new Date() > userRecord.otpExpiresAt) {
-      throw new BadRequestException('OTP has expired');
-    }
+    const passwordHash = await bcrypt.hash(
+      dto.newPassword,
+      AuthService.PASSWORD_COST,
+    );
 
-    if (userRecord.otp !== otp) {
-      throw new BadRequestException('Invalid OTP');
-    }
+    const user = await this.databaseService.$transaction(
+      async (transaction) => {
+        const updated = await transaction.user.update({
+          where: { id: challenge.userId! },
+          data: {
+            passwordHash,
+            tokenVersion: { increment: 1 },
+          },
+        });
 
-    await this.databaseService.getPrismaClient().user.update({
-      where: { id: user.id },
-      data: {
-        isVerified: true,
-        otp: null,
-        otpExpiresAt: null,
+        const consumed = await transaction.verificationChallenge.updateMany({
+          where: { id: challenge.id, consumedAt: null },
+          data: { consumedAt: new Date() },
+        });
+        if (consumed.count !== 1) {
+          throw new BadRequestException('Reset grant has already been used');
+        }
+
+        await transaction.authSession.updateMany({
+          where: { userId: updated.id, revokedAt: null },
+          data: { revokedAt: new Date() },
+        });
+
+        return updated;
       },
+    );
+
+    await this.sendSecurityNotification(() =>
+      this.emailService.sendPasswordResetSuccessEmail(user.email),
+    );
+    return {
+      message: 'Password reset successfully. Sign in again on all devices.',
+      requiresReauth: true,
+    };
+  }
+
+  async sendVerificationEmail(user: AuthenticatedUser): Promise<{
+    message: string;
+    challengeId?: string;
+    expiresInMinutes?: number;
+  }> {
+    const storedUser = await this.databaseService.user.findUniqueOrThrow({
+      where: { id: user.id },
     });
+
+    if (storedUser.emailVerifiedAt) {
+      return { message: 'Email is already verified' };
+    }
+
+    const { challenge, otp } = await this.createChallenge(
+      ChallengePurpose.VERIFY_EMAIL,
+      storedUser.email,
+      storedUser.id,
+    );
+    await this.emailService.sendOtpEmail(
+      storedUser.email,
+      otp,
+      'email verification',
+    );
+
+    return {
+      message: 'Verification code sent',
+      challengeId: challenge.id,
+      expiresInMinutes: 10,
+    };
+  }
+
+  async verifyEmail(
+    user: AuthenticatedUser,
+    dto: VerifyOtpDto,
+  ): Promise<{ message: string }> {
+    const challenge = await this.getChallengeForVerification(
+      dto.challengeId,
+      ChallengePurpose.VERIFY_EMAIL,
+    );
+
+    if (challenge.userId !== user.id) {
+      throw new BadRequestException('Invalid verification challenge');
+    }
+
+    await this.verifyChallengeCode(challenge, dto.otp);
+
+    await this.databaseService.$transaction([
+      this.databaseService.user.update({
+        where: { id: user.id },
+        data: { emailVerifiedAt: new Date() },
+      }),
+      this.databaseService.verificationChallenge.update({
+        where: { id: challenge.id },
+        data: { verifiedAt: new Date(), consumedAt: new Date() },
+      }),
+    ]);
 
     return { message: 'Email verified successfully' };
   }
 
-  async verifyEmailByToken(token: string, res: Response) {
-    console.log('AuthService: Starting email verification for token:', token);
-
-    if (!token || typeof token !== 'string') {
-      throw new BadRequestException('Verification token is required');
+  async changePassword(
+    user: AuthenticatedUser,
+    dto: ChangePasswordDto,
+  ): Promise<{ message: string; requiresReauth: true }> {
+    if (dto.newPassword !== dto.confirmPassword) {
+      throw new BadRequestException('Passwords do not match');
+    }
+    if (dto.currentPassword === dto.newPassword) {
+      throw new BadRequestException('New password must be different');
     }
 
-    const user = await this.databaseService.getPrismaClient().user.findFirst({
-      where: {
-        otp: token,
-      },
-    });
-
-    if (!user) {
-      console.log('AuthService: No user found for token');
-      throw new NotFoundException('Invalid verification link');
-    }
-
-    console.log('AuthService: Found user:', user.email);
-
-    if (!user.otpExpiresAt) {
-      console.log('AuthService: No expiration time found');
-      throw new BadRequestException('No verification token found');
-    }
-
-    if (new Date() > user.otpExpiresAt) {
-      console.log('AuthService: Token expired');
-      throw new BadRequestException('Verification link has expired');
-    }
-
-    console.log('AuthService: Updating user as verified');
-
-    await this.databaseService.getPrismaClient().user.update({
+    const storedUser = await this.databaseService.user.findUniqueOrThrow({
       where: { id: user.id },
-      data: {
-        isVerified: true,
-        otp: null,
-        otpExpiresAt: null,
-      },
     });
-
-    console.log(
-      'AuthService: Cleaning old tokens before creating verified session',
+    const currentPasswordValid = await bcrypt.compare(
+      dto.currentPassword,
+      storedUser.passwordHash,
     );
-
-    await this.tokenCleanupService.cleanupAllTokensForUser(user.id);
-
-    console.log('AuthService: Generating new verified session tokens');
-
-    const accessTokenExpiry =
-      process.env.ACCESS_TOKEN_EXPIRY_REMEMBER ||
-      process.env.ACCESS_TOKEN_EXPIRY ||
-      '24h';
-
-    const refreshTokenExpiry =
-      process.env.REFRESH_TOKEN_EXPIRY_REMEMBER ||
-      process.env.REFRESH_TOKEN_EXPIRY ||
-      '30d';
-
-    const tokens = await this.generateTokens(user.id, true);
-
-    console.log('AuthService: Setting authentication cookies');
-
-    this.cookieService.setAccessTokenCookie(
-      res,
-      tokens.accessToken,
-      accessTokenExpiry,
-    );
-
-    this.cookieService.setRefreshTokenCookie(
-      res,
-      tokens.refreshToken,
-      refreshTokenExpiry,
-    );
-
-    console.log('AuthService: Email verification completed successfully');
-  }
-
-  private parseExpiry(expiry: string): number {
-    const unit = expiry.slice(-1);
-    const value = parseInt(expiry.slice(0, -1));
-
-    switch (unit) {
-      case 's':
-        return value * 1000;
-      case 'm':
-        return value * 60 * 1000;
-      case 'h':
-        return value * 60 * 60 * 1000;
-      case 'd':
-        return value * 24 * 60 * 60 * 1000;
-      default:
-        return 7 * 24 * 60 * 60 * 1000;
+    if (!currentPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
     }
-  }
 
-  async sendCurrentEmailOtp(user: any) {
-    const email = user.email;
+    const passwordHash = await bcrypt.hash(
+      dto.newPassword,
+      AuthService.PASSWORD_COST,
+    );
 
-    const otp = this.generateOtp();
-    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    await this.databaseService.$transaction([
+      this.databaseService.user.update({
+        where: { id: user.id },
+        data: { passwordHash, tokenVersion: { increment: 1 } },
+      }),
+      this.databaseService.authSession.updateMany({
+        where: { userId: user.id, revokedAt: null },
+        data: { revokedAt: new Date() },
+      }),
+    ]);
 
-    await this.databaseService.getPrismaClient().user.update({
-      where: { id: user.id },
-      data: {
-        otp,
-        otpExpiresAt,
-        isVerified: true,
-      },
-    });
-
-    await this.emailService.sendCurrentEmailVerificationOtp(email, otp);
-
+    await this.sendSecurityNotification(() =>
+      this.emailService.sendPasswordResetSuccessEmail(storedUser.email),
+    );
     return {
-      message:
-        'OTP has been sent to your current email address. Please check your inbox and enter the 5-digit code.',
+      message: 'Password changed successfully. Sign in again.',
+      requiresReauth: true,
+    };
+  }
+
+  async startEmailChange(
+    user: AuthenticatedUser,
+  ): Promise<{ message: string; requestId: string; expiresInMinutes: number }> {
+    const otp = this.cryptoService.randomOtp();
+    const now = new Date();
+    const currentCodeExpiresAt = new Date(
+      now.getTime() + AuthService.OTP_TTL_MS,
+    );
+    const expiresAt = new Date(now.getTime() + AuthService.EMAIL_CHANGE_TTL_MS);
+
+    const storedUser = await this.databaseService.user.findUniqueOrThrow({
+      where: { id: user.id },
+    });
+
+    await this.databaseService.emailChangeRequest.deleteMany({
+      where: { userId: user.id, completedAt: null },
+    });
+
+    const request = await this.databaseService.emailChangeRequest.create({
+      data: {
+        userId: user.id,
+        currentCodeHash: this.cryptoService.hashOtp(otp),
+        currentCodeExpiresAt,
+        expiresAt,
+      },
+    });
+
+    await this.emailService.sendOtpEmail(storedUser.email, otp, 'email change');
+    return {
+      message: 'A verification code was sent to your current email address.',
+      requestId: request.id,
       expiresInMinutes: 10,
     };
   }
 
   async verifyCurrentEmailOtp(
-    user: any,
-    verifyOtpDto: VerifyEmailChangeOtpDto,
-  ) {
-    const { otp } = verifyOtpDto;
-
-    const userRecord = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { id: user.id },
-      });
-
-    if (!userRecord) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (!userRecord.otp || !userRecord.otpExpiresAt) {
-      throw new BadRequestException(
-        'No OTP found for current email verification',
-      );
-    }
-
-    if (new Date() > userRecord.otpExpiresAt) {
-      throw new BadRequestException('OTP has expired');
-    }
-
-    if (userRecord.otp !== otp) {
-      throw new BadRequestException('Invalid OTP');
-    }
-
-    await this.databaseService.getPrismaClient().user.update({
-      where: { id: user.id },
-      data: {
-        isVerified: true,
+    user: AuthenticatedUser,
+    dto: VerifyEmailChangeOtpDto,
+  ): Promise<{ message: string; canProceedToNewEmail: true }> {
+    const request = await this.getEmailChangeRequest(user.id, dto.requestId);
+    await this.verifyEmailChangeCode(
+      request.currentCodeHash,
+      request.currentCodeExpiresAt,
+      request.currentAttempts,
+      dto.otp,
+      async () => {
+        await this.databaseService.emailChangeRequest.update({
+          where: { id: request.id },
+          data: { currentAttempts: { increment: 1 } },
+        });
       },
+    );
+
+    await this.databaseService.emailChangeRequest.update({
+      where: { id: request.id },
+      data: { currentVerifiedAt: new Date() },
     });
 
     return {
-      message:
-        'Current email verified successfully. You can now enter your new email address.',
+      message: 'Current email verified',
       canProceedToNewEmail: true,
     };
   }
 
-  async sendNewEmailOtp(user: any, forgotPasswordDto: ForgotPasswordDto) {
-    const { email: newEmail } = forgotPasswordDto;
-
-    if (newEmail === user.email) {
-      throw new BadRequestException(
-        'New email must be different from current email',
-      );
+  async sendNewEmailOtp(
+    user: AuthenticatedUser,
+    dto: RequestNewEmailOtpDto,
+  ): Promise<{
+    message: string;
+    requestId: string;
+    newEmail: string;
+    expiresInMinutes: number;
+  }> {
+    const request = await this.getEmailChangeRequest(user.id, dto.requestId);
+    if (!request.currentVerifiedAt) {
+      throw new BadRequestException('Verify the current email first');
     }
 
-    const existingUser = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { email: newEmail },
-      });
-
-    if (existingUser) {
-      throw new BadRequestException('Email address is already registered');
+    const newEmail = this.normalizeEmail(dto.newEmail);
+    const existing = await this.databaseService.user.findUnique({
+      where: { email: newEmail },
+      select: { id: true },
+    });
+    if (existing) {
+      throw new ConflictException('Email is already in use');
     }
 
-    const newOtp = this.generateOtp();
-    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
-    await this.databaseService.getPrismaClient().user.update({
-      where: { id: user.id },
+    const otp = this.cryptoService.randomOtp();
+    await this.databaseService.emailChangeRequest.update({
+      where: { id: request.id },
       data: {
-        otp: newOtp,
-        otpExpiresAt,
         newEmail,
-        isVerified: true,
+        newCodeHash: this.cryptoService.hashOtp(otp),
+        newCodeExpiresAt: new Date(Date.now() + AuthService.OTP_TTL_MS),
+        newAttempts: 0,
+        newVerifiedAt: null,
       },
     });
 
-    await this.emailService.sendNewEmailVerificationOtp(newEmail, newOtp);
-
+    await this.emailService.sendOtpEmail(newEmail, otp, 'email change');
     return {
-      message:
-        'OTP has been sent to your new email address. Please check your inbox and enter the 5-digit code.',
-      expiresInMinutes: 10,
+      message: 'A verification code was sent to the new email address.',
+      requestId: request.id,
       newEmail,
+      expiresInMinutes: 10,
     };
   }
 
-  async verifyNewEmailOtp(user: any, verifyOtpDto: VerifyEmailChangeOtpDto) {
-    const { otp } = verifyOtpDto;
-
-    const userRecord = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { id: user.id },
-      });
-
-    if (!userRecord) {
-      throw new NotFoundException('User not found');
+  async verifyNewEmailOtp(
+    user: AuthenticatedUser,
+    dto: VerifyEmailChangeOtpDto,
+  ): Promise<{ message: string; canProceedToPasswordConfirmation: true }> {
+    const request = await this.getEmailChangeRequest(user.id, dto.requestId);
+    if (
+      !request.currentVerifiedAt ||
+      !request.newCodeHash ||
+      !request.newCodeExpiresAt
+    ) {
+      throw new BadRequestException(
+        'New email verification has not been started',
+      );
     }
 
-    if (!userRecord.otp || !userRecord.otpExpiresAt) {
-      throw new BadRequestException('No OTP found for new email verification');
-    }
-
-    if (new Date() > userRecord.otpExpiresAt) {
-      throw new BadRequestException('OTP has expired');
-    }
-
-    if (userRecord.otp !== otp) {
-      throw new BadRequestException('Invalid OTP');
-    }
-
-    await this.databaseService.getPrismaClient().user.update({
-      where: { id: user.id },
-      data: {
-        isVerified: true,
+    await this.verifyEmailChangeCode(
+      request.newCodeHash,
+      request.newCodeExpiresAt,
+      request.newAttempts,
+      dto.otp,
+      async () => {
+        await this.databaseService.emailChangeRequest.update({
+          where: { id: request.id },
+          data: { newAttempts: { increment: 1 } },
+        });
       },
+    );
+
+    await this.databaseService.emailChangeRequest.update({
+      where: { id: request.id },
+      data: { newVerifiedAt: new Date() },
     });
 
     return {
-      message:
-        'New email verified successfully. You can now confirm the change with your password.',
+      message: 'New email verified',
       canProceedToPasswordConfirmation: true,
     };
   }
 
   async confirmEmailChange(
-    user: any,
-    confirmEmailChangeDto: ConfirmEmailChangeDto,
-  ) {
-    const { newEmail, newPassword } = confirmEmailChangeDto;
-
-    const userRecord = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { id: user.id },
-      });
-
-    if (!userRecord) {
-      throw new NotFoundException('User not found');
+    user: AuthenticatedUser,
+    dto: ConfirmEmailChangeDto,
+  ): Promise<{ message: string; newEmail: string; requiresReauth: true }> {
+    const request = await this.getEmailChangeRequest(user.id, dto.requestId);
+    if (
+      !request.currentVerifiedAt ||
+      !request.newVerifiedAt ||
+      !request.newEmail
+    ) {
+      throw new BadRequestException('Both email addresses must be verified');
     }
 
-    if (!userRecord.otp || !userRecord.otpExpiresAt) {
-      throw new BadRequestException(
-        'Email change verification not completed. Please start the process again.',
-      );
-    }
-
-    if (new Date() > userRecord.otpExpiresAt) {
-      throw new BadRequestException(
-        'Email change verification has expired. Please start the process again.',
-      );
-    }
-
-    if (!userRecord.newEmail) {
-      throw new BadRequestException(
-        'New email not found. Please start the email change process again.',
-      );
-    }
-
-    const oldEmail = userRecord.email;
-    const finalNewEmail = newEmail;
-
-    console.log('Auth Service: Updating email and password:', {
-      userId: user.id,
-      oldEmail,
-      newEmail: finalNewEmail,
-      hasNewPassword: !!newPassword,
-    });
-
-    console.log(
-      'Auth Service: Cleaning up all tokens for user before email/password change:',
-      user.id,
-    );
-
-    const tokensCleaned =
-      await this.tokenCleanupService.cleanupAllTokensForUser(user.id);
-
-    console.log(
-      `Auth Service: Cleaned up ${tokensCleaned} tokens for user ${user.id}`,
-    );
-
-    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
-
-    const updateData: any = {
-      email: finalNewEmail,
-      password: hashedNewPassword,
-      newEmail: null,
-      otp: null,
-      otpExpiresAt: null,
-      isVerified: false,
-    };
-
-    console.log('Auth Service: Updating with new email and password');
-
-    await this.databaseService.getPrismaClient().user.update({
+    const storedUser = await this.databaseService.user.findUniqueOrThrow({
       where: { id: user.id },
-      data: updateData,
     });
-
-    console.log(
-      'Auth Service: Email and password change completed successfully',
+    const passwordValid = await bcrypt.compare(
+      dto.currentPassword,
+      storedUser.passwordHash,
     );
+    if (!passwordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
 
-    await this.emailService.sendEmailChangeConfirmationEmail(
-      finalNewEmail,
-      oldEmail,
-    );
-
-    const updatedUser = await this.databaseService
-      .getPrismaClient()
-      .user.findUnique({
-        where: { id: user.id },
+    try {
+      await this.databaseService.$transaction(async (transaction) => {
+        await transaction.user.update({
+          where: { id: user.id },
+          data: {
+            email: request.newEmail!,
+            emailVerifiedAt: new Date(),
+            tokenVersion: { increment: 1 },
+          },
+        });
+        await transaction.emailChangeRequest.update({
+          where: { id: request.id },
+          data: { completedAt: new Date() },
+        });
+        await transaction.authSession.updateMany({
+          where: { userId: user.id, revokedAt: null },
+          data: { revokedAt: new Date() },
+        });
       });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Email is already in use');
+      }
+      throw error;
+    }
+
+    await this.sendSecurityNotification(() =>
+      this.emailService.sendEmailChangeSuccessEmail(
+        storedUser.email,
+        request.newEmail!,
+      ),
+    );
 
     return {
-      message:
-        'Email address and password updated successfully. You will receive a confirmation email at your new address. Please login again with your new email address and password.',
-      newEmail: finalNewEmail,
-      user: updatedUser
-        ? {
-            id: updatedUser.id,
-            email: updatedUser.email,
-            username: updatedUser.username,
-            isVerified: updatedUser.isVerified,
-          }
-        : null,
+      message: 'Email changed successfully. Sign in again.',
+      newEmail: request.newEmail,
       requiresReauth: true,
     };
+  }
+
+  private async createSession(
+    user: User,
+    rememberMe: boolean,
+    metadata: RequestMetadata,
+  ): Promise<SessionTokens> {
+    const refreshTtlSeconds = rememberMe
+      ? this.configService.getOrThrow<number>('auth.refreshRememberTtlSeconds')
+      : this.configService.getOrThrow<number>('auth.refreshTtlSeconds');
+    const expiresAt = new Date(Date.now() + refreshTtlSeconds * 1000);
+    const refreshToken = this.cryptoService.randomToken(64);
+    const tokenHash = this.cryptoService.hashRefreshToken(refreshToken);
+
+    const session = await this.databaseService.authSession.create({
+      data: {
+        userId: user.id,
+        rememberMe,
+        expiresAt,
+        ipAddress: metadata.ipAddress,
+        userAgent: metadata.userAgent,
+        refreshTokens: {
+          create: {
+            tokenHash,
+            expiresAt,
+          },
+        },
+      },
+    });
+
+    return {
+      sessionId: session.id,
+      refreshToken,
+      accessToken: await this.signAccessToken(user, session.id),
+    };
+  }
+
+  private async signAccessToken(
+    user: User,
+    sessionId: string,
+  ): Promise<string> {
+    return this.jwtService.signAsync(
+      {
+        sub: user.id,
+        sid: sessionId,
+        role: user.role,
+        tv: user.tokenVersion,
+        type: 'access',
+      },
+      {
+        secret: this.configService.getOrThrow<string>('auth.jwtSecret'),
+        issuer: this.configService.getOrThrow<string>('auth.issuer'),
+        audience: this.configService.getOrThrow<string>('auth.audience'),
+        algorithm: 'HS512',
+        expiresIn: this.configService.getOrThrow<number>(
+          'auth.accessTtlSeconds',
+        ),
+      },
+    );
+  }
+
+  private async createChallenge(
+    purpose: ChallengePurpose,
+    target: string,
+    userId?: number,
+  ): Promise<{ challenge: VerificationChallenge; otp: string }> {
+    const otp = this.cryptoService.randomOtp();
+    const expiresAt = new Date(Date.now() + AuthService.OTP_TTL_MS);
+
+    await this.databaseService.verificationChallenge.deleteMany({
+      where: {
+        purpose,
+        target,
+        consumedAt: null,
+      },
+    });
+
+    const challenge = await this.databaseService.verificationChallenge.create({
+      data: {
+        purpose,
+        target,
+        userId,
+        codeHash: this.cryptoService.hashOtp(otp),
+        expiresAt,
+      },
+    });
+
+    return { challenge, otp };
+  }
+
+  private async verifyChallengeAndIssueGrant(
+    dto: VerifyOtpDto,
+    purpose: ChallengePurpose,
+  ): Promise<string> {
+    const challenge = await this.getChallengeForVerification(
+      dto.challengeId,
+      purpose,
+    );
+    await this.verifyChallengeCode(challenge, dto.otp);
+
+    const grant = this.cryptoService.randomToken(48);
+    await this.databaseService.verificationChallenge.update({
+      where: { id: challenge.id },
+      data: {
+        verifiedAt: new Date(),
+        grantHash: this.cryptoService.hashGrant(grant),
+        expiresAt: new Date(Date.now() + AuthService.GRANT_TTL_MS),
+      },
+    });
+    return grant;
+  }
+
+  private async getChallengeForVerification(
+    challengeId: string,
+    purpose: ChallengePurpose,
+  ): Promise<VerificationChallenge> {
+    const challenge =
+      await this.databaseService.verificationChallenge.findFirst({
+        where: { id: challengeId, purpose },
+      });
+
+    if (
+      !challenge ||
+      challenge.consumedAt ||
+      challenge.verifiedAt ||
+      challenge.expiresAt <= new Date() ||
+      challenge.attempts >= challenge.maxAttempts
+    ) {
+      throw new BadRequestException('Invalid or expired verification code');
+    }
+
+    return challenge;
+  }
+
+  private async verifyChallengeCode(
+    challenge: VerificationChallenge,
+    otp: string,
+  ): Promise<void> {
+    const submittedHash = this.cryptoService.hashOtp(otp);
+    if (!this.cryptoService.safeEqual(challenge.codeHash, submittedHash)) {
+      await this.databaseService.verificationChallenge.update({
+        where: { id: challenge.id },
+        data: { attempts: { increment: 1 } },
+      });
+      throw new BadRequestException('Invalid or expired verification code');
+    }
+  }
+
+  private async getUsableGrant(
+    grantHash: string,
+    purpose: ChallengePurpose,
+  ): Promise<VerificationChallenge> {
+    const challenge =
+      await this.databaseService.verificationChallenge.findFirst({
+        where: {
+          grantHash,
+          purpose,
+          verifiedAt: { not: null },
+          consumedAt: null,
+          expiresAt: { gt: new Date() },
+        },
+      });
+    if (!challenge) {
+      throw new BadRequestException('Invalid or expired grant');
+    }
+    return challenge;
+  }
+
+  private async getEmailChangeRequest(userId: number, requestId: string) {
+    const request = await this.databaseService.emailChangeRequest.findFirst({
+      where: {
+        id: requestId,
+        userId,
+        completedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+    });
+    if (!request) {
+      throw new BadRequestException('Invalid or expired email-change request');
+    }
+    return request;
+  }
+
+  private async verifyEmailChangeCode(
+    expectedHash: string,
+    expiresAt: Date,
+    attempts: number,
+    otp: string,
+    onFailure: () => Promise<void>,
+  ): Promise<void> {
+    if (expiresAt <= new Date() || attempts >= 5) {
+      throw new BadRequestException('Invalid or expired verification code');
+    }
+    const actualHash = this.cryptoService.hashOtp(otp);
+    if (!this.cryptoService.safeEqual(expectedHash, actualHash)) {
+      await onFailure();
+      throw new BadRequestException('Invalid or expired verification code');
+    }
+  }
+
+  private async sendSecurityNotification(
+    operation: () => Promise<void>,
+  ): Promise<void> {
+    try {
+      await operation();
+    } catch (error) {
+      this.logger.error(
+        'A security notification email could not be delivered',
+        error instanceof Error ? error.stack : undefined,
+      );
+    }
+  }
+
+  private async revokeSession(sessionId: string): Promise<void> {
+    await this.databaseService.authSession.updateMany({
+      where: { id: sessionId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+  }
+
+  private toUserResponse(
+    user: Pick<User, 'id' | 'email' | 'username' | 'role' | 'emailVerifiedAt'>,
+  ) {
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+      isVerified: Boolean(user.emailVerifiedAt),
+    };
+  }
+
+  private normalizeEmail(email: string): string {
+    return email.trim().toLowerCase();
+  }
+
+  private fakeChallengeResponse(message: string): {
+    message: string;
+    challengeId: string;
+    expiresInMinutes: number;
+  } {
+    return {
+      message,
+      challengeId: this.cryptoService.randomToken(24),
+      expiresInMinutes: 10,
+    };
+  }
+
+  private async performDummyPasswordCheck(password: string): Promise<void> {
+    const dummyHash =
+      '$2b$12$dLx0JcR5KJfYfSNzG4WfXuf3KjV5C/8OJ0n9HZgWGLm6vTFmdZVfC';
+    await bcrypt.compare(password, dummyHash).catch(() => false);
   }
 }

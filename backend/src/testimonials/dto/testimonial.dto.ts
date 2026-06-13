@@ -1,33 +1,47 @@
+import { Transform } from 'class-transformer';
 import {
-  IsString,
-  IsOptional,
   IsBoolean,
   IsInt,
-  Min,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Max,
   MaxLength,
+  Min,
 } from 'class-validator';
 
-export class CreateTestimonialDto {
-  @IsString()
-  @MaxLength(255)
-  name: string;
+const trim = ({ value }: { value: unknown }): unknown =>
+  typeof value === 'string' ? value.trim() : value;
 
+export class CreateTestimonialDto {
+  @Transform(trim)
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  name!: string;
+
+  @Transform(trim)
   @IsOptional()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(150)
   position?: string;
 
+  @Transform(trim)
+  @IsOptional()
+  @IsString()
+  @MaxLength(150)
+  company?: string;
+
+  @Transform(trim)
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(10_000)
+  content!: string;
+
+  @Transform(trim)
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  company?: string;
-
-  @IsString()
-  @MaxLength(2000)
-  content: string;
-
-  @IsOptional()
-  @IsString()
   image?: string;
 
   @IsOptional()
@@ -37,32 +51,41 @@ export class CreateTestimonialDto {
   @IsOptional()
   @IsInt()
   @Min(1)
+  @Max(10_000)
   displayOrder?: number;
 }
 
 export class UpdateTestimonialDto {
+  @Transform(trim)
   @IsOptional()
   @IsString()
-  @MaxLength(255)
+  @IsNotEmpty()
+  @MaxLength(100)
   name?: string;
 
+  @Transform(trim)
   @IsOptional()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(150)
   position?: string;
 
+  @Transform(trim)
+  @IsOptional()
+  @IsString()
+  @MaxLength(150)
+  company?: string;
+
+  @Transform(trim)
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(10_000)
+  content?: string;
+
+  @Transform(trim)
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  company?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(2000)
-  content?: string;
-
-  @IsOptional()
-  @IsString()
   image?: string;
 
   @IsOptional()
@@ -72,5 +95,6 @@ export class UpdateTestimonialDto {
   @IsOptional()
   @IsInt()
   @Min(1)
+  @Max(10_000)
   displayOrder?: number;
 }

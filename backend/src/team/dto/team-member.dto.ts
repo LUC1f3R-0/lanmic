@@ -1,70 +1,101 @@
+import { Transform } from 'class-transformer';
 import {
-  IsString,
-  IsOptional,
   IsBoolean,
-  IsNotEmpty,
   IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Max,
+  MaxLength,
   Min,
 } from 'class-validator';
 
+const trim = ({ value }: { value: unknown }): unknown =>
+  typeof value === 'string' ? value.trim() : value;
+
 export class CreateTeamMemberDto {
+  @Transform(trim)
   @IsString()
   @IsNotEmpty()
-  name: string;
+  @MaxLength(100)
+  name!: string;
 
+  @Transform(trim)
   @IsString()
   @IsNotEmpty()
-  position: string;
+  @MaxLength(150)
+  position!: string;
 
+  @Transform(trim)
   @IsString()
   @IsNotEmpty()
-  description: string;
+  @MaxLength(10_000)
+  description!: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(255)
   image?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(100)
   department?: string;
 
-  @IsBoolean()
   @IsOptional()
+  @IsBoolean()
   isActive?: boolean;
 
-  @IsInt()
   @IsOptional()
+  @IsInt()
   @Min(1)
+  @Max(10_000)
   displayOrder?: number;
 }
 
 export class UpdateTeamMemberDto {
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
   name?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(150)
   position?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(10_000)
   description?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(255)
   image?: string;
 
-  @IsString()
+  @Transform(trim)
   @IsOptional()
+  @IsString()
+  @MaxLength(100)
   department?: string;
 
-  @IsBoolean()
   @IsOptional()
+  @IsBoolean()
   isActive?: boolean;
 
-  @IsInt()
   @IsOptional()
+  @IsInt()
   @Min(1)
+  @Max(10_000)
   displayOrder?: number;
 }

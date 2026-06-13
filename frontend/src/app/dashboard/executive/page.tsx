@@ -8,6 +8,7 @@ import { useExecutive, ExecutiveLeadership } from '@/contexts/ExecutiveContext';
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 import { FileUpload } from '@/components/FileUpload';
 import { getDisplayImageUrl } from '@/lib/imageUtils';
+import BackendImage from "@/components/BackendImage";
 
 export default function ExecutiveManagementPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -417,15 +418,11 @@ export default function ExecutiveManagementPage() {
                     <div className="space-y-4">
                       {/* Executive Image Preview */}
                       <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
-                        <Image
-                          src={getDisplayImageUrl(executive.image, 'executive')}
+                        <BackendImage
+                          src={executive.image}
                           alt={executive.name}
-                          fill
-                          className="object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
+                          type="executive"
+                          className="w-full h-full object-cover"
                         />
                         <div className="absolute top-3 right-3">
                           <span className={`px-2 py-1 rounded text-xs font-medium ${

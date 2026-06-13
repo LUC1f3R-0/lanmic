@@ -6,6 +6,7 @@ import Link from "next/link";
 import AOS from "aos";
 import { useExecutive } from "@/contexts/ExecutiveContext";
 import { getDisplayImageUrl } from "@/lib/imageUtils";
+import BackendImage from "@/components/BackendImage";
 
 export default function Team() {
   const { getActiveExecutiveLeadership, isWebSocketConnected } = useExecutive();
@@ -191,21 +192,12 @@ export default function Team() {
                     data-aos-easing="ease-out-cubic"
                   >
                     <div className="relative mb-6">
-                      <Image
-                        src={getDisplayImageUrl(executive.image, 'executive')}
-                        alt={executive.name}
-                        width={400}
-                        height={400}
-                        className="w-full h-80 object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          console.log('Image failed to load:', target.src, 'for executive:', executive.name);
-                          target.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face';
-                        }}
-                        onLoad={() => {
-                          console.log('Image loaded successfully for:', executive.name, 'URL:', getDisplayImageUrl(executive.image, 'executive'));
-                        }}
-                      />
+                      <BackendImage
+  src={executive.image}
+  alt={executive.name}
+  type="executive"
+  className="w-full h-80 object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
+/>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                     <div className="text-center">

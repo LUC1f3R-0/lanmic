@@ -8,6 +8,7 @@ import { useBlog, BlogPost } from '@/contexts/BlogContext';
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 import { FileUpload } from '@/components/FileUpload';
 import { getDisplayImageUrl } from '@/lib/imageUtils';
+import BackendImage from "@/components/BackendImage";
 
 export default function BlogManagementPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -477,15 +478,11 @@ export default function BlogManagementPage() {
                     <div className="space-y-4">
                       {/* Blog Image Preview */}
                       <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
-                        <Image
-                          src={getDisplayImageUrl(post.blogImage)}
+                        <BackendImage
+                          src={post.blogImage}
                           alt={post.title}
-                          fill
-                          className="object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
+                          type="blog"
+                          className="w-full h-full object-cover"
                         />
                         <div className="absolute top-3 left-3">
                           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -520,16 +517,11 @@ export default function BlogManagementPage() {
                             )}
                           </div>
                           <div className="flex items-center">
-                            <Image
-                              src={getDisplayImageUrl(post.authorImage, 'author')}
+                            <BackendImage
+                              src={post.authorImage}
                               alt={post.authorName}
-                              width={32}
-                              height={32}
-                              className="w-8 h-8 rounded-full mr-3"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                              }}
+                              type="author"
+                              className="w-8 h-8 rounded-full mr-3 object-cover"
                             />
                             <div>
                               <div className="font-semibold text-gray-900 text-sm">{post.authorName}</div>

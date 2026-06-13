@@ -1,51 +1,61 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
 
 const prisma = new PrismaClient();
 
-async function main() {
-  console.log('🌱 Starting seed...');
+async function main(): Promise<void> {
+  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
 
-  const adminEmail = process.env.ADMIN_EMAIL || 'anonymous.inbox99@gmail.com';
-  const adminPlainPassword = process.env.ADMIN_PASSWORD || 'admin@pass';
+  const username = process.env.ADMIN_USERNAME?.trim().toLowerCase();
 
-  // Hash the admin password with the same salt rounds as the auth service
-  const hashedPassword = await bcrypt.hash(adminPlainPassword, 12);
+  const password = process.env.ADMIN_PASSWORD;
 
-  // Create admin user
-  const adminUser = await prisma.user.upsert({
-    where: { email: adminEmail },
+  if (!email || !username || !password) {
+    throw new Error(
+      'ADMIN_EMAIL, ADMIN_USERNAME and ADMIN_PASSWORD must be provided for seeding.',
+    );
+  }
+
+  if (password.length < 12) {
+    throw new Error('ADMIN_PASSWORD must contain at least 12 characters.');
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+
+  await prisma.user.upsert({
+    where: {
+      email,
+    },
+
     update: {
-      // Update password in case it changed
-      password: hashedPassword,
-      isVerified: false,
-      username: 'admin',
+      username,
+      passwordHash,
+      role: UserRole.ADMIN,
+      isActive: true,
+      emailVerifiedAt: new Date(),
+
+      tokenVersion: {
+        increment: 1,
+      },
     },
+
     create: {
-      email: adminEmail,
-      password: hashedPassword,
-      username: 'admin',
-      isVerified: false,
+      email,
+      username,
+      passwordHash,
+      role: UserRole.ADMIN,
+      isActive: true,
+      emailVerifiedAt: new Date(),
     },
   });
 
-  console.log('✅ Admin user created/updated:', {
-    id: adminUser.id,
-    email: adminUser.email,
-    username: adminUser.username,
-    isActive: adminUser.isVerified,
-  });
-
-  console.log('🎉 Seed completed successfully!');
+  console.log(`Administrator account ensured for ${email}.`);
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Seed failed:', e);
-    process.exit(1);
+  .catch((error: unknown) => {
+    console.error(error);
+    process.exitCode = 1;
   })
   .finally(async () => {
     await prisma.$disconnect();

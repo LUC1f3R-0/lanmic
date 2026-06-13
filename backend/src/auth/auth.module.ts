@@ -1,33 +1,40 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ScheduleModule } from '@nestjs/schedule';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { CookieService } from './cookie.service';
+import { CsrfController } from './csrf.controller';
 import { EmailService } from './email.service';
-import { TokenCleanupService } from './token-cleanup.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { DatabaseService } from '../database.service';
+import { TokenCleanupService } from './token-cleanup.service';
 
 @Module({
   imports: [
-    PassportModule,
-    ScheduleModule.forRoot(),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '15m' },
+    ConfigModule,
+    PassportModule.register({ defaultStrategy: 'jwt', session: false }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.getOrThrow<string>('auth.jwtSecret'),
+        signOptions: {
+          issuer: configService.getOrThrow<string>('auth.issuer'),
+          audience: configService.getOrThrow<string>('auth.audience'),
+          algorithm: 'HS512',
+        },
+      }),
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, CsrfController],
   providers: [
     AuthService,
     CookieService,
     EmailService,
     TokenCleanupService,
     JwtStrategy,
-    DatabaseService,
   ],
-  exports: [AuthService, CookieService, TokenCleanupService],
+  exports: [AuthService, CookieService, EmailService, JwtModule],
 })
 export class AuthModule {}

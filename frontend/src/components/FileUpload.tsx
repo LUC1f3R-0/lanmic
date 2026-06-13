@@ -1,16 +1,35 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
-import { blogApi } from '@/lib/blogApi';
-import { getDisplayImageUrl } from '@/lib/imageUtils';
+import React, { useRef, useState } from "react";
+import { blogApi } from "@/lib/blogApi";
+import { getDisplayImageUrl, ImageType } from "@/lib/imageUtils";
 
 interface FileUploadProps {
-  onUpload: (filename: string) => void;
-  currentImage?: string; // Now expects filename, not full URL
-  uploadPath?: string; // Path for upload (e.g., 'team-images', 'blog-images')
+  onUpload: (url: string) => void;
+  currentImage?: string;
+  uploadPath?: string;
   placeholder?: string;
   className?: string;
-  fieldName?: string; // Add field name to determine upload destination
+  fieldName?: string;
+}
+
+function getImageTypeFromFieldName(fieldName?: string): ImageType {
+  switch (fieldName) {
+    case "authorImage":
+      return "author";
+    case "blogImage":
+      return "blog";
+    case "teamImage":
+    case "team-images":
+      return "team-images";
+    case "executiveImage":
+      return "executive";
+    case "testimonialImage":
+    case "testimonial-images":
+      return "testimonial-images";
+    default:
+      return "blog";
+  }
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
@@ -19,27 +38,32 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   uploadPath = "blog-images",
   placeholder = "Upload image",
   className = "",
-  fieldName
+  fieldName,
 }) => {
-  // Use uploadPath as fieldName if fieldName is not provided
   const actualFieldName = fieldName || uploadPath;
+  const imageType = getImageTypeFromFieldName(actualFieldName);
+
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
-    if (!file) return;
 
-    // Validate file type
-    if (!file.type.match(/^image\/(jpg|jpeg|png|gif|webp)$/)) {
-      setError('Please select a valid image file (JPG, PNG, GIF, or WebP)');
+    if (!file) {
       return;
     }
 
-    // Validate file size (5MB limit)
+    if (!file.type.match(/^image\/(jpg|jpeg|png|gif|webp)$/)) {
+      setError("Please select a valid image file (JPG, PNG, GIF, or WebP)");
+      return;
+    }
+
     if (file.size > 5 * 1024 * 1024) {
-      setError('File size must be less than 5MB');
+      setError("File size must be less than 5MB");
       return;
     }
 
@@ -47,23 +71,30 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     setError(null);
 
     try {
-      const url = await blogApi.uploadImage(file, actualFieldName);
-      // Extract only the filename from the URL
-      let filename = url;
-      if (url.includes('/')) {
-        filename = url.split('/').pop() || url;
-      }
-      onUpload(filename);
+      const uploadedUrl = await blogApi.uploadImage(file, actualFieldName);
+
+      // Keep the backend returned path exactly:
+      // /uploads/author-images/file.png
+      // /uploads/blog-images/file.png
+      onUpload(uploadedUrl);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Upload failed');
+      setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setIsUploading(false);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
   const handleClick = () => {
     fileInputRef.current?.click();
   };
+
+  const previewUrl = currentImage
+    ? getDisplayImageUrl(currentImage, imageType)
+    : "";
 
   return (
     <div className={`space-y-2 ${className}`}>
@@ -76,59 +107,72 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         >
           {isUploading ? (
             <>
-              <svg className="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                className="animate-spin h-4 w-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
               Uploading...
             </>
           ) : (
             <>
-              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              <svg
+                className="h-4 w-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
               </svg>
               {placeholder}
             </>
           )}
         </button>
-        
+
         {currentImage && (
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600">Current:</span>
-            <a
-              href={getDisplayImageUrl(currentImage, uploadPath as 'blog' | 'author' | 'team-images' | 'executive')}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
-            >
-              View Image
-            </a>
-          </div>
+          <span className="text-sm text-green-600">Image selected</span>
         )}
       </div>
 
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
         onChange={handleFileSelect}
         className="hidden"
       />
 
       {error && (
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">
+          {error}
+        </p>
       )}
 
-      {currentImage && (
-        <div className="mt-2">
+      {previewUrl && (
+        <div className="relative w-32 h-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
           <img
-            src={getDisplayImageUrl(currentImage, uploadPath as 'blog' | 'author' | 'team-images' | 'executive')}
-            alt="Preview"
-            className="w-20 h-20 object-cover rounded-lg border border-gray-200"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-            }}
+            src={previewUrl}
+            alt="Uploaded preview"
+            className="w-full h-full object-cover"
           />
         </div>
       )}

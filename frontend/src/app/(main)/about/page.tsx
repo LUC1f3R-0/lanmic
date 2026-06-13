@@ -13,6 +13,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
+import BackendImage from "@/components/BackendImage";
 const HAPPY_CUSTOMER_LOGOS: { src: string; alt: string }[] = [
   { src: "/865e79e7bdc67e7b238da1dd92446ccf.webp", alt: "Partner logo" },
   { src: "/download%20(1).jpeg", alt: "Partner logo" },
@@ -421,13 +422,12 @@ export default function About() {
                     <div className="testimonial text-center">
                       <div className="mb-8">
                         {testimonial.image ? (
-                          <Image
-                            src={getDisplayImageUrl(testimonial.image, 'testimonial-images')}
-                            alt={testimonial.name}
-                            width={120}
-                            height={120}
-                            className="w-24 h-24 rounded-full mx-auto shadow-lg object-cover"
-                          />
+                          <BackendImage
+  src={testimonial.image}
+  alt={testimonial.name}
+  type="testimonial-images"
+  className="w-24 h-24 rounded-full mx-auto shadow-lg object-cover"
+/>
                         ) : (
                           <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full mx-auto shadow-lg flex items-center justify-center">
                             <svg className="w-12 h-12 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">

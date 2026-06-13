@@ -8,6 +8,7 @@ import { useTestimonial } from '@/contexts/TestimonialContext';
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 import { FileUpload } from '@/components/FileUpload';
 import { getDisplayImageUrl } from '@/lib/imageUtils';
+import BackendImage from "@/components/BackendImage";
 
 export default function TestimonialsManagementPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -395,12 +396,11 @@ export default function TestimonialsManagementPage() {
                     <div className="flex items-start space-x-4">
                       <div className="flex-shrink-0">
                         {testimonial.image ? (
-                          <Image
-                            src={getDisplayImageUrl(testimonial.image, 'testimonial-images')}
+                          <BackendImage
+                            src={testimonial.image}
                             alt={testimonial.name}
-                            width={80}
-                            height={80}
-                            className="w-20 h-20 rounded-full object-cover"
+                            type="testimonial-images"
+                            className="w-full h-full object-cover"
                           />
                         ) : (
                           <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center">

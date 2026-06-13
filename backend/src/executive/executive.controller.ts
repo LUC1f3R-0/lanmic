@@ -1,111 +1,112 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
   Post,
   Put,
-  Delete,
-  Body,
-  Param,
+  Req,
   UseGuards,
-  Request,
-  ParseIntPipe,
-  BadRequestException,
-  NotFoundException,
 } from '@nestjs/common';
-import { ExecutiveService } from './executive.service';
+import { UserRole } from '@prisma/client';
+import { Roles } from '../common/decorators/roles.decorator';
+import { RolesGuard } from '../common/guards/roles.guard';
+import type { AuthenticatedRequest } from '../common/interfaces/authenticated-request.interface';
+import { EmailVerifiedGuard } from '../guards/email-verified.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import {
   CreateExecutiveLeadershipDto,
   UpdateExecutiveLeadershipDto,
 } from './dto/executive-leadership.dto';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { CsrfGuard } from '../guards/csrf.guard';
+import { ExecutiveService } from './executive.service';
+
+const CMS_ROLES = [UserRole.ADMIN, UserRole.EDITOR];
 
 @Controller('executive')
 export class ExecutiveController {
   constructor(private readonly executiveService: ExecutiveService) {}
 
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  async getAllExecutiveLeadership(@Request() req) {
-    return await this.executiveService.findAll(req.user.id);
+  @Get('active')
+  getActiveExecutiveLeadership() {
+    return this.executiveService.findActive();
   }
 
-  @Get('active')
-  async getActiveExecutiveLeadership() {
-    return await this.executiveService.findActive();
+  @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
+  getAllExecutiveLeadership(@Req() request: AuthenticatedRequest) {
+    return this.executiveService.findAll(request.user.id);
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
   async getExecutiveLeadership(
     @Param('id', ParseIntPipe) id: number,
-    @Request() req,
+    @Req() request: AuthenticatedRequest,
   ) {
-    const executive = await this.executiveService.findOne(id, req.user.id);
-    if (!executive) {
+    const executive = await this.executiveService.findOne(id, request.user.id);
+    if (!executive)
       throw new NotFoundException('Executive leadership not found');
-    }
     return executive;
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard, CsrfGuard)
-  async createExecutiveLeadership(
-    @Body() createExecutiveLeadershipDto: CreateExecutiveLeadershipDto,
-    @Request() req,
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
+  createExecutiveLeadership(
+    @Body() dto: CreateExecutiveLeadershipDto,
+    @Req() request: AuthenticatedRequest,
   ) {
-    try {
-      return await this.executiveService.create(
-        createExecutiveLeadershipDto,
-        req.user.id,
-      );
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
+    return this.executiveService.create(dto, request.user.id);
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard, CsrfGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
   async updateExecutiveLeadership(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateExecutiveLeadershipDto: UpdateExecutiveLeadershipDto,
-    @Request() req,
+    @Body() dto: UpdateExecutiveLeadershipDto,
+    @Req() request: AuthenticatedRequest,
   ) {
-    try {
-      const executive = await this.executiveService.update(
-        id,
-        updateExecutiveLeadershipDto,
-        req.user.id,
-      );
-      if (!executive) {
-        throw new NotFoundException('Executive leadership not found');
-      }
-      return executive;
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
+    const executive = await this.executiveService.update(
+      id,
+      dto,
+      request.user.id,
+    );
+    if (!executive)
+      throw new NotFoundException('Executive leadership not found');
+    return executive;
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, CsrfGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
   async deleteExecutiveLeadership(
     @Param('id', ParseIntPipe) id: number,
-    @Request() req,
+    @Req() request: AuthenticatedRequest,
   ) {
-    const deleted = await this.executiveService.remove(id, req.user.id);
-    if (!deleted) {
-      throw new NotFoundException('Executive leadership not found');
-    }
+    const deleted = await this.executiveService.remove(id, request.user.id);
+    if (!deleted) throw new NotFoundException('Executive leadership not found');
     return { message: 'Executive leadership deleted successfully' };
   }
 
   @Put(':id/active')
-  @UseGuards(JwtAuthGuard, CsrfGuard)
-  async toggleActive(@Param('id', ParseIntPipe) id: number, @Request() req) {
-    const executive = await this.executiveService.toggleActive(id, req.user.id);
-    if (!executive) {
+  @UseGuards(JwtAuthGuard, RolesGuard, EmailVerifiedGuard)
+  @Roles(...CMS_ROLES)
+  async toggleActive(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    const executive = await this.executiveService.toggleActive(
+      id,
+      request.user.id,
+    );
+    if (!executive)
       throw new NotFoundException('Executive leadership not found');
-    }
     return executive;
   }
 }
